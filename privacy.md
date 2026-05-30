@@ -3,48 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Void Station</title>
+    <title>Void Station - Privacy Policy</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; color: #e2e8f0; background-color: #0f172a; }
-        h1 { color: #38bdf8; border-bottom: 2px solid #334155; padding-bottom: 10px; }
-        h2 { color: #7dd3fc; margin-top: 30px; }
-        p { margin-bottom: 15px; }
-        .contact { background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 40px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; }
+        .hero { background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('https://voidstationidleroguelike.github.io/Void-Station-Idle-Roguelike/assets/banner.jpg'); background-size: cover; padding: 60px 20px; text-align: center; border-bottom: 2px solid #38bdf8; }
+        .hero h1 { font-size: 2.5rem; color: #38bdf8; margin: 0; letter-spacing: 0.1em; text-transform: uppercase; }
+        .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
+        .nav-links a { color: #38bdf8; margin: 0 16px; font-size: 0.95rem; }
+        .content { padding: 40px 20px; }
+        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 40px; }
+        h3 { color: #38bdf8; }
+        .policy-section { background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+        a { color: #38bdf8; text-decoration: none; }
+        a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <h1>Privacy Policy for Void Station</h1>
-    <p><i>Last Updated: May 2024</i></p>
-    <p>This game is designed with a privacy-first approach. We respect your data and aim to be transparent about the minimal information we use to provide a high-quality gaming experience.</p>
-    
-    <h2>1. Google Play Games Services & Cloud Save</h2>
-    <p>To provide competitive and persistent gameplay, we utilize Google Play Games Services.</p>
-    <ul>
-        <li><strong>Leaderboards:</strong> When you are signed in, your highest sector reached (score) is sent to Google Play Services to be displayed on global leaderboards.</li>
-        <li><strong>Cloud Save:</strong> We use the <code>drive.appdata</code> scope to securely store your game progress (upgrades, currency, and settings) in a private folder on your Google Drive. This data is only accessible by this game and is used to sync your progress across different devices. We do not have access to any other files on your Google Drive.</li>
-    </ul>
 
-    <h2>2. Data Collection & Analytics</h2>
-    <ul>
-        <li><strong>Firebase Analytics:</strong> We use Firebase to collect anonymous, aggregated data (such as device model, wave completion, and crashes). This is strictly used for game balancing and technical improvements.</li>
-        <li><strong>Advertising ID:</strong> We may access your device's anonymous Advertising ID for attribution and analytics purposes to understand where our players come from.</li>
-    </ul>
-
-    <h2>3. In-App Purchases (IAP)</h2>
-    <p>All financial transactions are handled exclusively by the Google Play Store. The developer never sees or stores your payment information or credit card details.</p>
-
-    <h2>4. Data Security & Retention</h2>
-    <p>Your game data is stored locally on your device and/or encrypted on Google’s secure servers via Cloud Save. We do not maintain any independent database of your personal information.</p>
-
-    <h2>5. Children’s Privacy</h2>
-    <p>Our game is not intended for children under the age of 13. We do not knowingly collect personal data from children.</p>
-
-    <h2>6. Your Rights</h2>
-    <p>You can at any time sign out of Google Play Games in the settings to stop data syncing or delete your Cloud Save data through your Google Account settings.</p>
-
-    <div class="contact">
-        <strong>Contact Us:</strong><br>
-        If you have any questions, please reach out to: <a href="mailto:voidstationidle@gmail.com" style="color: #38bdf8;">voidstationidle@gmail.com</a>
+    <div class="hero">
+        <h1>Privacy Policy</h1>
     </div>
+
+    <div class="nav-links">
+        <a href="index.html">← Back to Homepage</a>
+    </div>
+
+    <div class="content">
+        <div class="policy-section">
+            <p><i>Last Updated: May 2024</i></p>
+            <p>We respect your privacy. This game uses <strong>Google Play Games Services</strong> to provide global leaderboards and secure <strong>Cloud Save</strong> functionality.</p>
+
+            <h3>Data Usage Transparency</h3>
+            <ul>
+                <li><strong>Leaderboards:</strong> Your highest sector reached is shared with Google Play Services to calculate your global rank.</li>
+                <li><strong>Progress Sync (Cloud Save):</strong> We use the <code>drive.appdata</code> scope to store your game settings in a private, isolated folder on your Google Drive. We cannot see or touch any other files in your drive.</li>
+                <li><strong>Analytics:</strong> We use Firebase to track game crashes and balancing data (like which weapons are most popular) to improve the game.</li>
+            </ul>
+
+            <h3>Your Control</h3>
+            <p>You can opt-out of data collection at any time by signing out of Google Play Games in the in-game settings menu. You can also delete your save data via your Google Account dashboard.</p>
+            
+            <p style="margin-top: 30px;">If you have any questions, feel free to contact us at <a href="mailto:voidstationidle@gmail.com">voidstationidle@gmail.com</a>.</p>
+        </div>
+    </div>
+
 </body>
 </html>
