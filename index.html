@@ -1,128 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="Y87ROB_8tENtX_2MXPcMvyY8ZWpPEjrK4CUpUa6PVd4" />
-    <title>Void Station - Official Homepage</title>
+    <title>Void Station - Official Idle Roguelike Defense</title>
+    
+    <!-- HER ER FAVICON KODEN -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 1000px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; overflow-x: hidden; }
         
-        /* Hero-seksjon med samme bakgrunnsfarge for sømløst design */
+        /* Hero-seksjon med Commander-grafikk */
         .hero { 
+            position: relative;
             background-color: #030412; 
-            padding: 60px 20px 40px 20px; 
+            padding: 80px 20px; 
             text-align: center; 
             border-bottom: 2px solid #38bdf8;
+            overflow: hidden;
         }
+
+        .commander-left, .commander-right {
+            position: absolute;
+            bottom: 0;
+            width: 250px;
+            height: auto;
+            z-index: 1;
+            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.3));
+            opacity: 0.8;
+            transition: transform 0.3s;
+        }
+        .commander-left { left: -50px; }
+        .commander-right { right: -50px; transform: scaleX(-1); }
         
         .logo { 
-            max-width: 420px; 
+            position: relative;
+            z-index: 2;
+            max-width: 450px; 
             width: 100%;
-            height: auto; 
-            display: block; 
-            margin: 0 auto;
             border-radius: 24px;
+            box-shadow: 0 0 50px rgba(56, 189, 248, 0.2);
         }
         
-        .hero p { color: #94a3b8; margin-top: 20px; font-size: 1.4rem; letter-spacing: 0.05em; font-weight: 500; }
+        h1 { font-size: 2.5rem; margin: 20px 0 10px; color: #fff; text-transform: uppercase; letter-spacing: 0.1em; position: relative; z-index: 2; }
+        .hero p { position: relative; z-index: 2; color: #94a3b8; font-size: 1.4rem; font-weight: 500; }
         
         .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
-        .nav-links a { color: #38bdf8; margin: 0 26px; font-size: 1rem; font-weight: 500; }
+        .nav-links a { color: #38bdf8; margin: 0 20px; font-weight: 500; text-decoration: none; }
+        .nav-links a:hover { text-decoration: underline; }
         
-        .content { padding: 40px 20px; }
+        .content { padding: 40px 20px; position: relative; z-index: 2; }
         
-        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 40px; }
-        h3 { color: #38bdf8; margin-bottom: 8px; }
-        
-        /* Seksjons-stiler */
-        .update-box { background: linear-gradient(145deg, #1e1b4b, #0f172a); padding: 25px; border-radius: 12px; border: 1px solid #4338ca; margin-bottom: 40px; }
-        .update-box h2 { color: #a5b4fc; border-bottom: 1px solid #4338ca; margin-top: 0; }
-        .update-box ul { padding-left: 20px; }
-        .update-box li { margin-bottom: 8px; }
+        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 40px; text-shadow: 0 0 10px rgba(125, 211, 252, 0.3); }
+        h3 { color: #38bdf8; margin-top: 0; }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 16px;
+            border: 2px solid #38bdf8;
+            margin: 30px 0;
+            box-shadow: 0 0 30px rgba(56, 189, 248, 0.2);
+        }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+        .download-area { text-align: center; margin: 50px 0; }
+        .game-loop { display: flex; justify-content: space-around; text-align: center; margin: 40px 0; gap: 10px; }
+        .loop-step { background: #1e1b4b; padding: 15px; border-radius: 12px; border: 1px solid #4338ca; flex: 1; }
 
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
         .feature { background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; }
         
-        .bullet-list { padding-left: 20px; }
-        .bullet-list li { margin-bottom: 6px; }
+        /* Roadmap Styling */
+        .roadmap-box { 
+            background: linear-gradient(145deg, #0f172a, #1e1b4b); 
+            padding: 30px; 
+            border-radius: 16px; 
+            border: 1px solid #38bdf8; 
+            margin: 40px 0;
+            position: relative;
+        }
+        .roadmap-box h2 { border-bottom: none; margin-top: 0; color: #38bdf8; }
+        .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .roadmap-item { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #38bdf8; }
+        .roadmap-item h4 { margin: 0 0 5px 0; color: #7dd3fc; text-transform: uppercase; font-size: 0.9rem; }
+        .roadmap-item p { margin: 0; font-size: 0.85rem; color: #94a3b8; }
 
-        .transparency-note { background: #0f172a; padding: 20px; border-radius: 8px; border: 1px solid #1e293b; margin-top: 40px; font-size: 0.95rem; }
-        .contact { background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 60px; }
-        
-        a { color: #38bdf8; text-decoration: none; }
-        a:hover { text-decoration: underline; }
+        .discord-btn { display: inline-block; background: #5865F2; color: white !important; padding: 14px 30px; border-radius: 10px; font-weight: bold; margin-top: 20px; text-decoration: none; }
 
         @media (max-width: 768px) {
-            .feature-grid { grid-template-columns: 1fr; }
-            .logo { max-width: 280px; }
-            .hero p { font-size: 1.1rem; }
+            .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
+            .commander-left, .commander-right { width: 150px; opacity: 0.3; }
+            .game-loop { flex-direction: column; }
         }
     </style>
 </head>
 <body>
 
     <div class="hero">
+        <img src="1fe.png" alt="Commander Female" class="commander-left">
+        <img src="1ma.png" alt="Commander Male" class="commander-right">
+        
         <img src="logo.png" alt="Void Station Logo" class="logo">
+        <h1>Void Station</h1>
         <p>The Ultimate Idle Roguelike Defense</p>
+        <p style="font-size: 0.9rem; opacity: 0.7;">600+ Commanders | 100% Ad-Free | Continuous Updates</p>
     </div>
 
     <div class="nav-links">
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
+        <a href="https://discord.gg/dqupm3GWbT" style="color: #5865F2;">Join Discord</a>
     </div>
 
     <div class="content">
-        
-        <!-- Siste oppdateringer -->
-        <div class="update-box">
-            <h2>🔥 Latest Update Live!</h2>
-            <ul>
-                <li>✨ Added translations to 5 languages</li>
-                <li>🌌 New Difficulty: 3.4.7 Update featuring 9 Tiers in total</li>
-                <li>🚀 New Bases to unlock</li>
-                <li>👾 New enemies and bosses</li>
-                <li>💬 Integrated Discord links with leaderboard ranks and roles</li>
-                <li>🏆 Global Leaderboards and ranks implemented in-game</li>
-                <li>⚖️ Significantly optimized and balanced game mechanics</li>
-                <li>🛠️ Fixed graphic settings and all reported bugs</li>
-            </ul>
+
+        <!-- Roadmap / Future Content Section -->
+        <div class="roadmap-box">
+            <h2>📡 Incoming Intelligence: Roadmap</h2>
+            <p style="margin-bottom: 20px;">The void is expanding. We are committed to a <strong>Free-to-Play friendly</strong> experience with constant content drops.</p>
+            <div class="roadmap-grid">
+                <div class="roadmap-item">
+                    <h4>🎖️ Commander Specialization</h4>
+                    <p>Unlock and level up unique Commanders with active skills and passive station buffs.</p>
+                </div>
+                <div class="roadmap-item">
+                    <h4>📦 Equipment System</h4>
+                    <p>Loot and craft modular gear to customize your station's offensive and defensive capabilities.</p>
+                </div>
+                <div class="roadmap-item">
+                    <h4>💎 More F2P Rewards</h4>
+                    <p>New daily missions and achievement tracks to earn Premium Currency just by playing.</p>
+                </div>
+                <div class="roadmap-item">
+                    <h4>🌌 New Sectors & Tiers</h4>
+                    <p>Push beyond Tier 9 with upcoming "Abyssal Rifts" and legendary boss encounters.</p>
+                </div>
+            </div>
         </div>
 
-        <h2>About the Game</h2>
-        <p>Defend your station against endless waves of cosmic enemies in this relaxing idle roguelike. Your station fires automatically while you level up, choose upgrades, and build unstoppable combinations to survive deeper into the void.</p>
+        <h2>The Game Loop</h2>
+        <div class="game-loop">
+            <div class="loop-step">
+                <h4>🛡️ DEFEND</h4>
+                <p style="font-size: 0.8rem;">Auto-fire weapons at cosmic waves</p>
+            </div>
+            <div class="loop-step">
+                <h4>💎 COLLECT</h4>
+                <p style="font-size: 0.8rem;">Earn Credits and XP from fallen foes</p>
+            </div>
+            <div class="loop-step">
+                <h4>🛠️ UPGRADE</h4>
+                <p style="font-size: 0.8rem;">Choose from 100+ unique weapon buffs</p>
+            </div>
+            <div class="loop-step">
+                <h4>🔄 REBIRTH</h4>
+                <p style="font-size: 0.8rem;">Reset progress for massive power</p>
+            </div>
+        </div>
 
+        <h2>Mission Briefing</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/sWP3GoCYXnM" title="Void Station Gameplay" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <div class="download-area">
+            <a href="https://play.google.com/store/apps/details?id=com.ray.voidstation" class="play-store-btn">
+                <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" width="240">
+            </a>
+        </div>
+
+        <h2>Game Features</h2>
         <div class="feature-grid">
             <div class="feature">
-                <h3>🚫 No Ads, Pure Gameplay</h3>
-                <p>Enjoy an uninterrupted gaming experience with zero interruptions. Void Station is 100% ad-free. We believe in pure game flow, and all microtransactions are completely optional for those who wish to support development.</p>
+                <h3>🚫 100% Ad-Free</h3>
+                <p>Pure gameplay flow. No forced ads, no reward-videos. We value your time as a Commander.</p>
             </div>
             <div class="feature">
-                <h3>🌌 Relaxing Idle Combat</h3>
-                <p>Sit back and watch neon space battles unfold. Your station automatically destroys incoming enemies, allowing you to focus on strategy and progression instead of constant tapping.</p>
+                <h3>🌌 Weapon Evolutions</h3>
+                <p>Unlock the true potential of your arsenal. Transform standard guns into <strong>Black Hole Generators</strong>.</p>
             </div>
             <div class="feature">
-                <h3>🛠️ Create Overpowered Builds</h3>
-                <p>Unlock lasers, drones, missiles, and experimental weapons. Every run offers new upgrade choices and powerful synergies that make every journey unique.</p>
+                <h3>📈 Deep Meta-Progression</h3>
+                <p>Invest in permanent upgrades. Even after a loss, you return stronger with more HP, Damage, and Speed.</p>
             </div>
             <div class="feature">
-                <h3>🚀 Push Deeper Into the Void</h3>
-                <p>How far can you reach? Progress through increasingly dangerous sectors and unlock new stations as you reach for the endless sectors. Track your progress with the "Best Sector" counter.</p>
+                <h3>🏆 Global Leaderboards</h3>
+                <p>Compete with 600+ players worldwide. Claim your rank as the ultimate Void Station defender.</p>
             </div>
-        </div>
-
-        <h2>Core Features</h2>
-        <ul class="bullet-list">
-            <li><strong>Permanent Progression:</strong> Earn credits to unlock permanent upgrades and return stronger after every run. With the Rebirth system, every defeat is just a stepping stone to greater power.</li>
-            <li><strong>Global Competition:</strong> Compete with players worldwide across 9 different difficulty Tiers.</li>
-            <li><strong>Ad-Free Experience:</strong> No forced ads ever.</li>
-            <li><strong>Optional IAP:</strong> Support the game only if you want to.</li>
-            <li><strong>Tons of Content:</strong> Discover unique weapons and upgrades in your Codex, wrapped in neon sci-fi visuals and effects.</li>
-        </ul>
-
-        <!-- Dataåpenhet for Google Trust & Safety -->
-        <div class="transparency-note">
-            <p><strong>Data Transparency:</strong> Void Station uses Google Play Games Services solely to manage global leaderboards and sync game progress via Cloud Save, ensuring your player data is securely preserved. For a detailed breakdown of how data is handled, please review our full <a href="privacy.html">Privacy Policy</a>.</p>
         </div>
 
         <div class="contact">
@@ -133,5 +203,4 @@
     </div>
 
 </body>
-</html>
 </html>
