@@ -12,115 +12,55 @@
     <meta property="og:title" content="Void Station - Idle Roguelike Defense">
     <meta property="og:description" content="The Ultimate Idle Roguelike Defense. 100% Ad-Free. 9 Difficulty Tiers. Available on Google Play.">
     <meta property="og:image" content="https://voidstationidleroguelike.com/preview.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
 
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
 
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 1100px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; overflow-x: hidden; }
-        
-        .hero { 
-            position: relative;
-            background-color: #030412; 
-            padding: 60px 20px 0 20px; 
-            text-align: center; 
-            border-bottom: 2px solid #38bdf8;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 675px; 
-        }
-
-        .commander-left, .commander-right {
-            position: absolute;
-            bottom: 0; 
-            width: 220px;
-            height: auto;
-            z-index: 1;
-            filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.2));
-            pointer-events: none;
-        }
-        
+        .hero { position: relative; background-color: #030412; padding: 60px 20px 0 20px; text-align: center; border-bottom: 2px solid #38bdf8; overflow: hidden; display: flex; flex-direction: column; align-items: center; min-height: 675px; }
+        .commander-left, .commander-right { position: absolute; bottom: 0; width: 220px; height: auto; z-index: 1; filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.2)); pointer-events: none; }
         .commander-left { left: 20px; }
         .commander-right { right: 20px; transform: scaleX(-1); }
-        
-        .logo { 
-            position: relative;
-            z-index: 2;
-            max-width: 460px; 
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        
-        .hero-text { position: relative; z-index: 2; }
+        .logo { position: relative; z-index: 2; max-width: 460px; width: 100%; margin-bottom: 20px; }
         .hero p { color: #94a3b8; font-size: 1.2rem; margin: 10px 0 30px 0; font-style: italic; }
-        
-        .top-download { position: relative; z-index: 10; margin-bottom: 40px; }
-
         .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
         .nav-links a { color: #38bdf8; margin: 0 20px; font-weight: 500; text-decoration: none; }
         .nav-links a:hover { text-decoration: underline; }
-        
+        .nav-links .changelog-link { color: #34d399; border: 1px solid #064e3b; padding: 4px 12px; border-radius: 6px; background: rgba(52, 211, 153, 0.05); }
         .content { padding: 40px 20px; position: relative; z-index: 2; }
-        
-        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 50px; text-shadow: 0 0 10px rgba(125, 211, 252, 0.3); text-transform: uppercase; letter-spacing: 0.05em; }
+        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 50px; text-transform: uppercase; letter-spacing: 0.05em; }
         h3 { color: #38bdf8; margin-top: 0; }
-
         .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
-        .feature { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-
+        .feature { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; }
         .game-loop { display: flex; justify-content: space-around; text-align: center; margin: 40px 0; gap: 10px; }
         .loop-step { background: #1e1b4b; padding: 20px; border-radius: 12px; border: 1px solid #4338ca; flex: 1; }
-        .loop-step h4 { margin: 0 0 10px 0; color: #a5b4fc; font-size: 1.1rem; }
-
-        .roadmap-box { 
-            background: linear-gradient(145deg, #0f172a, #1e1b4b); 
-            padding: 30px; 
-            border-radius: 16px; 
-            border: 1px solid #38bdf8; 
-            margin: 40px 0;
-        }
+        .roadmap-box { background: linear-gradient(145deg, #0f172a, #1e1b4b); padding: 30px; border-radius: 16px; border: 1px solid #38bdf8; margin: 40px 0; }
         .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .roadmap-item { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #38bdf8; }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 16px;
-            border: 2px solid #38bdf8;
-            margin: 30px 0;
-        }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 16px; border: 2px solid #38bdf8; margin: 30px 0; }
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
         .play-store-btn { display: inline-block; transition: transform 0.2s; }
         .play-store-btn:hover { transform: scale(1.1); }
-
         @media (max-width: 768px) {
             .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
-            .commander-left { left: -20px; width: 180px; opacity: 0.6; }
-            .commander-right { right: -20px; width: 180px; opacity: 0.6; }
+            .commander-left, .commander-right { width: 150px; opacity: 0.4; }
             .game-loop { flex-direction: column; }
             .hero { min-height: 450px; }
         }
     </style>
 </head>
 <body>
-
     <div class="hero">
         <img src="1fe.png" alt="Commander Female" class="commander-left">
         <img src="1ma.png" alt="Commander Male" class="commander-right">
-        
         <img src="logo.png" alt="Void Station Logo" class="logo">
-        
         <div class="hero-text">
             <p>The Ultimate Idle Roguelike Defense</p>
+            <div style="font-family: monospace; color: #38bdf8; font-size: 0.9rem; margin-top: -10px; text-transform: uppercase; letter-spacing: 0.2em;">
+                Join over 750 active Commanders in the Void
+            </div>
         </div>
-
         <div class="top-download">
             <a href="https://play.google.com/store/apps/details?id=com.ray.voidstation" class="play-store-btn">
                 <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" width="200">
@@ -129,95 +69,43 @@
     </div>
 
     <div class="nav-links">
+        <a href="changelog.html" class="changelog-link">Latest Intel (Changelog)</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
     </div>
 
     <div style="background: #1e1b4b; border-bottom: 1px solid #4338ca; padding: 14px 20px; text-align: center;">
         <a href="https://discord.gg/dqupm3GWbT" style="color: #a5b4fc; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 10px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 127.14 96.36" fill="#5865F2">
-                <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.7,77.7,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.25,105.25,0,0,0,126.6,80.22h0C129.24,52.84,122.09,29.11,107.7,8.07ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
-            </svg>
-            Got ideas or found a bug? Share your fixes & suggestions on Discord!
+            Got ideas? Join over 750 Commanders on Discord!
         </a>
     </div>
 
     <div class="content">
-
         <h2>Core Intel</h2>
         <div class="feature-grid">
-            <div class="feature">
-                <h3>🚫 100% Ad-Free</h3>
-                <p>Enjoy pure gameplay flow. No forced ads or reward-videos. We respect your time as a Commander.</p>
-            </div>
-            <div class="feature">
-                <h3>🌌 9 Difficulty Tiers</h3>
-                <p>Progress through increasingly dangerous sectors. Master all 9 Tiers to prove your dominance.</p>
-            </div>
-            <div class="feature">
-                <h3>📈 Meta-Progression</h3>
-                <p>Unlock 28 Satellite Cores and invest in permanent upgrades to return stronger after every run.</p>
-            </div>
-            <div class="feature">
-                <h3>🏆 Competitive Ranks</h3>
-                <p>Integrated Global Leaderboards. Compete for total kills and highest sector reached worldwide.</p>
-            </div>
-        </div>
-
-        <h2>The Game Loop</h2>
-        <div class="game-loop">
-            <div class="loop-step">
-                <h4>🛡️ DEFEND</h4>
-                <p style="font-size: 0.85rem;">Auto-fire weapons at cosmic waves</p>
-            </div>
-            <div class="loop-step">
-                <h4>💎 COLLECT</h4>
-                <p style="font-size: 0.85rem;">Earn Credits and XP from fallen foes</p>
-            </div>
-            <div class="loop-step">
-                <h4>🛠️ UPGRADE</h4>
-                <p style="font-size: 0.85rem;">Choose from 100+ unique weapon buffs</p>
-            </div>
-            <div class="loop-step">
-                <h4>🔄 REBIRTH</h4>
-                <p style="font-size: 0.85rem;">Reset progress for massive multipliers</p>
-            </div>
+            <div class="feature"><h3>🚫 100% Ad-Free</h3><p>Enjoy pure gameplay flow. No forced ads or reward-videos.</p></div>
+            <div class="feature"><h3>🌌 9 Difficulty Tiers</h3><p>Progress through increasingly dangerous sectors. Master the Singularity.</p></div>
+            <div class="feature"><h3>📈 Meta-Progression</h3><p>Unlock 28 Satellite Cores and permanent station upgrades.</p></div>
+            <div class="feature"><h3>🏆 Competitive Ranks</h3><p>Global Leaderboards for total kills and highest sector reached.</p></div>
         </div>
 
         <div class="roadmap-box">
-            <h2>📡 Incoming Intelligence: Roadmap</h2>
-            <p style="margin-bottom: 20px;">The void is expanding. We are committed to a <strong>Free-to-Play friendly</strong> experience with continuous development.</p>
+            <h2>📡 Roadmap</h2>
             <div class="roadmap-grid">
-                <div class="roadmap-item">
-                    <h4>🎖️ Commander Specialization</h4>
-                    <p>Upgrade unique Commanders with active abilities and passive station bonuses.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>📦 Equipment System</h4>
-                    <p>Find and craft modular equipment to customize your station's attack and defense.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>💎 More F2P Rewards</h4>
-                    <p>Earn Premium currency through daily missions and new achievements.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>🌌 New Game Modes</h4>
-                    <p>We are exploring new ways to challenge your station beyond the 9 fixed tiers.</p>
-                </div>
+                <div class="roadmap-item"><h4>🎖️ Commanders</h4><p>Unique abilities and passive station bonuses.</p></div>
+                <div class="roadmap-item"><h4>📦 Equipment</h4><p>Find and craft modular equipment for your station.</p></div>
             </div>
         </div>
 
         <h2>Mission Briefing</h2>
         <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/sWP3GoCYXnM" title="Void Station Gameplay" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe src="https://www.youtube.com/embed/sWP3GoCYXnM" frameborder="0" allowfullscreen></iframe>
         </div>
 
-        <div class="contact" style="background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 60px;">
-            <strong>Developer Contact:</strong><br>
-            Raymond Dagslet-Kjendseth<br>
+        <div style="background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 60px;">
+            <strong>Developer Contact:</strong> Raymond Dagslet-Kjendseth<br>
             Email: <a href="mailto:voidstationidle@gmail.com" style="color: #38bdf8;">voidstationidle@gmail.com</a>
         </div>
     </div>
-
 </body>
 </html>
