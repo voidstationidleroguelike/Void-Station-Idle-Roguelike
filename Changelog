@@ -8,92 +8,55 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; }
         .hero { background-color: #030412; padding: 40px 20px 20px 20px; text-align: center; border-bottom: 2px solid #38bdf8; }
         .logo { max-width: 220px; width: 100%; height: auto; display: block; margin: 0 auto; border-radius: 16px; }
-        .hero h1 { font-size: 2rem; color: #38bdf8; margin: 15px 0 0 0; letter-spacing: 0.05em; text-transform: uppercase; }
+        .hero h1 { font-size: 2rem; color: #38bdf8; margin: 15px 0 0 0; text-transform: uppercase; }
         .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
         .nav-links a { color: #38bdf8; margin: 0 16px; font-size: 0.95rem; text-decoration: none; }
-        .nav-links a:hover { text-decoration: underline; }
         .content { padding: 40px 20px; }
-        
         .version-block { background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px; }
         .version-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 20px; }
         .version-number { color: #38bdf8; font-size: 1.5rem; font-weight: bold; }
-        .version-date { color: #94a3b8; font-size: 0.9rem; }
-        
-        h3 { color: #7dd3fc; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        h3 { color: #7dd3fc; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; }
         ul { margin-bottom: 20px; padding-left: 20px; }
         li { margin-bottom: 8px; }
-        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; vertical-align: middle; text-transform: uppercase; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; text-transform: uppercase; }
         .tag-new { background: #064e3b; color: #34d399; }
-        .tag-fix { background: #450a0a; color: #f87171; }
         .tag-opt { background: #1e3a8a; color: #60a5fa; }
-        
         .footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.8rem; }
-        a { color: #38bdf8; text-decoration: none; }
     </style>
 </head>
 <body>
-
     <div class="hero">
         <img src="logo.png" alt="Void Station Logo" class="logo">
         <h1>System Archives</h1>
     </div>
-
     <div class="nav-links">
         <a href="index.html">← Back to Homepage</a>
         <a href="privacy.html">Privacy Policy</a>
     </div>
-
     <div class="content">
-        
-        <!-- VERSION 3.5.0 - THE MEGA UPDATE -->
         <div class="version-block">
             <div class="version-header">
                 <div class="version-number">v3.5.0 - The Growth & Stability Update</div>
-                <div class="version-date">June 2024</div>
+                <div style="color: #94a3b8;">June 2024</div>
             </div>
-            
-            <h3><span class="tag tag-new">New</span> Social Features</h3>
+            <h3><span class="tag tag-new">New</span> Social & Rewards</h3>
             <ul>
-                <li><strong>Refer a Friend System:</strong> Introduced an invite-based reward system. Share your unique Invite Code to earn massive bonuses.</li>
-                <li><strong>Recruitment Rewards:</strong> New players receive **3,000¢** instantly. Referrers receive a **3X Credit Chest** when their friend reaches Sector 16.</li>
-                <li><strong>Community Promo Codes:</strong> The Codex now supports global promo codes. Use code **VOID2026** for a special gift!</li>
+                <li><strong>Refer a Friend System:</strong> Share your unique Invite Code (Codex -> Stats). New players get 3,000¢ instantly. You get a <strong>3X Credit Chest</strong> when they reach Sector 16.</li>
+                <li><strong>Community Promo Codes:</strong> Added support for global codes. Use <strong>VOID2026</strong> for a welcome gift!</li>
             </ul>
-
             <h3><span class="tag tag-opt">Stability & Performance</span></h3>
             <ul>
-                <li><strong>ANR Protection:</strong> Implemented "Freeze-Proof" triple-layer protection to prevent Android's "Application Not Responding" errors during intense late-game waves.</li>
-                <li><strong>Multithreaded Cloud Saving:</strong> All Google Play Games operations (Saving, Leaderboards, Achievements) now run on background threads with a 5s safety timeout.</li>
-                <li><strong>Engine Optimization:</strong> Migrated to squared-distance collision logic, reducing CPU calculations by nearly 40% during bullet-heavy sequences.</li>
-                <li><strong>Galaxy S25 Support:</strong> Fixed UI layout issues to ensure perfect scaling on modern narrow-screen devices.</li>
+                <li><strong>ANR Protection:</strong> Triple-layer optimization to prevent "Application Not Responding" errors during high-wave intensity.</li>
+                <li><strong>Multithreaded Cloud Saving:</strong> All Play Games operations now run on background threads with a 5s safety timeout.</li>
+                <li><strong>S25 Optimization:</strong> UI layout adjusted for perfect scaling on narrow-screen devices.</li>
             </ul>
-
-            <h3><span class="tag tag-new">Game Logic & Scaling</span></h3>
+            <h3><span class="tag tag-new">Game Logic</span></h3>
             <ul>
-                <li><strong>Infinite Progression:</strong> Internal number limit increased to **1e100** (Google-Go!). Numbers will no longer hit a "ceiling" in the deepest parts of the Void.</li>
-                <li><strong>Advanced Session Metrics:</strong> Station Lost summary now displays "Session Time" and "Credits Per Minute" for better optimization.</li>
-                <li><strong>Singularity Logic Fix:</strong> Resolved a critical bug where high-tier run stats could occasionally default back to Tier 1.</li>
+                <li><strong>Infinite Scaling:</strong> Internal number limit increased to <strong>1e100</strong>.</li>
+                <li><strong>Session Metrics:</strong> Added "Credits Per Minute" and "Session Time" to game-over summary.</li>
             </ul>
         </div>
-
-        <!-- PREVIOUS VERSION -->
-        <div class="version-block">
-            <div class="version-header">
-                <div class="version-number">v3.4.0 - The Codex Update</div>
-                <div class="version-date">May 2024</div>
-            </div>
-            
-            <h3>Highlights</h3>
-            <ul>
-                <li><strong>The Codex:</strong> New Archives menu where players can study enemy types and weapon stats.</li>
-                <li><strong>Achievements:</strong> Full integration with Google Play Games milestones.</li>
-            </ul>
-        </div>
-
     </div>
-
-    <div class="footer">
-        © 2026 Void Station • <a href="mailto:voidstationidle@gmail.com">Contact Support</a>
-    </div>
-
+    <div class="footer">© 2026 Void Station</div>
 </body>
 </html>
