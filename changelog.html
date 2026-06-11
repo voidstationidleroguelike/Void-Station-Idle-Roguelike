@@ -4,44 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Void Station - System Archives (Changelog)</title>
+    <!-- Favicon / Logo på fanen -->
+    <link rel="icon" type="image/png" href="logo.png">
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 1100px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; overflow-x: hidden; }
-        
-        .hero { 
-            background-color: #030412; 
-            padding: 40px 20px; 
-            text-align: center; 
-            border-bottom: 2px solid #38bdf8;
-        }
-        
+        .hero { background-color: #030412; padding: 40px 20px; text-align: center; border-bottom: 2px solid #38bdf8; }
         .logo { max-width: 250px; width: 100%; margin-bottom: 10px; }
         .hero h1 { font-size: 2rem; color: #38bdf8; margin: 0; text-transform: uppercase; letter-spacing: 0.1em; }
-
         .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
         .nav-links a { color: #38bdf8; margin: 0 20px; font-weight: 500; text-decoration: none; }
         .nav-links a:hover { text-decoration: underline; }
-        
         .content { padding: 40px 20px; }
-        
         .version-block { background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px; }
         .version-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 20px; }
         .version-number { color: #38bdf8; font-size: 1.5rem; font-weight: bold; }
         .version-date { color: #94a3b8; font-size: 0.9rem; }
-        
         h3 { color: #7dd3fc; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; }
         ul { margin-bottom: 20px; padding-left: 20px; }
         li { margin-bottom: 8px; }
-
         .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; text-transform: uppercase; vertical-align: middle; }
         .tag-new { background: #064e3b; color: #34d399; }
         .tag-opt { background: #1e3a8a; color: #60a5fa; }
         .tag-fix { background: #7f1d1d; color: #fca5a5; }
-        
-        .player-guide { background: #1e293b; border-left: 4px solid #38bdf8; padding: 20px; margin-top: 20px; border-radius: 0 8px 8px 0; }
-        .player-guide h4 { margin-top: 0; color: #38bdf8; text-transform: uppercase; font-size: 0.95rem; }
-        .faq-item { margin-bottom: 15px; }
-        .faq-item strong { color: #f1f5f9; display: block; margin-bottom: 4px; }
-        
         .footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.8rem; }
         a { color: #38bdf8; text-decoration: none; }
     </style>
@@ -59,107 +43,70 @@
     </div>
 
     <div class="content">
-        
-        <!-- VERSION 3.5.1 -->
+
+        <!-- VERSION 3.6.0 -->
         <div class="version-block">
             <div class="version-header">
-                <div class="version-number">v3.5.1 - Stability & "No-Crash" Safeguard</div>
+                <div class="version-number">v3.6.0 - The Endless Expansion</div>
                 <div class="version-date">June 2026</div>
             </div>
-            
-            <h3><span class="tag tag-fix">Fixes & Safeguards</span></h3>
+
+            <h3><span class="tag tag-new">New</span> Endless Roadmap & Rewards</h3>
             <ul>
-                <li><strong>GPU Fix (Adreno):</strong> Removed heavy glow effects in Low Quality mode that previously overloaded graphics drivers on certain Android devices.</li>
-                <li><strong>Crash Safeguard:</strong> The game now actively monitors your FPS. If it drops too low, Low Quality mode is forced automatically to save your run.</li>
-                <li><strong>Projectile Cap:</strong> Introduced a hard limit of 600 simultaneous projectiles on-screen to ensure stable performance during extreme endgame battles.</li>
+                <li><strong>Dynamic Reward Tiers:</strong> Earn massive credits based on your Best Run value:
+                    <ul>
+                        <li>1 min: 20,000 Credits | 2 min: 100,000 Credits</li>
+                        <li>3 min: 0.5x Best Run | 4 min: 1x Best Run</li>
+                        <li>12 min: 2x Best Run | 22 min: 3x Best Run</li>
+                    </ul>
+                </li>
+                <li><strong>Satellite Core Milestones:</strong> Reach 10m, 20m, and 30m to earn a free Satellite Core!</li>
+            </ul>
+
+            <h3><span class="tag tag-new">New</span> Store & Community</h3>
+            <ul>
+                <li><strong>First Advisor Pack:</strong> Exclusive starter pack added! Grants +100 HP, +100 Shield, 0.5x Multipliers and 3,000 Credits instantly.</li>
+                <li><strong>Discord Promo Codes:</strong> Special global codes will now be shared exclusively in our Discord community. Join us to stay updated!</li>
+            </ul>
+
+            <h3><span class="tag tag-opt">Auto-Pilot Overhaul</span></h3>
+            <ul>
+                <li><strong>Weapon Priority:</strong> New "Weapon priority to level 10" toggle. Force the AI to max out your arsenal before taking any passive skills.</li>
+                <li><strong>Improved Strategy:</strong> Station now continues to rotate smoothly during Level Up animations for a seamless visual experience.</li>
+            </ul>
+
+            <h3><span class="tag tag-fix">Stability & Performance</span></h3>
+            <ul>
+                <li><strong>Adreno GPU Fix:</strong> Total overhaul of the rendering engine. Capped all shadow effects to prevent stuttering and crashes on Android devices.</li>
+                <li><strong>Stat Overflow Fix:</strong> Increased internal math limit to <strong>1e200</strong> to support extreme endgame scaling.</li>
             </ul>
         </div>
-        
+
         <!-- VERSION 3.5.0 -->
         <div class="version-block">
             <div class="version-header">
                 <div class="version-number">v3.5.0 - The Evolution Update</div>
-                <div class="version-date">June 2026</div>
+                <div class="version-date">May 2026</div>
             </div>
             
-            <p><em>This is the biggest update in the game's history! We are introducing entirely new ways to play with the Auto-Pilot module, expanding the universe with Tiers 10-12, and completing a total technical overhaul to ensure the game runs silky smooth on all devices.</em></p>
-            
-            <h3><span class="tag tag-new">New</span> Auto-Pilot Module</h3>
+            <h3><span class="tag tag-new">New</span> Content</h3>
             <ul>
-                <li><strong>Automatic Level-up:</strong> The station will now choose upgrades for you during combat. Unlock it in the shop!</li>
-                <li><strong>Full Control:</strong> Configure your own prioritization list inside the Codex (e.g., focus on DMG before HP).</li>
-                <li><strong>Premium Pass Benefit:</strong> Premium Pass owners grant immediate access to advanced configuration options.</li>
-            </ul>
-
-            <h3><span class="tag tag-new">New</span> Rifts: Tier 10, 11 & 12</h3>
-            <ul>
-                <li>Three brand-new challenges have opened up for the absolute strongest stations, requiring extreme strategy:
+                <li><strong>Auto-Pilot Module:</strong> First iteration of automated upgrade selection.</li>
+                <li><strong>New Genesis Rifts:</strong> Opened Tiers 10-12 for elite stations.</li>
+                <li><strong>Friend Referral System:</strong> 
                     <ul>
-                        <li><strong>Tier 10:</strong> New Genesis (Starts with up to 150,000 HP)</li>
-                        <li><strong>Tier 11:</strong> Dimension Zero</li>
-                        <li><strong>Tier 12:</strong> Void Emperor</li>
+                        <li><strong>Joiner:</strong> Receive 3,000¢ instantly by entering a code.</li>
+                        <li><strong>Inviter:</strong> Receive a <strong>3x Best Run</strong> chest when your friend reaches Sector 16!</li>
                     </ul>
                 </li>
             </ul>
 
-            <h3><span class="tag tag-new">New</span> Social & Rewards</h3>
+            <h3><span class="tag tag-opt">Balancing</span></h3>
             <ul>
-                <li><strong>Refer a Friend System:</strong> Introduced an invite-based reward system. Share your unique Invite Code (Codex -> Stats) to earn massive bonuses.</li>
-                <li><strong>Recruitment Rewards:</strong> New players receive 3,000¢ instantly. Referrers receive a <strong>3X Credit Chest</strong> when their friend reaches Sector 16.</li>
-                <li><strong>Community Promo Codes:</strong> Added support for global codes. Use <strong>VOID2026</strong> for a welcome gift!</li>
+                <li><strong>Rebirth Economy:</strong> You now retain <strong>0.01%</strong> of your accumulated Credits upon Rebirth.</li>
+                <li><strong>Daily Transmission:</strong> Reworked rewards to scale with progress (0.25x - 1x Best Run value).</li>
+                <li><strong>Pacifist Check:</strong> Added exploit protection for Sector 4.</li>
             </ul>
-
-            <h3><span class="tag tag-opt">Gameplay & Balancing</span></h3>
-            <ul>
-                <li><strong>Altered Scaling:</strong> Enemies now become 3x stronger after Sector 500. Tier 8 and Tier 9 have received doubled growth rates to provide a true endgame challenge.</li>
-                <li><strong>Anti-Immortality:</strong> Adjusted damage ratios for T6-12 (locked to 50% of base HP) ensuring enemies always remain a threat.</li>
-                <li><strong>Rebirth 2.0:</strong> You now retain 0.1% of your Credits upon Rebirth for a faster headstart in your next life.</li>
-                <li><strong>Pacifist Check:</strong> Runs will now automatically terminate if you reach Sector 4 without killing any enemies (Level 1 exploit fix).</li>
-            </ul>
-
-            <h3><span class="tag tag-opt">Endless Void Improvements</span></h3>
-            <ul>
-                <li><strong>MM:SS Records:</strong> Endless mode now saves your personal records by Time instead of sectors within the Codex.</li>
-                <li><strong>Reward Roadmap:</strong> View exactly when rewards drop (1m, 2m, 4m, 10m, 20m) directly inside the difficulty selection menu.</li>
-            </ul>
-
-            <h3><span class="tag tag-opt">User Interface (UI)</span></h3>
-            <ul>
-                <li><strong>Unified 2x Speed:</strong> Combined the speed toggle into a single, clean layout with clearer information regarding the XP penalty.</li>
-                <li><strong>Pause Status:</strong> The pause menu now clearly indicates if you are playing at double speed (e.g., "NORMAL 2x").</li>
-                <li><strong>Centralized Localization:</strong> Migrated all translations to a brand-new system for faster updates and significantly less lag in menus.</li>
-                <li><strong>S25 Support:</strong> UI layout adjusted for perfect scaling on modern narrow-screen devices.</li>
-            </ul>
-
-            <h3><span class="tag tag-opt">Stability & Performance</span></h3>
-            <ul>
-                <li><strong>ANR Protection:</strong> Triple-layer optimization to prevent "Application Not Responding" errors during high-intensity waves.</li>
-                <li><strong>Multithreaded Cloud Saving:</strong> All Play Games operations now run on background threads with a 5s safety timeout to ensure smooth UI performance.</li>
-                <li><strong>Engine Optimization:</strong> Migrated to squared-distance collision logic, reducing CPU load significantly.</li>
-            </ul>
-
-            <h3><span class="tag tag-opt">Game Logic</span></h3>
-            <ul>
-                <li><strong>Infinite Progression:</strong> Internal number limit increased to <strong>1e100</strong>.</li>
-                <li><strong>Advanced Metrics:</strong> Added "Credits Per Minute" and "Session Time" tracking to game-over summary.</li>
-            </ul>
-
-            <!-- PLAYER'S GUIDE (FAQ) -->
-            <div class="player-guide">
-                <h4>📘 Player's Guide to 3.5</h4>
-                <div class="faq-item">
-                    <strong>What is 2x Sector Speed?</strong>
-                    This is a mode that allows sectors to progress twice as fast. It is the quickest way to farm Credits, but keep in mind: because you defeat fewer enemies per sector, your level will be lower when facing bosses. Use this for farming, but toggle it off when aiming for a new high-sector personal record!
-                </div>
-                <div class="faq-item">
-                    <strong>How do the new Tiers work?</strong>
-                    Tiers 10-12 are specifically designed for endgame players who have maxed out many of their satellite upgrades. Enemy strength escalates extremely fast here, requiring a precise balance of damage and defense to survive the first 100 sectors.
-                </div>
-                <div class="faq-item">
-                    <strong>Why does my game look different now?</strong>
-                    If your game previously crashed or suffered from lag, the new Crash Safeguard system might have automatically lowered your graphics settings to Low. You can manually change it back to High in the settings menu if you are using a high-end device, but Low is now 100% stable across all devices.
-                </div>
-            </div>
         </div>
 
         <!-- VERSION 3.4.0 -->
@@ -171,7 +118,7 @@
             <h3>Highlights</h3>
             <ul>
                 <li><strong>The Codex:</strong> New Archives menu where players can study enemy types and weapon stats.</li>
-                <li><strong>Achievements:</strong> Full integration with Google Play Games milestones.</li>
+                <li><strong>Achievements:</strong> Full integration with Google Play Games milestones and cloud saving.</li>
             </ul>
         </div>
 
