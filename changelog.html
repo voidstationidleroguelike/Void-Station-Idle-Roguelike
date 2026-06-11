@@ -27,52 +27,52 @@
         .hero { 
             position: relative;
             background-color: #030412; 
-            padding: 50px 20px 0 20px; 
+            padding: 60px 20px 0 20px; 
             text-align: center; 
             border-bottom: 2px solid #38bdf8;
             overflow: hidden;
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 580px; /* Låser høyden på PC så det ikke blir gigantisk */
+            height: 675px; /* Satt tilbake til 675px som på de andre sidene */
             box-sizing: border-box;
         }
 
-        /* Felles stil for begge to */
+        /* Løsningen: Bilder skalerer etter høyden på hero-boksen i stedet for bredden */
         .commander-left, .commander-right {
             position: absolute;
             bottom: 0; 
-            height: auto;
+            max-height: 100%; /* Sørger for at de aldri blir høyere enn 675px */
+            width: auto;       /* Bevarer riktig proporsjon uten å strekke bildene */
             z-index: 1;
             filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.2));
             pointer-events: none;
         }
         
-        /* Siden hennes bilde viser hele beina, må bredden ned for at hodet skal matche hans */
+        /* Justerer avstanden til sidene for å gi logoen plass */
         .commander-left { 
-            left: 10px; 
-            width: 250px; 
+            left: 20px; 
+            max-width: 320px; /* Sikrer at hun ikke tar for mye bredde */
         }
         
-        /* Hans bilde har tettere utsnitt, så han trenger mer bredde for å matche hennes størrelse */
         .commander-right { 
-            right: 10px; 
-            width: 325px; 
+            right: 20px; 
+            max-width: 380px; /* Siden hans bilde er bredere i utgangspunktet */
             transform: scaleX(-1); 
         }
         
         .logo { 
             position: relative;
             z-index: 2;
-            max-width: 400px; /* Justert litt ned for å gi pusterom på sidene */
+            max-width: 440px; 
             width: 100%;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
         
         .hero-text { position: relative; z-index: 2; }
-        .hero p { color: #94a3b8; font-size: 1.2rem; margin: 10px 0 25px 0; font-style: italic; }
+        .hero p { color: #94a3b8; font-size: 1.2rem; margin: 10px 0 30px 0; font-style: italic; }
         
-        .top-download { position: relative; z-index: 10; margin-bottom: 20px; }
+        .top-download { position: relative; z-index: 10; margin-bottom: 40px; }
 
         .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
         .nav-links a { color: #38bdf8; margin: 0 20px; font-weight: 500; text-decoration: none; }
@@ -117,9 +117,9 @@
         @media (max-width: 768px) {
             .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
             
-            .hero { height: 480px; }
-            .commander-left { left: -40px; width: 180px; opacity: 0.35; }
-            .commander-right { right: -40px; width: 230px; opacity: 0.35; }
+            .hero { height: 450px; }
+            .commander-left { left: -40px; max-width: 200px; opacity: 0.3; }
+            .commander-right { right: -40px; max-width: 250px; opacity: 0.3; }
             
             .game-loop { flex-direction: column; }
         }
@@ -148,7 +148,7 @@
     </div>
 
     <div class="nav-links">
-        <a href="changelog.html">Changelog</a>
+        <a href="index.html">← Back to Homepage</a>
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Service</a>
     </div>
