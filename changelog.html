@@ -3,24 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="Y87ROB_8tENtX_2MXPcMvyY8ZWpPEjrK4CUpUa6PVd4" />
-    <title>Void Station - Official Idle Roguelike Defense</title>
-    <meta name="description" content="The Ultimate Idle Roguelike Defense. 100% Ad-Free. 9 Difficulty Tiers. Available on Google Play.">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://voidstationidleroguelike.com/">
-    <meta property="og:title" content="Void Station - Idle Roguelike Defense">
-    <meta property="og:description" content="The Ultimate Idle Roguelike Defense. 100% Ad-Free. 9 Difficulty Tiers. Available on Google Play.">
-    <meta property="og:image" content="https://voidstationidleroguelike.com/preview.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="650">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:image" content="https://voidstationidleroguelike.com/preview.png">
-
+    <title>Void Station - System Archives (Changelog)</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <link rel="apple-touch-icon" href="logo.png">
-
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; max-width: 1100px; margin: 0 auto; padding: 0; color: #e2e8f0; background-color: #030412; overflow-x: hidden; }
         
@@ -34,30 +18,28 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 675px; /* Satt tilbake til 675px som på de andre sidene */
+            height: 675px; 
             box-sizing: border-box;
         }
 
-        /* Løsningen: Bilder skalerer etter høyden på hero-boksen i stedet for bredden */
         .commander-left, .commander-right {
             position: absolute;
             bottom: 0; 
-            max-height: 100%; /* Sørger for at de aldri blir høyere enn 675px */
-            width: auto;       /* Bevarer riktig proporsjon uten å strekke bildene */
+            max-height: 100%; 
+            width: auto;       
             z-index: 1;
             filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.2));
             pointer-events: none;
         }
         
-        /* Justerer avstanden til sidene for å gi logoen plass */
         .commander-left { 
             left: 20px; 
-            max-width: 320px; /* Sikrer at hun ikke tar for mye bredde */
+            max-width: 320px; 
         }
         
         .commander-right { 
             right: 20px; 
-            max-width: 380px; /* Siden hans bilde er bredere i utgangspunktet */
+            max-width: 380px; 
             transform: scaleX(-1); 
         }
         
@@ -74,54 +56,33 @@
         
         .top-download { position: relative; z-index: 10; margin-bottom: 40px; }
 
-        .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; }
+        .nav-links { text-align: center; padding: 16px; background: #0f172a; border-bottom: 1px solid #1e293b; position: relative; z-index: 10; }
         .nav-links a { color: #38bdf8; margin: 0 20px; font-weight: 500; text-decoration: none; }
         .nav-links a:hover { text-decoration: underline; }
         
         .content { padding: 40px 20px; position: relative; z-index: 2; }
+        .version-block { background: #0f172a; padding: 30px; border-radius: 12px; border: 1px solid #334155; margin-bottom: 30px; }
+        .version-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-bottom: 20px; }
+        .version-number { color: #38bdf8; font-size: 1.5rem; font-weight: bold; }
+        .version-date { color: #94a3b8; font-size: 0.9rem; }
         
-        h2 { color: #7dd3fc; border-bottom: 1px solid #334155; padding-bottom: 10px; margin-top: 50px; text-shadow: 0 0 10px rgba(125, 211, 252, 0.3); text-transform: uppercase; letter-spacing: 0.05em; }
-        h3 { color: #38bdf8; margin-top: 0; }
-
-        .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
-        .feature { background: #1e293b; padding: 25px; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-
-        .game-loop { display: flex; justify-content: space-around; text-align: center; margin: 40px 0; gap: 10px; }
-        .loop-step { background: #1e1b4b; padding: 20px; border-radius: 12px; border: 1px solid #4338ca; flex: 1; }
-        .loop-step h4 { margin: 0 0 10px 0; color: #a5b4fc; font-size: 1.1rem; }
-
-        .roadmap-box { 
-            background: linear-gradient(145deg, #0f172a, #1e1b4b); 
-            padding: 30px; 
-            border-radius: 16px; 
-            border: 1px solid #38bdf8; 
-            margin: 40px 0;
-        }
-        .roadmap-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .roadmap-item { background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 8px; border-left: 3px solid #38bdf8; }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 16px;
-            border: 2px solid #38bdf8;
-            margin: 30px 0;
-        }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        .play-store-btn { display: inline-block; transition: transform 0.2s; }
-        .play-store-btn:hover { transform: scale(1.1); }
+        h3 { color: #7dd3fc; margin-top: 20px; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+        ul { margin-bottom: 20px; padding-left: 20px; }
+        li { margin-bottom: 8px; }
+        
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; margin-right: 8px; text-transform: uppercase; vertical-align: middle; }
+        .tag-new { background: #064e3b; color: #34d399; }
+        .tag-opt { background: #1e3a8a; color: #60a5fa; }
+        .tag-fix { background: #7f1d1d; color: #fca5a5; }
+        
+        .footer { text-align: center; padding: 40px; color: #64748b; font-size: 0.8rem; }
+        a { color: #38bdf8; text-decoration: none; }
 
         @media (max-width: 768px) {
-            .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
-            
             .hero { height: 450px; }
             .commander-left { left: -40px; max-width: 200px; opacity: 0.3; }
             .commander-right { right: -40px; max-width: 250px; opacity: 0.3; }
-            
-            .game-loop { flex-direction: column; }
+            .version-header { flex-direction: column; align-items: flex-start; gap: 5px; }
         }
     </style>
 </head>
@@ -164,115 +125,85 @@
 
     <div class="content">
 
-        <h2>Core Intel</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <h3>🚫 100% Ad-Free</h3>
-                <p>Enjoy pure gameplay flow. No forced ads or reward-videos. We respect your time as a Commander.</p>
+        <div class="version-block">
+            <div class="version-header">
+                <div class="version-number">v3.6.0 - The Endless Expansion</div>
+                <div class="version-date">June 2026</div>
             </div>
-            <div class="feature">
-                <h3>🌌 9 Difficulty Tiers</h3>
-                <p>Progress through increasingly dangerous sectors. Master all 9 Tiers to prove your dominance.</p>
-            </div>
-            <div class="feature">
-                <h3>📈 Meta-Progression</h3>
-                <p>Unlock 28 Satellite Cores and invest in permanent upgrades to return stronger after every run.</p>
-            </div>
-            <div class="feature">
-                <h3>🏆 Competitive Ranks</h3>
-                <p>Integrated Global Leaderboards. Compete for total kills and highest sector reached worldwide.</p>
-            </div>
+
+            <h3><span class="tag tag-new">New</span> Endless Roadmap & Rewards</h3>
+            <ul>
+                <li><strong>Dynamic Reward Tiers:</strong> Earn massive credits based on your Best Run value:
+                    <ul>
+                        <li>1 min: 20,000 Credits | 2 min: 100,000 Credits</li>
+                        <li>3 min: 0.5x Best Run | 4 min: 1x Best Run</li>
+                        <li>12 min: 2x Best Run | 22 min: 3x Best Run</li>
+                    </ul>
+                </li>
+                <li><strong>Satellite Core Milestones:</strong> Reach 10m, 20m, and 30m to earn a free Satellite Core!</li>
+            </ul>
+
+            <h3><span class="tag tag-new">New</span> Store & Community</h3>
+            <ul>
+                <li><strong>First Advisor Pack:</strong> Exclusive starter pack added! Grants +100 HP, +100 Shield, 0.5x Multipliers and 3,000 Credits instantly.</li>
+                <li><strong>Discord Promo Codes:</strong> Special global codes will now be shared exclusively in our Discord community. Join us to stay updated!</li>
+            </ul>
+
+            <h3><span class="tag tag-opt">Auto-Pilot Overhaul</span></h3>
+            <ul>
+                <li><strong>Weapon Priority:</strong> New "Weapon priority to level 10" toggle. Force the AI to max out your arsenal before taking any passive skills.</li>
+                <li><strong>Improved Strategy:</strong> Station now continues to rotate smoothly during Level Up animations for a seamless visual experience.</li>
+            </ul>
+
+            <h3><span class="tag tag-fix">Stability & Performance</span></h3>
+            <ul>
+                <li><strong>Adreno GPU Fix:</strong> Total overhaul of the rendering engine. Capped all shadow effects to prevent stuttering and crashes on Android devices.</li>
+                <li><strong>Stat Overflow Fix:</strong> Increased internal math limit to <strong>1e200</strong> to support extreme endgame scaling.</li>
+            </ul>
         </div>
 
-        <h2>The Game Loop</h2>
-        <div class="game-loop">
-            <div class="loop-step">
-                <h4>🛡️ DEFEND</h4>
-                <p style="font-size: 0.85rem;">Auto-fire weapons at cosmic waves</p>
+        <div class="version-block">
+            <div class="version-header">
+                <div class="version-number">v3.5.0 - The Evolution Update</div>
+                <div class="version-date">May 2026</div>
             </div>
-            <div class="loop-step">
-                <h4>💎 COLLECT</h4>
-                <p style="font-size: 0.85rem;">Earn Credits and XP from fallen foes</p>
-            </div>
-            <div class="loop-step">
-                <h4>🛠️ UPGRADE</h4>
-                <p style="font-size: 0.85rem;">Choose from 100+ unique weapon buffs</p>
-            </div>
-            <div class="loop-step">
-                <h4>🔄 REBIRTH</h4>
-                <p style="font-size: 0.85rem;">Reset progress for massive multipliers</p>
-            </div>
+            
+            <h3><span class="tag tag-new">New</span> Content</h3>
+            <ul>
+                <li><strong>Auto-Pilot Module:</strong> First iteration of automated upgrade selection.</li>
+                <li><strong>New Genesis Rifts:</strong> Opened Tiers 10-12 for elite stations.</li>
+                <li><strong>Friend Referral System:</strong> 
+                    <ul>
+                        <li><strong>Joiner:</strong> Receive 3,000¢ instantly by entering a code.</li>
+                        <li><strong>Inviter:</strong> Receive a <strong>3x Best Run</strong> chest when your friend reaches Sector 16!</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3><span class="tag tag-opt">Balancing</span></h3>
+            <ul>
+                <li><strong>Rebirth Economy:</strong> You now retain <strong>0.01%</strong> of your accumulated Credits upon Rebirth.</li>
+                <li><strong>Daily Transmission:</strong> Reworked rewards to scale with progress (0.25x - 1x Best Run value).</li>
+                <li><strong>Pacifist Check:</strong> Added exploit protection for Sector 4.</li>
+            </ul>
         </div>
 
-        <h2>The Arsenal</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <h3>🔫 12 Specialized Weapons</h3>
-                <p>Equip your station with a diverse array of weaponry. Master the rapid-fire <strong>Machine Gun</strong>, the instant-hit <strong>Precision Laser</strong>, or the devastating <strong>Nova Pulse</strong>. Each weapon has unique stats for damage, range, and fire rate.</p>
+        <div class="version-block">
+            <div class="version-header">
+                <div class="version-number">v3.4.0 - The Codex Update</div>
+                <div class="version-date">May 2024</div>
             </div>
-            <div class="feature">
-                <h3>⚡ Weapon Evolutions</h3>
-                <p>Reach Level 10 during a run to unlock powerful <strong>Evolutions</strong>. Transform your basic weapons into elite variants like the <strong>Focused Lens</strong> for lasers or <strong>Storm Missiles</strong> for massive area destruction.</p>
-            </div>
+            <h3>Highlights</h3>
+            <ul>
+                <li><strong>The Codex:</strong> New Archives menu where players can study enemy types and weapon stats.</li>
+                <li><strong>Achievements:</strong> Full integration with Google Play Games milestones and cloud saving.</li>
+            </ul>
         </div>
 
-        <h2>Command Centers</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <h3>🏗️ Unique Base Designs</h3>
-                <p>Unlock and switch between multiple <strong>Station Bases</strong>. Each design offers distinct starting bonuses to HP, Shield regeneration, or XP gain, allowing you to tailor your defense to your preferred playstyle.</p>
-            </div>
-            <div class="feature">
-                <h3>🛰️ Satellite Core Expansion</h3>
-                <p>Build up to 28 <strong>Satellite Cores</strong>. These permanent station additions provide compounding multipliers to your Fire Rate, Crit Damage, and Credit income, making you exponentially stronger over time.</p>
-            </div>
-        </div>
+    </div>
 
-        <h2>Strategic Evolution</h2>
-        <div class="feature-grid">
-            <div class="feature">
-                <h3>🆙 Randomized Level Ups</h3>
-                <p>Every level up presents a choice of three randomized upgrades. Strategy is key—do you focus on raw damage, increase your sensor range, or bolster your station's armor to survive the later waves?</p>
-            </div>
-            <div class="feature">
-                <h3>🧠 100+ Unique Skills</h3>
-                <p>Build a perfect synergy with over 100 stackable skills. From <strong>Piercing Rounds</strong> and <strong>Chain Lightning</strong> to <strong>Nano-Repair</strong> drones, the combinations for each run are nearly infinite.</p>
-            </div>
-        </div>
-
-        <div class="roadmap-box">
-            <h2 style="margin-top: 0;">📡 Incoming Intelligence: Future Content</h2>
-            <p style="margin-bottom: 20px;">The void is expanding. We are committed to a <strong>Free-to-Play friendly</strong> experience with continuous development.</p>
-            <div class="roadmap-grid">
-                <div class="roadmap-item">
-                    <h4>🎖️ Commander Specialization</h4>
-                    <p>Upgrade unique Commanders with active abilities and passive station bonuses.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>📦 Equipment System</h4>
-                    <p>Find and craft modular equipment to customize your station's attack and defense.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>💎 More F2P Rewards</h4>
-                    <p>Earn Premium currency through daily missions and new achievements.</p>
-                </div>
-                <div class="roadmap-item">
-                    <h4>🌌 New Game Modes</h4>
-                    <p>We are exploring new ways to challenge your station beyond the 9 fixed tiers.</p>
-                </div>
-            </div>
-        </div>
-
-        <h2>Mission Briefing</h2>
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/sWP3GoCYXnM" title="Void Station Gameplay" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
-
-        <div class="contact" style="background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 60px;">
-            <strong>Developer Contact:</strong><br>
-            Raymond Dagslet-Kjendseth<br>
-            Email: <a href="mailto:voidstationidle@gmail.com" style="color: #38bdf8;">voidstationidle@gmail.com</a>
-        </div>
+    <div class="footer">
+        © 2026 Void Station • Developed by Raymond Dagslet-Kjendseth • <a href="mailto:voidstationidle@gmail.com">Support</a>
     </div>
 
 </body>
