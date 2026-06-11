@@ -37,11 +37,11 @@
             min-height: 675px; 
         }
 
-        /* Begge kommandørene deler nå nøyaktig samme dimensjoner */
+        /* Begge kommandørene (3fe og 5ma) deler nå nøyaktig samme store dimensjoner */
         .commander-left, .commander-right {
             position: absolute;
             bottom: 0; 
-            width: 340px; /* Gjort betydelig større så han matcher hennes skala */
+            width: 340px; /* Gjort store og like store */
             height: auto;
             z-index: 1;
             filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.2));
@@ -108,7 +108,7 @@
         @media (max-width: 768px) {
             .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
             
-            /* Dytter dem litt ut på kanten og øker synligheten på mobil */
+            /* Mobil-tilpasning for de store bildene */
             .commander-left { left: -60px; width: 240px; opacity: 0.4; }
             .commander-right { right: -60px; width: 240px; opacity: 0.4; }
             
@@ -120,8 +120,8 @@
 <body>
 
     <div class="hero">
-        <img src="1fe.png" alt="Commander Female" class="commander-left">
-        <img src="1ma.png" alt="Commander Male" class="commander-right">
+        <img src="3fe.png" alt="Commander Female" class="commander-left">
+        <img src="5ma.png" alt="Commander Male" class="commander-right">
         
         <img src="logo.png" alt="Void Station Logo" class="logo">
         
