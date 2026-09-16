@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>RDK Motion - Home Workout</title>
+  <meta name="description" content="Free adaptive bodyweight workouts from 5 to 30 minutes. Built around your time and fitness level. No subscriptions. No hidden fees.">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(118, 181, 229, 0.28), transparent 35%),
+        linear-gradient(145deg, #0c253b 0%, #123a59 45%, #091d30 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, 90%);
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .brand img {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      object-fit: cover;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      color: #cce4f7;
+      font-size: 0.95rem;
+    }
+
+    .nav-links a:hover {
+      color: white;
+    }
+
+    .hero {
+      min-height: 690px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: 70px;
+      padding: 75px 0;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 13px;
+      border: 1px solid rgba(166, 213, 248, 0.25);
+      border-radius: 999px;
+      color: #b8ddf7;
+      background: rgba(110, 173, 220, 0.08);
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.7rem);
+      line-height: 0.98;
+      letter-spacing: -0.055em;
+      margin-bottom: 24px;
+    }
+
+    h1 span {
+      color: #9fd2f5;
+    }
+
+    .hero-text {
+      font-size: 1.2rem;
+      color: #c9deed;
+      max-width: 650px;
+      margin-bottom: 18px;
+    }
+
+    .tagline {
+      color: #9fd2f5;
+      font-size: 1.05rem;
+      letter-spacing: 0.12em;
+      margin-bottom: 34px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-block;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 650;
+      transition: 0.2s ease;
+    }
+
+    .button-primary {
+      background: #ffffff;
+      color: #12344e;
+    }
+
+    .button-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-secondary {
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #eaf6ff;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .button-secondary:hover {
+      background: rgba(255,255,255,0.09);
+    }
+
+    .hero-image-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image {
+      width: min(100%, 360px);
+      border-radius: 30px;
+      box-shadow: 0 28px 80px rgba(0,0,0,0.35);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .section {
+      padding: 85px 0;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 12px;
+    }
+
+    .section-heading p {
+      color: #b9d0df;
+      max-width: 640px;
+      margin: auto;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 20px;
+      padding: 28px;
+      backdrop-filter: blur(8px);
+    }
+
+    .card h3 {
+      margin-bottom: 9px;
+      font-size: 1.2rem;
+    }
+
+    .card p {
+      color: #b9d0df;
+    }
+
+    .free-box {
+      margin: 45px auto 0;
+      max-width: 830px;
+      text-align: center;
+      padding: 38px;
+      border-radius: 24px;
+      background: linear-gradient(
+        135deg,
+        rgba(136, 198, 242, 0.15),
+        rgba(255,255,255,0.04)
+      );
+      border: 1px solid rgba(160, 211, 248, 0.17);
+    }
+
+    .free-box h2 {
+      margin-bottom: 10px;
+      font-size: 2rem;
+    }
+
+    .free-box p {
+      color: #cae0ef;
+      font-size: 1.08rem;
+    }
+
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin-top: 40px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+      color: #9eb9cb;
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 22px;
+    }
+
+    .footer-links a:hover {
+      color: white;
+    }
+
+    @media (max-width: 800px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 45px;
+        padding: 60px 0;
+      }
+
+      .hero-text {
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .buttons {
+        justify-content: center;
+      }
+
+      .hero-image {
+        width: min(78%, 330px);
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-inner {
+        justify-content: center;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container">
+    <nav>
+      <a class="brand" href="./">
+        <img src="logo.png" alt="RDK Motion logo">
+        <span>RDK Motion</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <section class="container hero">
+
+    <div>
+      <div class="eyebrow">Adaptive Home Workouts</div>
+
+      <h1>
+        Move a little.<br>
+        <span>Every day.</span>
+      </h1>
+
+      <p class="hero-text">
+        Free adaptive bodyweight workouts from 5 to 30 minutes,
+        built around your time, fitness level and daily routine.
+      </p>
+
+      <p class="tagline">
+        YOUR TIME · YOUR LEVEL · YOUR WORKOUT
+      </p>
+
+      <div class="buttons">
+        <a class="button button-primary" href="#features">
+          Explore RDK Motion
+        </a>
+
+        <a class="button button-secondary" href="support.html">
+          Support
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-image-wrap">
+      <img
+        class="hero-image"
+        src="rdk_full_splash.png"
+        alt="RDK Motion Home Workout"
+      >
+    </div>
+
+  </section>
+
+
+  <section class="section" id="features">
+    <div class="container">
+
+      <div class="section-heading">
+        <h2>Workout around your life</h2>
+        <p>
+          Choose how much time you have and what kind of workout you want.
+          RDK Motion builds the session around you.
+        </p>
+      </div>
+
+      <div class="features">
+
+        <div class="card">
+          <h3>5–30 Minute Workouts</h3>
+          <p>
+            Choose 5, 10, 15, 20, 25 or 30 minutes and get a workout
+            that fits the time you actually have.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Adaptive Training</h3>
+          <p>
+            Rate exercises after your workout and RDK Motion can adjust
+            repetitions and timed exercises to better match your level.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Bodyweight Focused</h3>
+          <p>
+            Train at home with little or no equipment using bodyweight,
+            core, mobility, low-impact and full-body exercises.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Choose Your Style</h3>
+          <p>
+            Select from military-inspired, mixed, core, low-impact,
+            mobility and Pilates-inspired workouts.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Guided Workouts</h3>
+          <p>
+            Voice Coach, rep counting, timers and automatic progression
+            help you stay focused on the workout.
+          </p>
+        </div>
+
+        <div class="card">
+          <h3>Track Your Progress</h3>
+          <p>
+            Follow your workout minutes, completed exercises,
+            repetitions and recent workout history.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="free-box">
+        <h2>Free to use.</h2>
+        <p>
+          No subscriptions. No hidden fees.<br>
+          RDK Motion is supported by simple banner ads.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+
+<footer>
+  <div class="container footer-inner">
+
+    <div>
+      © 2026 RDK Motion
+    </div>
+
+    <div class="footer-links">
+      <a href="support.html">Support</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+
+  </div>
+</footer>
+
+</body>
+</html>
