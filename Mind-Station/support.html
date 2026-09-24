@@ -1,1 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support – Mind Station</title>
+  <meta name="description" content="Support for Mind Station: Logical Puzzles.">
+  <meta name="theme-color" content="#3b261d">
+  <style>
+:root {
+  --brown: #3b261d;
+  --brown-2: #4b3125;
+  --cream: #fbf5ec;
+  --paper: #fffaf3;
+  --text: #241b17;
+  --muted: #7b6d64;
+  --gold: #c28b16;
+  --gold-soft: #f4dfaa;
+  --border: rgba(59, 38, 29, 0.14);
+  --shadow: 0 14px 36px rgba(59, 38, 29, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--cream);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(194,139,22,0.08), transparent 30%),
+    var(--cream);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.65;
+}
+
+a {
+  color: #8a5d00;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.shell {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.topbar {
+  background: var(--brown);
+  color: #fff4dd;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.nav {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff4dd;
+  font-weight: 800;
+}
+
+.brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.links a {
+  color: #f0c967;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.hero {
+  padding: 70px 0 34px;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #a97811;
+  font-weight: 850;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-size: .8rem;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.13;
+  color: var(--brown);
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
+  font-weight: 500;
+}
+
+.hero p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+main {
+  padding: 10px 0 74px;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 1.75rem;
+}
+
+.card h3 {
+  margin: 24px 0 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 0 0 12px;
+}
+
+.card p:last-child,
+.card ul:last-child {
+  margin-bottom: 0;
+}
+
+ul {
+  padding-left: 1.3rem;
+}
+
+li + li {
+  margin-top: 8px;
+}
+
+.note {
+  background: #f7e8bd;
+  border: 1px solid #d3a43a;
+}
+
+.contact {
+  text-align: center;
+  background: linear-gradient(135deg, #f7dfa0, #f2cd72);
+  border: 2px solid var(--gold);
+}
+
+.contact a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--brown);
+  color: #fff4dd;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: .94rem;
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+.footer {
+  background: var(--brown);
+  color: rgba(255,244,221,.78);
+  padding: 28px 0;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer a {
+  color: #f0c967;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 14px;
+}
+
+@media (max-width: 650px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 0;
+  }
+
+  .hero {
+    padding-top: 48px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .footer a {
+    margin-left: 0;
+    margin-right: 14px;
+  }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="brand" href="./">
+        <img src="logo.png" alt="Mind Station icon">
+        <span>Mind Station</span>
+      </a>
+      <nav class="links" aria-label="Main navigation">
+        <a href="./">Home</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="shell">
+      <div class="eyebrow">Mind Station</div>
+      <h1>Support</h1>
+      <p>
+        Need help with Sudoku, Queens, Tango, Nonogram, Mahjong, Zip,
+        Daily Challenge, purchases or another part of Mind Station?
+      </p>
+    </div>
+  </section>
+
+  <main>
+    <div class="shell">
+      <section class="card contact">
+        <h2>Contact support</h2>
+        <p>
+          Email is the fastest way to report a problem or ask a question.
+        </p>
+        <a class="button" href="mailto:voidstationidle@gmail.com?subject=Mind%20Station%20Support">
+          voidstationidle@gmail.com
+        </a>
+      </section>
+
+      <section class="card">
+        <h2>When reporting a problem</h2>
+        <p>Including a few details helps make troubleshooting much faster:</p>
+        <ul>
+          <li>Your iPhone or iPad model</li>
+          <li>Your iOS or iPadOS version</li>
+          <li>The Mind Station app version and build number</li>
+          <li>Which game or screen the issue happened in</li>
+          <li>What you expected to happen and what happened instead</li>
+          <li>A screenshot or screen recording, if useful</li>
+        </ul>
+        <p>
+          Please do not send passwords, payment card details or other sensitive credentials.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Game Center and Daily Challenge</h2>
+        <p>
+          Mind Station uses Apple Game Center for supported leaderboard features.
+          Make sure you are signed in to Game Center in your Apple device settings if
+          leaderboard information is not appearing.
+        </p>
+        <p>
+          Daily Challenge progress and results can depend on the current daily puzzle and
+          your Game Center connection.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Hints and rewarded ads</h2>
+        <p>
+          Some hints can be earned by watching a rewarded advertisement. An ad must complete
+          successfully before the reward can be granted. Availability can vary depending on
+          network connection, region and whether an advertisement is available at that time.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Purchases and premium</h2>
+        <p>
+          Purchases and subscriptions are processed by Apple through the App Store.
+          Make sure you are using the same Apple Account that made the purchase if premium
+          access is not appearing as expected.
+        </p>
+        <p>
+          If a purchase is still not reflected correctly, contact support and include the
+          product name and approximate purchase date. Do not send payment card information.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Progress and iCloud</h2>
+        <p>
+          Mind Station may store supported progress and preferences locally and may use
+          Apple's iCloud services to synchronize supported data between your Apple devices.
+          Make sure iCloud is enabled and that the devices use the same Apple Account when
+          testing synchronization.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Puzzle help</h2>
+        <p>
+          Each game includes rules and an interactive tutorial designed to explain the core
+          mechanics. Open the Rules section in Mind Station if you are unsure how a puzzle
+          type works.
+        </p>
+      </section>
+
+      <section class="card note">
+        <h2>Privacy</h2>
+        <p>
+          For information about advertising, Game Center, iCloud, purchases and local app
+          data, read the <a href="privacy.html">Mind Station Privacy Policy</a>.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <div>© 2026 Mind Station</div>
+      <div>
+        <a href="./">Home</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
 
