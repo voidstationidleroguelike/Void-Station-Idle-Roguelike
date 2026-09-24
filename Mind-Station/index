@@ -1,1 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mind Station: Logical Puzzles</title>
+  <meta name="description" content="Mind Station brings six logic puzzle games together in one calm, polished app: Sudoku, Queens, Tango, Nonogram, Mahjong and Zip.">
+  <meta name="theme-color" content="#3b261d">
 
+  <style>
+    :root {
+      --brown: #3b261d;
+      --brown-2: #4b3125;
+      --cream: #fbf5ec;
+      --paper: #fffaf3;
+      --text: #241b17;
+      --muted: #7b6d64;
+      --gold: #c28b16;
+      --gold-soft: #f4dfaa;
+
+      --sudoku: #4f8dac;
+      --sudoku-bg: #e7eff1;
+      --queens: #8b5aad;
+      --queens-bg: #eee0f0;
+      --tango: #c66834;
+      --tango-bg: #f4e1d7;
+      --nonogram: #5f8060;
+      --nonogram-bg: #e8ecd9;
+      --mahjong: #26a89f;
+      --mahjong-bg: #def1ec;
+      --zip: #c95751;
+      --zip-bg: #f5ddd8;
+
+      --radius: 26px;
+      --shadow: 0 16px 42px rgba(59, 38, 29, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      background: var(--cream);
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(194,139,22,0.08), transparent 30%),
+        var(--cream);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.55;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      background: var(--brown);
+      color: #fff4dd;
+      padding: 72px 0 54px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .brand img {
+      width: 92px;
+      height: 92px;
+      border-radius: 22px;
+      object-fit: cover;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.26);
+    }
+
+    .brand-text small {
+      display: block;
+      color: #e6c16a;
+      font-weight: 800;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    h1, h2, h3 {
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.05;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.8rem);
+      font-weight: 500;
+      letter-spacing: .04em;
+      margin-bottom: 14px;
+    }
+
+    .tagline {
+      max-width: 650px;
+      font-size: clamp(1.05rem, 2.3vw, 1.35rem);
+      color: rgba(255,244,221,.82);
+      margin: 0 0 30px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      font-weight: 800;
+      padding: 13px 20px;
+      border-radius: 999px;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .button:hover { transform: translateY(-2px); }
+
+    .button-primary {
+      background: var(--gold);
+      color: #23160f;
+    }
+
+    .button-secondary {
+      border: 1px solid rgba(255,255,255,.24);
+      color: #fff4dd;
+      background: rgba(255,255,255,.06);
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 30px;
+      padding: 18px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.24);
+      backdrop-filter: blur(12px);
+    }
+
+    .hero-card img {
+      width: 100%;
+      display: block;
+      border-radius: 20px;
+      background: var(--paper);
+    }
+
+    section { padding: 78px 0; }
+
+    .section-title {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 36px;
+    }
+
+    .section-title h2 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      margin-bottom: 12px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+      margin: 0;
+      font-size: 1.08rem;
+    }
+
+    .games {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .game-card {
+      border: 3px solid var(--accent);
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .game-shot {
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.65), rgba(255,255,255,.15)),
+        var(--card-bg);
+      border-bottom: 1px solid color-mix(in srgb, var(--accent) 32%, transparent);
+    }
+
+    .game-shot img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .game-card.missing .game-shot {
+      display: grid;
+      place-items: center;
+    }
+
+    .game-card.missing .game-shot::after {
+      content: "Screenshot coming soon";
+      color: color-mix(in srgb, var(--accent) 80%, #222);
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      font-size: .82rem;
+    }
+
+    .game-card.missing .game-shot img { display: none; }
+
+    .game-copy {
+      padding: 22px 22px 24px;
+    }
+
+    .game-copy h3 {
+      margin-bottom: 7px;
+      font-size: 2rem;
+    }
+
+    .game-copy p {
+      margin: 0;
+      color: color-mix(in srgb, var(--accent) 55%, #3f3732);
+    }
+
+    .sudoku   { --accent: var(--sudoku);   --card-bg: var(--sudoku-bg); }
+    .queens   { --accent: var(--queens);   --card-bg: var(--queens-bg); }
+    .tango    { --accent: var(--tango);    --card-bg: var(--tango-bg); }
+    .nonogram { --accent: var(--nonogram); --card-bg: var(--nonogram-bg); }
+    .mahjong  { --accent: var(--mahjong);  --card-bg: var(--mahjong-bg); }
+    .zip      { --accent: var(--zip);      --card-bg: var(--zip-bg); }
+
+    .trailer-section {
+      background: #f4ede4;
+      border-top: 1px solid rgba(59,38,29,.08);
+      border-bottom: 1px solid rgba(59,38,29,.08);
+    }
+
+    .video-wrap {
+      width: min(900px, 100%);
+      margin: 0 auto;
+      aspect-ratio: 16 / 9;
+      overflow: hidden;
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      border: 4px solid var(--brown);
+      background: #000;
+    }
+
+    .video-wrap iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .feature {
+      background: var(--paper);
+      border: 1px solid rgba(59,38,29,.12);
+      border-radius: 22px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(59,38,29,.07);
+    }
+
+    .feature strong {
+      display: block;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.45rem;
+      margin-bottom: 8px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .cta {
+      text-align: center;
+      background: linear-gradient(135deg, #f7dfa0, #f2cd72);
+      border: 3px solid var(--gold);
+      border-radius: 30px;
+      padding: 42px 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .cta h2 {
+      margin-bottom: 10px;
+      font-size: clamp(2rem, 5vw, 3rem);
+    }
+
+    .cta p {
+      max-width: 680px;
+      margin: 0 auto 22px;
+      color: #6b4e17;
+    }
+
+    .footer {
+      background: var(--brown);
+      color: rgba(255,244,221,.78);
+      padding: 32px 0;
+      margin-top: 78px;
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer a {
+      color: #f0c967;
+      text-decoration: none;
+      font-weight: 700;
+      margin-left: 16px;
+    }
+
+    @media (max-width: 800px) {
+      .hero { padding-top: 48px; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .games { grid-template-columns: 1fr; }
+      .features { grid-template-columns: 1fr; }
+      .brand img { width: 76px; height: 76px; }
+      .footer a { margin-left: 0; margin-right: 14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <div class="brand">
+          <img src="logo.png" alt="Mind Station app icon">
+          <div class="brand-text">
+            <small>Logic puzzles</small>
+            <strong>Mind Station</strong>
+          </div>
+        </div>
+
+        <h1>Mind Station</h1>
+        <p class="tagline">
+          Six logic games in one calm, polished app. Solve Sudoku, Queens, Tango,
+          Nonogram, Mahjong and Zip at your own pace.
+        </p>
+
+        <div class="hero-actions">
+          <a class="button button-primary" href="#games">Explore the games</a>
+          <a class="button button-secondary" href="#trailer">Watch trailer</a>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <img src="home.png"
+             alt="Mind Station home screen"
+             onerror="this.src='logo.png'; this.style.objectFit='contain'; this.style.padding='48px';">
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="games">
+      <div class="shell">
+        <div class="section-title">
+          <h2>Six games. One station.</h2>
+          <p>
+            Jump between different styles of logic puzzles without leaving the app.
+            Each game has its own visual identity, rules and interactive tutorial.
+          </p>
+        </div>
+
+        <div class="games">
+          <article class="game-card sudoku">
+            <div class="game-shot">
+              <img src="sudoku.png" alt="Sudoku in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Sudoku</h3>
+              <p>Classic number logic with rows, columns and 3×3 boxes.</p>
+            </div>
+          </article>
+
+          <article class="game-card queens">
+            <div class="game-shot">
+              <img src="queens.png" alt="Queens in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Queens</h3>
+              <p>Place one queen in every row, column and colored region.</p>
+            </div>
+          </article>
+
+          <article class="game-card tango">
+            <div class="game-shot">
+              <img src="tango.png" alt="Tango in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Tango</h3>
+              <p>Balance suns and moons while following equality clues.</p>
+            </div>
+          </article>
+
+          <article class="game-card nonogram">
+            <div class="game-shot">
+              <img src="nonogram.png" alt="Nonogram in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Nonogram</h3>
+              <p>Use row and column clues to reveal the hidden pattern.</p>
+            </div>
+          </article>
+
+          <article class="game-card mahjong">
+            <div class="game-shot">
+              <img src="mahjong.png" alt="Mahjong in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Mahjong</h3>
+              <p>Match available tiles before your hand fills up.</p>
+            </div>
+          </article>
+
+          <article class="game-card zip">
+            <div class="game-shot">
+              <img src="zip.png" alt="Zip in Mind Station"
+                   onerror="this.closest('.game-card').classList.add('missing')">
+            </div>
+            <div class="game-copy">
+              <h3>Zip</h3>
+              <p>Connect every cell in one continuous numbered path.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="trailer" class="trailer-section">
+      <div class="shell">
+        <div class="section-title">
+          <h2>See Mind Station in action</h2>
+          <p>A quick look at the games, interface and overall experience.</p>
+        </div>
+
+        <div class="video-wrap">
+          <iframe
+            src="https://www.youtube.com/embed/5xxDqiH7YXk"
+            title="Mind Station trailer"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-title">
+          <h2>Built for quick logic sessions</h2>
+        </div>
+
+        <div class="features">
+          <div class="feature">
+            <strong>Interactive tutorials</strong>
+            <p>Learn each game by solving guided examples directly on the board.</p>
+          </div>
+
+          <div class="feature">
+            <strong>Daily Challenge</strong>
+            <p>A rotating daily puzzle gives you something new to solve every day.</p>
+          </div>
+
+          <div class="feature">
+            <strong>Six distinct games</strong>
+            <p>Switch between number, placement, symbol, pixel, tile and path logic.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top:0">
+      <div class="shell">
+        <div class="cta">
+          <h2>Welcome to Mind Station</h2>
+          <p>
+            A single place for focused logic puzzles, whether you want a quick
+            five-minute challenge or a longer session.
+          </p>
+          <a class="button button-primary" href="support.html">Support</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <div>© 2026 Mind Station</div>
+      <div>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
