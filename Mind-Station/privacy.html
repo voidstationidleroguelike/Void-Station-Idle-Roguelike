@@ -1,1 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy – Mind Station</title>
+  <meta name="description" content="Privacy Policy for Mind Station: Logical Puzzles.">
+  <meta name="theme-color" content="#3b261d">
+  <style>
+:root {
+  --brown: #3b261d;
+  --brown-2: #4b3125;
+  --cream: #fbf5ec;
+  --paper: #fffaf3;
+  --text: #241b17;
+  --muted: #7b6d64;
+  --gold: #c28b16;
+  --gold-soft: #f4dfaa;
+  --border: rgba(59, 38, 29, 0.14);
+  --shadow: 0 14px 36px rgba(59, 38, 29, 0.10);
+}
+
+* { box-sizing: border-box; }
+
+html {
+  background: var(--cream);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(194,139,22,0.08), transparent 30%),
+    var(--cream);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.65;
+}
+
+a {
+  color: #8a5d00;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.shell {
+  width: min(920px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.topbar {
+  background: var(--brown);
+  color: #fff4dd;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.nav {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #fff4dd;
+  font-weight: 800;
+}
+
+.brand img {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.links a {
+  color: #f0c967;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.hero {
+  padding: 70px 0 34px;
+  text-align: center;
+}
+
+.eyebrow {
+  color: #a97811;
+  font-weight: 850;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-size: .8rem;
+  margin-bottom: 10px;
+}
+
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  line-height: 1.13;
+  color: var(--brown);
+}
+
+h1 {
+  margin: 0 0 14px;
+  font-size: clamp(2.6rem, 7vw, 4.6rem);
+  font-weight: 500;
+}
+
+.hero p {
+  max-width: 700px;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: 1.08rem;
+}
+
+main {
+  padding: 10px 0 74px;
+}
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+
+.card h2 {
+  margin: 0 0 12px;
+  font-size: 1.75rem;
+}
+
+.card h3 {
+  margin: 24px 0 8px;
+  font-size: 1.2rem;
+}
+
+.card p {
+  margin: 0 0 12px;
+}
+
+.card p:last-child,
+.card ul:last-child {
+  margin-bottom: 0;
+}
+
+ul {
+  padding-left: 1.3rem;
+}
+
+li + li {
+  margin-top: 8px;
+}
+
+.note {
+  background: #f7e8bd;
+  border: 1px solid #d3a43a;
+}
+
+.contact {
+  text-align: center;
+  background: linear-gradient(135deg, #f7dfa0, #f2cd72);
+  border: 2px solid var(--gold);
+}
+
+.contact a.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: var(--brown);
+  color: #fff4dd;
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: .94rem;
+  text-align: center;
+  margin: 16px 0 0;
+}
+
+.footer {
+  background: var(--brown);
+  color: rgba(255,244,221,.78);
+  padding: 28px 0;
+}
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.footer a {
+  color: #f0c967;
+  text-decoration: none;
+  font-weight: 700;
+  margin-left: 14px;
+}
+
+@media (max-width: 650px) {
+  .nav {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px 0;
+  }
+
+  .hero {
+    padding-top: 48px;
+  }
+
+  .card {
+    padding: 22px;
+  }
+
+  .footer a {
+    margin-left: 0;
+    margin-right: 14px;
+  }
+}
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="brand" href="./">
+        <img src="logo.png" alt="Mind Station icon">
+        <span>Mind Station</span>
+      </a>
+      <nav class="links" aria-label="Main navigation">
+        <a href="./">Home</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="shell">
+      <div class="eyebrow">Mind Station</div>
+      <h1>Privacy Policy</h1>
+      <p>
+        This policy explains how Mind Station handles information when you use the app,
+        including data processed through Apple services and Google AdMob.
+      </p>
+      <p class="meta">Effective date: September 24, 2026</p>
+    </div>
+  </section>
+
+  <main>
+    <div class="shell">
+      <section class="card">
+        <h2>Overview</h2>
+        <p>
+          Mind Station is a logic puzzle app developed by Raymond Dagslet-Kjendseth.
+          The app does not require you to create a separate Mind Station account.
+        </p>
+        <p>
+          Most gameplay information, settings and progress are stored on your device.
+          Some features use Apple services such as Game Center, iCloud and StoreKit,
+          and advertising is provided through Google AdMob.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Data stored on your device</h2>
+        <p>
+          Mind Station may store gameplay information locally, such as completed puzzles,
+          progress, settings, preferences, hint-related state and other information needed
+          for the app to function.
+        </p>
+        <p>
+          This local app data is not a separate user profile operated by the developer.
+          Removing the app may remove locally stored data, subject to Apple's normal device
+          backup and restore behavior.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>iCloud</h2>
+        <p>
+          Mind Station may use Apple's iCloud services to store or synchronize supported
+          progress or app preferences across your Apple devices.
+        </p>
+        <p>
+          iCloud is operated by Apple and is governed by your Apple Account settings and
+          Apple's privacy practices. The developer does not receive your Apple Account
+          password or payment credentials.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Game Center</h2>
+        <p>
+          Mind Station can use Apple Game Center for features such as authentication and
+          leaderboards. If you use these features, Apple may provide the app with Game Center
+          information needed to display or submit leaderboard results, such as a player
+          identifier, display information and scores or completion times.
+        </p>
+        <p>
+          Game Center information is handled through Apple's services and may be visible to
+          other Game Center users according to your Game Center and Apple Account settings.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Advertising</h2>
+        <p>
+          Mind Station uses Google AdMob to display advertisements, including rewarded ads.
+          Depending on your device, consent choices, region and advertising settings, Google
+          and its advertising partners may process information such as device identifiers,
+          IP address, ad interaction data, diagnostics and approximate location inferred from
+          network information.
+        </p>
+        <p>
+          Advertising data is processed by Google and its partners under their own policies.
+          Where required, the app may ask for consent or present privacy choices before certain
+          advertising processing occurs.
+        </p>
+        <p>
+          Learn more at
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+            Google Privacy Policy
+          </a>.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Purchases and subscriptions</h2>
+        <p>
+          In-app purchases and subscriptions are processed by Apple through StoreKit and the
+          App Store. Mind Station may receive information required to determine which product
+          was purchased and whether an entitlement or subscription is active.
+        </p>
+        <p>
+          The developer does not receive your payment card number or other payment credentials.
+          Payment information is handled by Apple.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Information you send to support</h2>
+        <p>
+          If you contact support by email, the developer will receive the information you
+          choose to send, such as your email address, message, screenshots and technical
+          details you include. This information is used only to respond to your request,
+          troubleshoot problems and improve the app.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Third-party services</h2>
+        <p>Mind Station may rely on the following third-party services:</p>
+        <ul>
+          <li>Apple Game Center</li>
+          <li>Apple iCloud</li>
+          <li>Apple StoreKit and the App Store</li>
+          <li>Google AdMob</li>
+        </ul>
+        <p>
+          These services may process data independently under their own terms and privacy
+          policies. You can review
+          <a href="https://www.apple.com/legal/privacy/" target="_blank" rel="noopener noreferrer">
+            Apple's Privacy Policy
+          </a>
+          and
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">
+            Google's Privacy Policy
+          </a>.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Data retention</h2>
+        <p>
+          Data stored locally remains on your device until it is deleted by the app, removed
+          by you, or removed as part of deleting the app. Data handled by Apple, Google or
+          other third-party services is retained according to those providers' own policies
+          and your account or privacy settings.
+        </p>
+        <p>
+          Support emails may be retained for as long as reasonably necessary to answer your
+          request, maintain support history and resolve related issues.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Children</h2>
+        <p>
+          Mind Station does not require a separate account and is not designed to ask users
+          to directly submit personal information through gameplay. Third-party services such
+          as Apple and Google may apply their own age-related protections, account rules and
+          advertising requirements.
+        </p>
+      </section>
+
+      <section class="card">
+        <h2>Changes to this policy</h2>
+        <p>
+          This Privacy Policy may be updated if Mind Station changes its features, services
+          or data practices. The effective date at the top of this page will be updated when
+          material changes are published.
+        </p>
+      </section>
+
+      <section class="card contact">
+        <h2>Contact</h2>
+        <p>
+          If you have questions about this Privacy Policy or Mind Station's privacy practices,
+          contact:
+        </p>
+        <a class="button" href="mailto:voidstationidle@gmail.com">voidstationidle@gmail.com</a>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-inner">
+      <div>© 2026 Mind Station</div>
+      <div>
+        <a href="./">Home</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy Policy</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
 
