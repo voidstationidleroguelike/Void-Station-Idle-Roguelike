@@ -1,1 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#050505" />
 
+  <title>Infinity Merge</title>
+  <meta name="description" content="Swipe, merge tiles, upgrade your spawn level and climb higher and higher." />
+
+  <meta property="og:title" content="Infinity Merge" />
+  <meta property="og:description" content="Swipe. Merge. Climb." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="assets/promo-1024x500.png" />
+
+  <link rel="icon" type="image/png" href="assets/logo-512x512.png" />
+  <link rel="apple-touch-icon" href="assets/logo-512x512.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <div class="safe-top"></div>
+
+    <!-- Reserved web display-ad area.
+         AdSense code is injected here by web-ads.js after you fill web-ads-config.js. -->
+    <section class="web-ad-shell web-ad-top" aria-label="Advertisement">
+      <div id="adTop" class="web-ad-slot">
+        <span>AD SPACE • responsive 320×50 / 728×90</span>
+      </div>
+    </section>
+
+    <header class="topbar">
+      <div>
+        <div class="brand-title" id="gameTitle">
+          <span class="brand-infinity">Infinity</span>
+          <span class="brand-merge">Merge</span>
+        </div>
+        <div class="brand-sub">Swipe. Merge. Climb.</div>
+      </div>
+      <div class="top-actions">
+        <button id="settingsBtn" class="settings-btn" aria-label="Settings">⚙</button>
+        <div class="coins-wrap"><span class="coin-dot">◆</span><span id="coins">0</span></div>
+      </div>
+    </header>
+
+    <section class="stats">
+      <div id="movesStat" class="stat"><span>MOVES</span><strong id="movesLabel">4</strong></div>
+      <div class="stat"><span>BEST</span><strong id="bestLevelLabel">1</strong></div>
+      <button id="worldBestBtn" class="stat stat-button">
+        <span>BEST IN WORLD</span><strong id="worldBestLabel">—</strong>
+      </button>
+    </section>
+
+    <main class="game-area">
+      <div id="grid" class="grid" aria-label="4 by 4 merge board"></div>
+      <div id="message" class="message" aria-live="polite"></div>
+    </main>
+
+    <section class="controls">
+      <button id="spawnBtn" class="control-btn spawn-main-btn">
+        <span class="control-icon">＋</span>
+        <span class="control-copy">
+          <strong>Spawn</strong>
+          <small id="spawnCostLabel">Lv. 1 • ◆1</small>
+        </span>
+      </button>
+
+      <button id="spawnUpgradeBtn" class="control-btn">
+        <span class="control-icon">⬆</span>
+        <span class="control-copy">
+          <strong>Spawn upgrade</strong>
+          <small id="spawnUpgradeLabel">Lv. 2 • ◆20</small>
+        </span>
+      </button>
+
+      <button id="buyMoveBtn" class="control-btn">
+        <span class="control-icon">➜</span>
+        <span class="control-copy">
+          <strong>+1 Move</strong>
+          <small id="buyMoveLabel">◆5</small>
+        </span>
+      </button>
+
+      <button id="hammerBtn" class="control-btn">
+        <span class="control-icon">🔨</span>
+        <span class="control-copy">
+          <strong id="hammerLabel">Hammer ×0</strong>
+          <small id="hammerProgress">Next 0/25 merges</small>
+        </span>
+      </button>
+
+      <button id="goldAdBtn" class="control-btn gold-ad-btn">
+        <span class="control-icon currency-icon">◆</span>
+        <span class="control-copy">
+          <strong>Gold ad</strong>
+          <small id="goldAdLabel">+◆10</small>
+        </span>
+      </button>
+
+      <button id="moveAdBtn" class="control-btn reward-btn">
+        <span class="control-icon">▶</span>
+        <span class="control-copy">
+          <strong>Watch ad</strong>
+          <small id="moveAdLabel">+2 Moves • 3/3 to Spawn Up</small>
+        </span>
+      </button>
+    </section>
+
+    <!-- Second reserved responsive display-ad area. -->
+    <section class="web-ad-shell web-ad-bottom" aria-label="Advertisement">
+      <div id="adBottom" class="web-ad-slot">
+        <span>AD SPACE • responsive</span>
+      </div>
+    </section>
+
+    <footer class="hint">
+      Swipe anywhere on the board. Every valid swipe costs 1 Move. Each merge gives +1 Move.
+    </footer>
+  </div>
+
+  <div id="settingsModal" class="modal-backdrop" hidden>
+    <section class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="settingsTitle">Settings</h2>
+          <p>Game and ad preferences</p>
+        </div>
+        <button id="closeSettingsBtn" class="close-btn" aria-label="Close settings">×</button>
+      </div>
+
+      <div class="settings-list">
+        <button id="soundToggleBtn" class="settings-row">
+          <span><strong>Sound</strong><small>Merge pop sound</small></span>
+          <b id="soundState">ON</b>
+        </button>
+
+        <!-- Kept in the DOM because app.js shares the same game logic.
+             Disabled on web until a web purchase provider is chosen. -->
+        <button id="removeAdsBtn" class="settings-row web-purchase-note" disabled>
+          <span>
+            <strong>Remove Interstitial Ads</strong>
+            <small>Web purchase is not connected yet.</small>
+          </span>
+          <b id="removeAdsPrice">WEB: N/A</b>
+        </button>
+
+        <div class="settings-info">
+          <span>Game interstitial</span>
+          <strong>Every 100 merges when supported</strong>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Kept hidden for compatibility with the shared game code. -->
+  <div id="interstitialModal" class="modal-backdrop" hidden>
+    <section class="modal interstitial-demo" role="dialog" aria-modal="true">
+      <div class="interstitial-badge">WEB INTERSTITIAL</div>
+      <strong>Ad unavailable</strong>
+      <small>The web version simply continues if the provider does not support the format.</small>
+      <button id="closeInterstitialBtn" class="interstitial-close">Continue</button>
+    </section>
+  </div>
+
+  <div id="leaderboardModal" class="modal-backdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="leaderboardTitle">Best in World</h2>
+          <p>Shared record across web, Android and iOS.</p>
+        </div>
+        <button id="closeLeaderboardBtn" class="close-btn" aria-label="Close leaderboard">×</button>
+      </div>
+
+      <div class="leaderboard-your-score world-record-card">
+        <span>WORLD BEST</span>
+        <strong id="leaderboardBest">—</strong>
+        <small>Loaded from Firebase.</small>
+      </div>
+    </section>
+  </div>
+
+  <script src="web-ads-config.js"></script>
+  <script src="web-ads.js"></script>
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
