@@ -1,144 +1,6 @@
-:root{
-  --bg:#050505; --panel:#0d0d0f; --panel2:#141416; --line:#242428; --text:#f6f6f7; --muted:#8f8f99; --accent:#f2cf5b;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-html,body{
-  margin:0;min-height:100%;background:var(--bg);color:var(--text);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  overscroll-behavior:none;
-}
-body{touch-action:manipulation} button{font:inherit}
-#app{
-  min-height:100dvh;max-width:760px;margin:0 auto;display:flex;flex-direction:column;
-  padding:0 14px calc(10px + env(safe-area-inset-bottom));
-}
-.safe-top{height:env(safe-area-inset-top)}
-.web-ad-shell{
-  margin:0 -14px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#09090a;
-  border-color:var(--line);
-  border-style:solid;
-  border-width:0 0 1px;
-}
-.web-ad-bottom{
-  margin-top:10px;
-  border-width:1px 0;
-}
-.web-ad-slot{
-  width:min(100%,728px);
-  min-height:50px;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  color:#696970;
-  font-size:10px;
-  letter-spacing:.10em;
-  text-align:center;
-}
-.web-ad-slot span{padding:7px 12px}
-.display-ads-configured .web-ad-slot span{display:none}
-.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 1px 7px}
-.brand-title{
-  display:flex;align-items:baseline;gap:5px;
-  font-size:20px;font-weight:950;letter-spacing:-.045em;
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))
-}
-.brand-infinity{color:#fff}
-.brand-merge{
-  color:#b647f2;
-  background:linear-gradient(180deg,#ef6fff 0%,#a62ff0 72%,#7d22dd 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  text-shadow:none
-}
-.brand-sub{color:var(--muted);font-size:11px;margin-top:1px}
-.coins-wrap{display:flex;align-items:center;gap:7px;font-weight:900;font-size:18px;white-space:nowrap}
-.coin-dot{color:var(--accent);font-size:15px;line-height:1;text-shadow:0 0 10px rgba(242,207,91,.22)}
-.stats{display:grid;grid-template-columns:.85fr .85fr 1.3fr;gap:6px;margin-bottom:7px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:7px 8px;min-width:0;color:var(--text);text-align:left}
-.stat span{display:block;color:var(--muted);font-size:8px;letter-spacing:.08em;font-weight:800;white-space:nowrap}
-.stat strong{display:block;margin-top:2px;font-size:14px}
-.stat.danger{border-color:#a92b2b;box-shadow:0 0 0 2px rgba(220,38,38,.28), 0 0 18px rgba(220,38,38,.18)}
-.stat.danger strong,.stat.danger span{color:#ffd6d6}
-.stat-button:active{transform:scale(.985)}
-.game-area{display:flex;flex:1 1 auto;min-height:0;flex-direction:column;align-items:center;justify-content:center;padding:0 0 5px}
-.grid{
-  --grid-size:4;width:min(100%,560px);aspect-ratio:1;display:grid;
-  grid-template-columns:repeat(var(--grid-size),minmax(0,1fr));gap:clamp(4px,.95vw,8px);
-  padding:clamp(4px,.95vw,8px);background:#0a0a0b;border:1px solid var(--line);border-radius:16px;
-  touch-action:none;position:relative;overflow:visible
-}
-.cell{position:relative;min-width:0;min-height:0;border-radius:clamp(6px,1.2vw,11px);background:#101013;border:1px solid #1d1d22;overflow:hidden}
-.tile{
-  position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;font-weight:950;color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.35);font-size:clamp(16px,5.6vw,34px);backface-visibility:hidden
-}
-.tile.hidden-for-swipe{opacity:0}.tile.pop{animation:pop .20s ease}.tile.spawn-pop{animation:spawnPop .22s ease}
-@keyframes pop{0%{transform:scale(.78)}62%{transform:scale(1.13)}100%{transform:scale(1)}}
-@keyframes spawnPop{0%{transform:scale(.30);opacity:.2}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
-.swipe-ghost{
-  position:fixed;display:grid;place-items:center;pointer-events:none;z-index:99999;font-weight:950;color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.35);backface-visibility:hidden;will-change:transform
-}
-.cell.hammer-target{outline:3px solid var(--accent);outline-offset:-3px}
-.message{min-height:19px;margin-top:4px;color:var(--muted);text-align:center;font-size:11px}
-.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:2px}
-.control-btn{
-  min-height:56px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;
-  padding:8px 10px;display:flex;align-items:center;justify-content:flex-start;gap:9px;text-align:left;min-width:0;
-  transition:background .15s ease,border-color .15s ease, box-shadow .15s ease, transform .08s ease, opacity .15s ease;
-}
-.control-btn:active{transform:scale(.985)}
-.control-btn:disabled{opacity:.42}
-.control-btn.available{box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 8px 22px rgba(0,0,0,.18)}
-.control-btn.active{border-color:var(--accent);background:#19170f}
-@keyframes movePulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.08)}
-  50%{box-shadow:0 0 0 4px rgba(46,204,113,.28),0 0 18px rgba(46,204,113,.24)}
-}
-.control-btn.move-rescue{
-  animation:movePulse 1.15s ease-in-out infinite;
-  border-color:#2ecc71 !important;
-  background:#143221 !important;
-}
-.spawn-main-btn{grid-column:1/-1;min-height:68px;justify-content:center;text-align:center}
-.spawn-main-btn .control-icon{font-size:22px}
-.spawn-main-btn .control-copy{align-items:center}
-.spawn-main-btn .control-copy strong{font-size:16px}
-.spawn-main-btn .control-copy small{font-size:12px}
-.reward-btn{border-color:#2e2940;grid-column:1/-1}
-.gold-ad-btn{border-color:#3a2e12}
-.control-icon{font-size:18px;line-height:1;flex:0 0 auto}
-.control-copy{min-width:0;display:flex;flex-direction:column}
-.control-copy strong{font-size:11px;line-height:1.15;white-space:nowrap}
-.control-copy small{color:#edf1ff;font-size:12px;line-height:1.15;margin-top:3px;white-space:nowrap;font-weight:900;letter-spacing:.01em}
-.hint{color:#72727b;text-align:center;font-size:9px;padding-top:7px}
-.modal-backdrop{
-  position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.76);
-  padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));display:grid;place-items:center
-}
-.modal-backdrop[hidden]{display:none}
-.modal{width:min(100%,420px);background:#101012;border:1px solid #2a2a2f;border-radius:16px;padding:16px}
-.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.modal h2{margin:0;font-size:19px}
-.modal p{color:var(--muted);font-size:11px;margin:3px 0 0}
-.close-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--panel2);font-size:23px}
-.leaderboard-your-score{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px}
-.leaderboard-your-score span,.leaderboard-your-score small{display:block;color:var(--muted);font-size:10px}
-.leaderboard-your-score strong{display:block;font-size:32px;margin:2px 0 4px}
-.leaderboard-placeholder{margin-top:10px}
-.fake-row{display:grid;grid-template-columns:40px 1fr 50px;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:12px}
-@media(max-height:760px){
-  .brand-sub,.hint{display:none}.topbar{padding-top:7px;padding-bottom:5px}.stats{margin-bottom:5px}
-  .control-btn{min-height:47px}.spawn-main-btn{min-height:56px}.game-area{padding-bottom:2px}.message{min-height:15px}
-}
-@media(min-width:650px){
-  #app{padding-left:20px;padding-right:20px}
-  .web-ad-shell{margin-left:-20px;margin-right:-20px}
-  .web-ad-slot{min-height:90px}
-}
+
+    
+  
 
 @keyframes upgradePulse{
   0%,100%{box-shadow:0 0 0 0 transparent}
@@ -206,3 +68,71 @@ body{touch-action:manipulation} button{font:inherit}
       var(--bg);
   }
 }
+
+
+/* Desktop ad rails.
+   Hidden until there is enough room for the game + both side ads. */
+@media (min-width:1280px){
+  .page-layout{
+    grid-template-columns:minmax(160px,300px) minmax(620px,760px) minmax(160px,300px);
+    column-gap:22px;
+    align-items:start;
+    max-width:1420px;
+    margin:0 auto;
+    padding:0 14px;
+  }
+
+  #app{
+    grid-column:2;
+    grid-row:1;
+    width:100%;
+    max-width:760px;
+    margin:0;
+    padding-left:14px;
+    padding-right:14px;
+    align-self:start;
+  }
+
+  .web-ad-shell{
+    margin-left:-14px;
+    margin-right:-14px;
+  }
+
+  .side-ad{
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+    min-width:0;
+    padding-top:110px;
+    position:sticky;
+    top:0;
+    height:100dvh;
+  }
+
+  .side-ad-left{
+    grid-column:1;
+    grid-row:1;
+    align-self:start;
+  }
+
+  .side-ad-right{
+    grid-column:3;
+    grid-row:1;
+    align-self:start;
+  }
+
+  .web-ad-slot-side{
+    width:100%;
+    max-width:300px;
+    min-height:600px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    background:#09090a;
+  }
+}
+
+/* Keep side ads hidden on phones/tablets/smaller laptops. */
+@media (max-width:1279px){
+  .side-ad{display:none!important}
+}
+
