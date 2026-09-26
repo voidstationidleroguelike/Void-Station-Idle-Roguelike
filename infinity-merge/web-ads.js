@@ -9,7 +9,6 @@
   let gptListenersInstalled = false;
 
   const rewardedStates = new Map();
-  const interstitialStates = new Map();
 
   function valueConfigured(value) {
     return typeof value === "string" &&
@@ -21,15 +20,15 @@
   function adsenseConfigured() {
     return !!adsense.enabled &&
       valueConfigured(adsense.client) &&
-      (valueConfigured(adsense.topSlot) || valueConfigured(adsense.bottomSlot));
+      (
+        valueConfigured(adsense.topSlot) ||
+        valueConfigured(adsense.leftSlot) ||
+        valueConfigured(adsense.rightSlot)
+      );
   }
 
   function gamConfigured() {
     return !!gam.enabled && valueConfigured(gam.rewardedAdUnitPath);
-  }
-
-  function gameInterstitialConfigured() {
-    return !!gam.enabled && valueConfigured(gam.gameInterstitialAdUnitPath);
   }
 
   function notifyState() {
@@ -37,8 +36,7 @@
       detail: {
         initialized,
         rewardedAvailable: gamConfigured(),
-        displayConfigured: adsenseConfigured(),
-        gameInterstitialConfigured: gameInterstitialConfigured()
+        displayConfigured: adsenseConfigured()
       }
     }));
   }
@@ -99,7 +97,12 @@
     }
 
     mount("adTop", adsense.topSlot);
-    mount("adBottom", adsense.bottomSlot);
+
+    // Side ads only exist visually on wide desktop layouts.
+    // It is safe to mount them on narrower screens; CSS keeps the containers hidden.
+    mount("adLeft", adsense.leftSlot);
+    mount("adRight", adsense.rightSlot);
+
     document.documentElement.classList.add("display-ads-configured");
     return true;
   }
@@ -114,15 +117,6 @@
     state.resolve(result);
   }
 
-  function finishInterstitial(slot, result) {
-    const state = interstitialStates.get(slot);
-    if (!state || state.done) return;
-    state.done = true;
-    clearTimeout(state.timer);
-    interstitialStates.delete(slot);
-    try { window.googletag?.destroySlots?.([slot]); } catch {}
-    state.resolve(result);
-  }
 
   function installGPTListeners() {
     if (gptListenersInstalled) return;
@@ -174,37 +168,7 @@
       });
     });
 
-    pubads.addEventListener("gameManualInterstitialSlotReady", event => {
-      const state = interstitialStates.get(event.slot);
-      if (!state) return;
-      try {
-        state.shown = !!event.makeGameManualInterstitialVisible();
-        if (!state.shown) {
-          finishInterstitial(event.slot, {
-            provider: "google-ad-manager",
-            available: true,
-            shown: false
-          });
-        }
-      } catch (error) {
-        finishInterstitial(event.slot, {
-          provider: "google-ad-manager",
-          available: true,
-          shown: false,
-          error
-        });
-      }
-    });
 
-    pubads.addEventListener("gameManualInterstitialSlotClosed", event => {
-      const state = interstitialStates.get(event.slot);
-      if (!state) return;
-      finishInterstitial(event.slot, {
-        provider: "google-ad-manager",
-        available: true,
-        shown: !!state.shown
-      });
-    });
 
     // Covers empty / no-fill requests for both out-of-page formats.
     pubads.addEventListener("slotRenderEnded", event => {
@@ -220,19 +184,11 @@
         });
       }
 
-      if (interstitialStates.has(event.slot)) {
-        finishInterstitial(event.slot, {
-          provider: "google-ad-manager",
-          available: true,
-          shown: false,
-          noFill: true
-        });
-      }
     });
   }
 
   async function initGPT() {
-    if ((!gamConfigured() && !gameInterstitialConfigured()) || gptReady) return gptReady;
+    if (!gamConfigured() || gptReady) return gptReady;
 
     window.googletag = window.googletag || { cmd: [] };
     await loadScript("https://securepubads.g.doubleclick.net/tag/js/gpt.js");
@@ -255,12 +211,12 @@
     initPromise = (async () => {
       const tasks = [];
       if (adsenseConfigured()) tasks.push(initAdSense().catch(error => console.warn("AdSense init failed", error)));
-      if (gamConfigured() || gameInterstitialConfigured()) tasks.push(initGPT().catch(error => console.warn("Google Ad Manager init failed", error)));
+      if (gamConfigured()) tasks.push(initGPT().catch(error => console.warn("Google Ad Manager init failed", error)));
 
       await Promise.all(tasks);
       initialized = true;
       notifyState();
-      return adsenseConfigured() || gamConfigured() || gameInterstitialConfigured();
+      return adsenseConfigured() || gamConfigured();
     })();
 
     return initPromise;
@@ -328,67 +284,11 @@
     });
   }
 
-  async function showInterstitial(reason = "merge100") {
-    if (!gameInterstitialConfigured()) {
-      return {
-        provider: "web",
-        available: false,
-        shown: false,
-        reason: "Game manual interstitial is not configured."
-      };
-    }
-
-    const ready = await initGPT();
-    if (!ready) return { provider: "web", available: false, shown: false };
-
-    return new Promise(resolve => {
-      window.googletag.cmd.push(() => {
-        const slot = window.googletag.defineOutOfPageSlot(
-          gam.gameInterstitialAdUnitPath,
-          window.googletag.enums.OutOfPageFormat.GAME_MANUAL_INTERSTITIAL
-        );
-
-        if (!slot) {
-          resolve({
-            provider: "google-ad-manager",
-            available: false,
-            shown: false,
-            reason: "Game manual interstitial is unavailable for this account/page/device."
-          });
-          return;
-        }
-
-        slot.addService(window.googletag.pubads());
-
-        const timer = setTimeout(() => {
-          finishInterstitial(slot, {
-            provider: "google-ad-manager",
-            available: true,
-            shown: false,
-            timeout: true
-          });
-        }, 30000);
-
-        interstitialStates.set(slot, {
-          resolve,
-          done: false,
-          shown: false,
-          reason,
-          timer
-        });
-
-        window.googletag.display(slot);
-      });
-    });
-  }
-
   window.InfinityAds = {
     CONFIG,
     init,
     showRewarded,
-    showInterstitial,
     isRewardedAvailable: gamConfigured,
-    isDisplayConfigured: adsenseConfigured,
-    isInterstitialAvailable: gameInterstitialConfigured
+    isDisplayConfigured: adsenseConfigured
   };
 })();
