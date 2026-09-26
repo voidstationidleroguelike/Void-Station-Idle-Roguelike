@@ -4,7 +4,6 @@
   const SWIPE_THRESHOLD = 28;
   const DAILY_SPAWN_UPS_FROM_ADS_MAX = 10;
   const MERGES_PER_HAMMER = 25;
-  const MERGES_PER_INTERSTITIAL = 100;
   const COLORS = ["#c72323","#21d255","#8e1edd","#dac42b","#20aecb","#d61d81","#52d626","#2f27dd","#ce581c","#24cf8f","#cb22da","#b9e123","#2375c7","#d22145","#1edd2e","#6d2bda","#cb9220","#1dd6cf","#d626a9","#7add27","#1c39ce","#cf3a24","#22da6f","#aa23e1","#c7c723","#219ed2","#dd1e6d","#40da2b","#3d20cb","#d6731d","#26d6ab","#dd27d5","#92ce1c","#2464cf","#da2230","#23e14c","#7623c7","#d2ae21","#1ecddd","#da2b97","#58cb20","#1d24d6","#d65326","#27dd8b","#b21cce","#b8cf24","#228cda","#e12359","#23c724","#5621d2"];
   const $ = id => document.getElementById(id);
 
@@ -16,8 +15,7 @@
     moveAdBtn:$("moveAdBtn"), moveAdLabel:$("moveAdLabel"), goldAdBtn:$("goldAdBtn"), goldAdLabel:$("goldAdLabel"),
     leaderboardModal:$("leaderboardModal"), closeLeaderboardBtn:$("closeLeaderboardBtn"), leaderboardBest:$("leaderboardBest"),
     settingsBtn:$("settingsBtn"), settingsModal:$("settingsModal"), closeSettingsBtn:$("closeSettingsBtn"),
-    soundToggleBtn:$("soundToggleBtn"), soundState:$("soundState"), removeAdsBtn:$("removeAdsBtn"), removeAdsPrice:$("removeAdsPrice"),
-    interstitialModal:$("interstitialModal"), closeInterstitialBtn:$("closeInterstitialBtn")
+    soundToggleBtn:$("soundToggleBtn"), soundState:$("soundState")
   };
 
   function todayKey() {
@@ -39,9 +37,7 @@
       moveAdsWatched: 0,
       adSpawnUpgradeDay: todayKey(),
       adSpawnUpgradeCountToday: 0,
-      soundEnabled: true,
-      interstitialAdsRemoved: false,
-      mergesSinceInterstitial: 0
+      soundEnabled: true
     };
   }
 
@@ -63,10 +59,6 @@
       if(typeof x.adSpawnUpgradeDay !== "string") x.adSpawnUpgradeDay = todayKey();
       if(typeof x.adSpawnUpgradeCountToday !== "number") x.adSpawnUpgradeCountToday = 0;
       if(typeof x.soundEnabled !== "boolean") x.soundEnabled = true;
-      if(typeof x.interstitialAdsRemoved !== "boolean"){
-        x.interstitialAdsRemoved = typeof x.adsRemoved === "boolean" ? x.adsRemoved : false;
-      }
-      if(typeof x.mergesSinceInterstitial !== "number") x.mergesSinceInterstitial = (x.totalMerges || 0) % MERGES_PER_INTERSTITIAL;
       return x;
     }catch{ return null; }
   }
@@ -117,21 +109,6 @@
       osc.start(now);
       osc.stop(now + .12);
     }catch{}
-  }
-
-  function maybeShowInterstitial(mergeCount){
-    if(mergeCount <= 0 || state.interstitialAdsRemoved) return;
-    state.mergesSinceInterstitial += mergeCount;
-
-    if(state.mergesSinceInterstitial >= MERGES_PER_INTERSTITIAL){
-      state.mergesSinceInterstitial %= MERGES_PER_INTERSTITIAL;
-
-      setTimeout(async () => {
-        await window.InfinityAds?.showInterstitial?.("merge100");
-        // If the web provider/account/device does not support the format,
-        // the game simply continues without interrupting the player.
-      }, 220);
-    }
   }
 
   function randomEmpty(board=state.board){
@@ -288,7 +265,6 @@
       const h = hammerAwards(merges);
       if(merges){
         playMergePop(Math.max(...result.mergedLevels), merges);
-        maybeShowInterstitial(merges);
       }
       const spawned = addRandomTile(true);
 
@@ -370,9 +346,6 @@
     els.leaderboardBest.textContent = globalBestLevel > 0 ? globalBestLevel.toLocaleString() : "—";
     els.soundState.textContent = state.soundEnabled ? "ON" : "OFF";
     els.soundState.style.color = state.soundEnabled ? "#2ecc71" : "#8f8f99";
-    els.removeAdsPrice.textContent = "WEB: N/A";
-    els.removeAdsPrice.style.color = "#8f8f99";
-    els.removeAdsBtn.classList.remove("purchase-owned");
 
     els.spawnCostLabel.textContent = `Lv. ${state.spawnLevel} • ◆${sp}`;
     els.spawnBtn.disabled = state.coins < sp || randomEmpty() < 0;
@@ -584,14 +557,6 @@
     save();
     render();
     msg(`Sound ${state.soundEnabled ? "on" : "off"}.`);
-  });
-
-  els.removeAdsBtn.addEventListener("click", () => {
-    msg("Web purchase is not connected yet.", 1700);
-  });
-
-  els.closeInterstitialBtn.addEventListener("click", () => {
-    els.interstitialModal.hidden = true;
   });
 
   els.worldBestBtn.addEventListener("click", async () => {
