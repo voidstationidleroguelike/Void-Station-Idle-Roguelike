@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1531025343110744"
+        crossorigin="anonymous"></script>
     <meta name="google-site-verification" content="Y87ROB_8tENtX_2MXPcMvyY8ZWpPEjrK4CUpUa6PVd4" />
     <link rel="canonical" href="https://voidstationidleroguelike.com/">
     <title>Void Station - Official Idle Roguelike Defense</title>
-    <meta name="description" content="The Ultimate Idle Roguelike Defense. 100% Ad-Free. 12 Difficulty Tiers. Available on Google Play.">
+    <meta name="description" content="Idle roguelike defense with 12 difficulty tiers, Commanders, Item Forge merging, permanent progression, global leaderboards and more. Available on Google Play.">
 
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://voidstationidleroguelike.com/">
     <meta property="og:title" content="Void Station - Idle Roguelike Defense">
-    <meta property="og:description" content="The Ultimate Idle Roguelike Defense. 100% Ad-Free. 12 Difficulty Tiers. Available on Google Play.">
+    <meta property="og:description" content="Idle roguelike defense with Commanders, Item Forge merging, permanent progression, global leaderboards and 12 difficulty tiers.">
     <meta property="og:image" content="https://voidstationidleroguelike.com/preview.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="650">
@@ -105,12 +107,22 @@
         .play-store-btn { display: inline-block; transition: transform 0.2s; }
         .play-store-btn:hover { transform: scale(1.1); }
 
+
+        .status-live { display: inline-block; font-size: 0.65rem; color: #86efac; border: 1px solid #22c55e; padding: 2px 7px; border-radius: 999px; text-transform: uppercase; font-weight: 700; margin-left: 8px; vertical-align: middle; }
+        .app-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+        .app-card { display: block; background: #111827; border: 1px solid #334155; border-radius: 14px; padding: 20px; color: #e2e8f0; text-decoration: none; transition: transform .2s, border-color .2s, background .2s; }
+        .app-card:hover { transform: translateY(-3px); border-color: #38bdf8; background: #172033; }
+        .app-card strong { display: block; color: #7dd3fc; font-size: 1.05rem; margin-bottom: 5px; }
+        .app-card span { color: #94a3b8; font-size: .9rem; }
+        .site-footer { margin-top: 50px; padding: 25px 20px; text-align: center; color: #64748b; border-top: 1px solid #1e293b; font-size: .85rem; }
+
         @media (max-width: 768px) {
             .feature-grid, .roadmap-grid { grid-template-columns: 1fr; }
             .commander-left { left: -20px; width: 180px; opacity: 0.6; }
             .commander-right { right: -20px; width: 180px; opacity: 0.6; }
             .game-loop { flex-direction: column; }
             .hero { min-height: 450px; }
+            .app-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -156,8 +168,8 @@
         <h2>Core Intel</h2>
         <div class="feature-grid">
             <div class="feature">
-                <h3>🚫 100% Ad-Free</h3>
-                <p>Enjoy pure gameplay flow. No forced ads or reward-videos. We respect your time as a Commander.</p>
+                <h3>🎮 Free-to-Play Progression</h3>
+                <p>Play and progress for free with permanent upgrades, optional rewarded ads and in-app support for players who want to accelerate their journey.</p>
             </div>
             <div class="feature">
                 <h3>🌌 12 Difficulty Tiers</h3>
@@ -205,15 +217,35 @@
             </div>
         </div>
 
-        <h2>Command Centers</h2>
+        <h2>Commanders & Command Centers</h2>
         <div class="feature-grid">
             <div class="feature">
+                <h3>🎖️ Commanders <span class="status-live">Live</span></h3>
+                <p>Unlock Commanders with their own progression and specialization. Build around their strengths and combine Commander progression with your station upgrades.</p>
+            </div>
+            <div class="feature">
                 <h3>🏗️ Unique Base Designs</h3>
-                <p>Unlock and switch between multiple <strong>Station Bases</strong>. Each design offers distinct starting bonuses to HP, Shield regeneration, or XP gain.</p>
+                <p>Unlock and switch between multiple <strong>Station Bases</strong>. Each design offers distinct starting bonuses to HP, Shield regeneration, XP gain and other strategic bonuses.</p>
             </div>
             <div class="feature">
                 <h3>🛰️ Satellite Core Expansion</h3>
                 <p>Build up to 28 <strong>Satellite Cores</strong>. These permanent station additions provide compounding multipliers to your stats, making you exponentially stronger.</p>
+            </div>
+            <div class="feature">
+                <h3>🌌 Long-Term Progression</h3>
+                <p>Combine Commanders, station bases, cores and permanent upgrades to shape a build that keeps growing between runs.</p>
+            </div>
+        </div>
+
+        <h2>Item Forge & Merge</h2>
+        <div class="feature-grid">
+            <div class="feature">
+                <h3>🔨 Item Forge <span class="status-live">Live</span></h3>
+                <p>Collect equipment and use the forge to develop stronger items for your station. Equipment adds another layer of permanent progression outside each run.</p>
+            </div>
+            <div class="feature">
+                <h3>🔷 Merge Equipment</h3>
+                <p>Merge matching items to create stronger versions, improve your loadout and keep pushing your station toward higher-tier builds.</p>
             </div>
         </div>
 
@@ -230,33 +262,48 @@
         </div>
 
         <div class="roadmap-box">
-            <h2 style="margin-top: 0;">📡 Incoming Intelligence: Future Content</h2>
-            <p style="margin-bottom: 20px;">The void is expanding. Everything is possible for <strong>Free-to-Play</strong> commanders, with optional in-app support for those who wish to accelerate their journey.</p>
+            <h2 style="margin-top: 0;">📡 The Void Keeps Expanding</h2>
+            <p style="margin-bottom: 20px;">Void Station continues to grow with new progression systems, balance updates and additional content.</p>
             <div class="roadmap-grid">
                 <div class="roadmap-item">
-                    <div class="wip-tag">In Progress</div>
-                    <h4>🎖️ Commander Levels & Evolutions</h4>
-                    <p>Development has started on unique Commanders! Unlock them and gain XP to access specialized level-based evolutions and permanent station perks.</p>
+                    <h4>🎖️ Commander Progression</h4>
+                    <p>Commanders are now part of the game, adding another permanent progression path and more ways to shape your build.</p>
                 </div>
                 <div class="roadmap-item">
-                    <div class="wip-tag">In Progress</div>
-                    <h4>📦 Loot Drops & Equipment</h4>
-                    <p>Soon, defeated enemies will drop modular equipment. Collect, craft, and equip items to customize your station's offensive and defensive capabilities.</p>
+                    <h4>🔨 Item Forge & Merge</h4>
+                    <p>Collect equipment, forge items and merge matching pieces into stronger versions for deeper long-term progression.</p>
                 </div>
                 <div class="roadmap-item">
                     <h4>💎 More F2P Rewards</h4>
-                    <p>Earn premium currency through new daily missions, global community milestones, and weekly kill rewards.</p>
+                    <p>Additional rewards, events and progression opportunities continue to be expanded over time.</p>
                 </div>
                 <div class="roadmap-item">
-                    <h4>🌌 Advanced Elder Rifts</h4>
-                    <p>Expanding the universe beyond Tier 12. Prepare for specialized rifts with unique mechanics and high-tier satellite materials.</p>
+                    <h4>🌌 More Void Content</h4>
+                    <p>New challenges, upgrades and late-game content will continue to push progression beyond the current systems.</p>
                 </div>
             </div>
+        </div>
         </div>
 
         <h2>Mission Briefing</h2>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/sWP3GoCYXnM" title="Void Station Gameplay" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <h2>More Games & Apps</h2>
+        <div class="app-grid">
+            <a class="app-card" href="/Mind-Station/">
+                <strong>🧠 Mind Station</strong>
+                <span>Thousands of logic puzzles including Sudoku, Queens, Nonogram, Tango, Mahjong and Zip.</span>
+            </a>
+            <a class="app-card" href="/rdk-motion/">
+                <strong>💪 RDK Motion</strong>
+                <span>Quick adaptive home workouts built around the time and training style you choose.</span>
+            </a>
+            <a class="app-card" href="/infinity-merge/">
+                <strong>◆ Infinity Merge</strong>
+                <span>Swipe, merge and climb in a simple endless 4×4 merge puzzle — playable directly in your browser.</span>
+            </a>
         </div>
 
         <div class="contact" style="background-color: #1e293b; padding: 20px; border-radius: 8px; border-left: 4px solid #38bdf8; margin-top: 60px;">
@@ -266,5 +313,8 @@
         </div>
     </div>
 
+    <footer class="site-footer">
+        © 2026 Void Station / RDK • Independent games & apps
+    </footer>
 </body>
 </html>
