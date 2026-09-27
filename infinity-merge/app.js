@@ -14,7 +14,6 @@
     buyMoveLabel:$("buyMoveLabel"), hammerBtn:$("hammerBtn"), hammerLabel:$("hammerLabel"), hammerProgress:$("hammerProgress"),
     moveAdBtn:$("moveAdBtn"), moveAdLabel:$("moveAdLabel"), goldAdBtn:$("goldAdBtn"), goldAdLabel:$("goldAdLabel"),
     leaderboardModal:$("leaderboardModal"), closeLeaderboardBtn:$("closeLeaderboardBtn"), leaderboardBest:$("leaderboardBest"),
-    settingsBtn:$("settingsBtn"), settingsModal:$("settingsModal"), closeSettingsBtn:$("closeSettingsBtn"),
     restartRunBtn:$("restartRunBtn"), restartConfirmModal:$("restartConfirmModal"),
     closeRestartConfirmBtn:$("closeRestartConfirmBtn"), cancelRestartBtn:$("cancelRestartBtn"),
     confirmRestartBtn:$("confirmRestartBtn")
@@ -380,7 +379,7 @@
   els.grid.addEventListener("pointercancel", () => gesture = null);
 
   window.addEventListener("keydown", e => {
-    if(!els.leaderboardModal.hidden || !els.settingsModal.hidden || !els.restartConfirmModal.hidden) return;
+    if(!els.leaderboardModal.hidden || !els.restartConfirmModal.hidden) return;
     const map = { ArrowLeft:"left", ArrowRight:"right", ArrowUp:"up", ArrowDown:"down" };
     if(map[e.key]){ e.preventDefault(); performSwipe(map[e.key]); }
   });
@@ -502,18 +501,6 @@
     msg(`Ad reward: +${reward} coins.`);
   });
 
-  els.settingsBtn.addEventListener("click", () => {
-    els.settingsModal.hidden = false;
-  });
-
-  els.closeSettingsBtn.addEventListener("click", () => {
-    els.settingsModal.hidden = true;
-  });
-
-  els.settingsModal.addEventListener("click", e => {
-    if(e.target === els.settingsModal) els.settingsModal.hidden = true;
-  });
-
   function restartRun(){
     if(animating) return;
 
@@ -544,7 +531,6 @@
 
   els.restartRunBtn.addEventListener("click", () => {
     if(animating) return;
-    els.settingsModal.hidden = true;
     els.restartConfirmModal.hidden = false;
   });
 
