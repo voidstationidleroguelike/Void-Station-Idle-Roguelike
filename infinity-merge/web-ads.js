@@ -7,7 +7,6 @@
   let initPromise = null;
   let gptReady = false;
   let gptListenersInstalled = false;
-  let desktopAdListenerInstalled = false;
 
   const rewardedStates = new Map();
 
@@ -20,13 +19,7 @@
   }
 
   function adsenseConfigured() {
-    return !!adsense.enabled &&
-      valueConfigured(adsense.client) &&
-      (
-        valueConfigured(adsense.topSlot) ||
-        valueConfigured(adsense.leftSlot) ||
-        valueConfigured(adsense.rightSlot)
-      );
+    return !!adsense.enabled && valueConfigured(adsense.client);
   }
 
   function gamConfigured() {
@@ -46,9 +39,14 @@
   function loadScript(src, attrs = {}) {
     return new Promise((resolve, reject) => {
       const existing = [...document.scripts].find(s => s.src === src);
+
       if (existing) {
-        if (existing.dataset.loaded === "1") resolve();
-        else existing.addEventListener("load", resolve, { once: true });
+        if (existing.dataset.loaded === "1") {
+          resolve();
+        } else {
+          existing.addEventListener("load", resolve, { once: true });
+          existing.addEventListener("error", reject, { once: true });
+        }
         return;
       }
 
@@ -77,58 +75,8 @@
     const src =
       `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(adsense.client)}`;
 
+    // Auto Ads needs only the AdSense loader. Placement is controlled in AdSense.
     await loadScript(src, { crossOrigin: "anonymous" });
-
-    function mount(slotElementId, slotId) {
-      if (!valueConfigured(slotId)) return;
-
-      const host = document.getElementById(slotElementId);
-      if (!host || host.dataset.adMounted === "1") return;
-
-      host.innerHTML = "";
-
-      const ins = document.createElement("ins");
-      ins.className = "adsbygoogle";
-      ins.style.display = "block";
-      ins.style.width = "100%";
-      ins.setAttribute("data-ad-client", adsense.client);
-      ins.setAttribute("data-ad-slot", slotId);
-      ins.setAttribute("data-ad-format", "auto");
-      ins.setAttribute("data-full-width-responsive", "true");
-
-      host.appendChild(ins);
-      host.dataset.adMounted = "1";
-
-      try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      } catch (error) {
-        console.warn("AdSense slot request failed", error);
-      }
-    }
-
-    // Top ad is available on all layouts.
-    mount("adTop", adsense.topSlot);
-
-    // Side ads only exist visually on wide desktop layouts.
-    // Do not request responsive ads while their containers are display:none.
-    const desktopQuery = window.matchMedia("(min-width: 1280px)");
-
-    function mountDesktopSideAds() {
-      if (!desktopQuery.matches) return;
-      mount("adLeft", adsense.leftSlot);
-      mount("adRight", adsense.rightSlot);
-    }
-
-    mountDesktopSideAds();
-
-    if (!desktopAdListenerInstalled && desktopQuery.addEventListener) {
-      desktopAdListenerInstalled = true;
-      desktopQuery.addEventListener("change", event => {
-        if (event.matches) mountDesktopSideAds();
-      });
-    }
-
-    document.documentElement.classList.add("display-ads-configured");
     return true;
   }
 
@@ -202,7 +150,6 @@
       });
     });
 
-    // Covers empty / no-fill requests for rewarded out-of-page formats.
     pubads.addEventListener("slotRenderEnded", event => {
       if (!event.isEmpty) return;
 
