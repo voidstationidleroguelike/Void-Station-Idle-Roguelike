@@ -1,19 +1,12 @@
 // Infinity Merge web advertising configuration.
 //
-// Display ads = Google AdSense
-// Rewarded / game interstitial = Google Ad Manager
+// Display ads = Google AdSense Auto Ads
+// Rewarded ads = Google Ad Manager
 
 window.INFINITY_WEB_ADS_CONFIG = {
   adsense: {
     enabled: true,
-
-    // Real AdSense publisher/client ID:
-    client: "ca-pub-1531025343110744",
-
-    // Infinity Merge display ad units:
-    topSlot: "8371043010",
-    leftSlot: "9349082765",
-    rightSlot: "7652857712"
+    client: "ca-pub-1531025343110744"
   },
 
   adManager: {
