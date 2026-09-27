@@ -74,6 +74,8 @@ h1, h2 { margin: 2px 0 0; }
 .progress { height: 6px; margin: 13px 0; overflow: hidden; border-radius: 10px; background: #07111d; }
 .progress > i { display: block; height: 100%; width: 0; background: var(--cyan); }
 .room__actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.room__actions .action--auto { grid-column: 1 / -1; color: #d9f9ff; border: 1px solid #2d8394; background: #102c38; }
+.room__actions .action--auto:not(:disabled) { color: #07111d; background: var(--cyan); }
 .action { min-height: 44px; border: 0; border-radius: 9px; padding: 6px 8px; color: #07111d; background: var(--green); font-weight: 900; cursor: pointer; }
 .action--secondary { color: #d9f9ff; border: 1px solid #315b72; background: #142a3a; }
 .action:disabled { cursor: not-allowed; opacity: .42; }

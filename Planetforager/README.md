@@ -19,7 +19,7 @@ Then open `http://localhost:4173`.
 - Tap-to-aim automatic cannon
 - Damage, fire-rate and splash upgrades
 - Five escalating income rooms
-- Crew-level automation requirements
+- Crew-level requirements plus a separate per-world automation purchase
 - Manual collection for rooms without qualified crew
 - Offline income and local saving
 - World progression
