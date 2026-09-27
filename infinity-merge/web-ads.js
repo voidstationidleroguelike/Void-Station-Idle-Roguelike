@@ -7,6 +7,7 @@
   let initPromise = null;
   let gptReady = false;
   let gptListenersInstalled = false;
+  let desktopAdListenerInstalled = false;
 
   const rewardedStates = new Map();
 
@@ -14,7 +15,8 @@
     return typeof value === "string" &&
       value.trim() !== "" &&
       !value.includes("XXXX") &&
-      !value.includes("NETWORK_CODE");
+      !value.includes("NETWORK_CODE") &&
+      !value.includes("SLOT_ID");
   }
 
   function adsenseConfigured() {
@@ -53,14 +55,17 @@
       const script = document.createElement("script");
       script.async = true;
       script.src = src;
+
       Object.entries(attrs).forEach(([key, value]) => {
         if (key === "crossOrigin") script.crossOrigin = value;
         else script.setAttribute(key, value);
       });
+
       script.addEventListener("load", () => {
         script.dataset.loaded = "1";
         resolve();
       }, { once: true });
+
       script.addEventListener("error", reject, { once: true });
       document.head.appendChild(script);
     });
@@ -69,15 +74,19 @@
   async function initAdSense() {
     if (!adsenseConfigured()) return false;
 
-    const src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(adsense.client)}`;
+    const src =
+      `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(adsense.client)}`;
+
     await loadScript(src, { crossOrigin: "anonymous" });
 
     function mount(slotElementId, slotId) {
       if (!valueConfigured(slotId)) return;
+
       const host = document.getElementById(slotElementId);
       if (!host || host.dataset.adMounted === "1") return;
 
       host.innerHTML = "";
+
       const ins = document.createElement("ins");
       ins.className = "adsbygoogle";
       ins.style.display = "block";
@@ -86,6 +95,7 @@
       ins.setAttribute("data-ad-slot", slotId);
       ins.setAttribute("data-ad-format", "auto");
       ins.setAttribute("data-full-width-responsive", "true");
+
       host.appendChild(ins);
       host.dataset.adMounted = "1";
 
@@ -96,12 +106,27 @@
       }
     }
 
+    // Top ad is available on all layouts.
     mount("adTop", adsense.topSlot);
 
     // Side ads only exist visually on wide desktop layouts.
-    // It is safe to mount them on narrower screens; CSS keeps the containers hidden.
-    mount("adLeft", adsense.leftSlot);
-    mount("adRight", adsense.rightSlot);
+    // Do not request responsive ads while their containers are display:none.
+    const desktopQuery = window.matchMedia("(min-width: 1280px)");
+
+    function mountDesktopSideAds() {
+      if (!desktopQuery.matches) return;
+      mount("adLeft", adsense.leftSlot);
+      mount("adRight", adsense.rightSlot);
+    }
+
+    mountDesktopSideAds();
+
+    if (!desktopAdListenerInstalled && desktopQuery.addEventListener) {
+      desktopAdListenerInstalled = true;
+      desktopQuery.addEventListener("change", event => {
+        if (event.matches) mountDesktopSideAds();
+      });
+    }
 
     document.documentElement.classList.add("display-ads-configured");
     return true;
@@ -110,13 +135,17 @@
   function finishRewarded(slot, result) {
     const state = rewardedStates.get(slot);
     if (!state || state.done) return;
+
     state.done = true;
     clearTimeout(state.timer);
     rewardedStates.delete(slot);
-    try { window.googletag?.destroySlots?.([slot]); } catch {}
+
+    try {
+      window.googletag?.destroySlots?.([slot]);
+    } catch {}
+
     state.resolve(result);
   }
-
 
   function installGPTListeners() {
     if (gptListenersInstalled) return;
@@ -127,9 +156,12 @@
     pubads.addEventListener("rewardedSlotReady", event => {
       const state = rewardedStates.get(event.slot);
       if (!state) return;
+
       state.ready = true;
+
       try {
         state.shown = !!event.makeRewardedVisible();
+
         if (!state.shown) {
           finishRewarded(event.slot, {
             provider: "google-ad-manager",
@@ -152,6 +184,7 @@
     pubads.addEventListener("rewardedSlotGranted", event => {
       const state = rewardedStates.get(event.slot);
       if (!state) return;
+
       state.earned = true;
       state.payload = event.payload || null;
     });
@@ -159,6 +192,7 @@
     pubads.addEventListener("rewardedSlotClosed", event => {
       const state = rewardedStates.get(event.slot);
       if (!state) return;
+
       finishRewarded(event.slot, {
         provider: "google-ad-manager",
         available: true,
@@ -168,9 +202,7 @@
       });
     });
 
-
-
-    // Covers empty / no-fill requests for both out-of-page formats.
+    // Covers empty / no-fill requests for rewarded out-of-page formats.
     pubads.addEventListener("slotRenderEnded", event => {
       if (!event.isEmpty) return;
 
@@ -183,7 +215,6 @@
           noFill: true
         });
       }
-
     });
   }
 
@@ -210,12 +241,23 @@
 
     initPromise = (async () => {
       const tasks = [];
-      if (adsenseConfigured()) tasks.push(initAdSense().catch(error => console.warn("AdSense init failed", error)));
-      if (gamConfigured()) tasks.push(initGPT().catch(error => console.warn("Google Ad Manager init failed", error)));
+
+      if (adsenseConfigured()) {
+        tasks.push(
+          initAdSense().catch(error => console.warn("AdSense init failed", error))
+        );
+      }
+
+      if (gamConfigured()) {
+        tasks.push(
+          initGPT().catch(error => console.warn("Google Ad Manager init failed", error))
+        );
+      }
 
       await Promise.all(tasks);
       initialized = true;
       notifyState();
+
       return adsenseConfigured() || gamConfigured();
     })();
 
@@ -234,8 +276,14 @@
     }
 
     const ready = await initGPT();
+
     if (!ready) {
-      return { provider: "web", available: false, shown: false, earned: false };
+      return {
+        provider: "web",
+        available: false,
+        shown: false,
+        earned: false
+      };
     }
 
     return new Promise(resolve => {
