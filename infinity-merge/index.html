@@ -167,34 +167,8 @@ body{touch-action:manipulation} button{font:inherit}
 }
 
 .top-actions{display:flex;align-items:center;gap:10px}
-.settings-btn{width:34px;height:34px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:#aaaab3;display:grid;place-items:center;font-size:17px;padding:0}
-.settings-btn:active{transform:scale(.96)}
-.settings-list{display:flex;flex-direction:column;gap:9px;margin-top:15px}
-.settings-row{width:100%;min-height:64px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--text);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 13px;text-align:left}
-.settings-row span{display:flex;flex-direction:column;gap:3px;min-width:0}
-.settings-row strong{font-size:13px}
-.settings-row small{color:var(--muted);font-size:10px;line-height:1.25}
-.settings-row b{color:var(--accent);font-size:12px;white-space:nowrap}
-.settings-info{border-top:1px solid var(--line);margin-top:3px;padding:12px 3px 0;display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px}
-.settings-info strong{color:#d5d5db;font-size:11px}
-.interstitial-demo{text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 20px}
-.interstitial-demo>strong{font-size:20px}
-.interstitial-demo>small{color:var(--muted);max-width:280px;line-height:1.4}
-.interstitial-badge{font-size:10px;letter-spacing:.16em;color:#aaaab3;border:1px solid var(--line);border-radius:999px;padding:6px 9px}
-.interstitial-close{margin-top:7px;min-width:140px;border:1px solid #4d4d55;background:#19191c;color:white;border-radius:11px;padding:11px 16px;font-weight:800}
-.ad-slot.ads-removed{display:none}
-
-.settings-row.purchase-owned{
-  border-color:#2ecc71;
-  background:#10271a;
-}
-
-.settings-row.danger-row{
-  border-color:#6e2727;
-  background:#241111;
-}
-.settings-row.danger-row strong{color:#ff8f8f}
-.settings-row.danger-row b{color:#ff6b6b}
+.restart-top-btn{width:34px;height:34px;border:1px solid #6e2727;border-radius:10px;background:#241111;color:#ff8f8f;display:grid;place-items:center;font-size:20px;font-weight:900;padding:0;cursor:pointer}
+.restart-top-btn:active{transform:scale(.96)}
 .restart-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -247,7 +221,7 @@ body{touch-action:manipulation} button{font:inherit}
         <div class="brand-sub">Swipe. Merge. Climb.</div>
       </div>
       <div class="top-actions">
-        <button id="settingsBtn" class="settings-btn" aria-label="Settings">⚙</button>
+        <button id="restartRunBtn" class="restart-top-btn" aria-label="Restart run" title="Restart run">↻</button>
         <div class="coins-wrap"><span class="coin-dot">◆</span><span id="coins">0</span></div>
       </div>
     </header>
@@ -320,28 +294,6 @@ body{touch-action:manipulation} button{font:inherit}
       </footer>
     </div>
 </div>
-
-  <div id="settingsModal" class="modal-backdrop" hidden>
-    <section class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
-      <div class="modal-head">
-        <div>
-          <h2 id="settingsTitle">Settings</h2>
-          <p>Game options</p>
-        </div>
-        <button id="closeSettingsBtn" class="close-btn" aria-label="Close settings">×</button>
-      </div>
-
-      <div class="settings-list">
-        <button id="restartRunBtn" class="settings-row danger-row">
-          <span>
-            <strong>Restart run</strong>
-            <small>Reset board, coins, moves, spawn level and hammers</small>
-          </span>
-          <b>RESTART</b>
-        </button>
-      </div>
-    </section>
-  </div>
 
   <div id="restartConfirmModal" class="modal-backdrop" hidden>
     <section class="modal" role="dialog" aria-modal="true" aria-labelledby="restartConfirmTitle">
