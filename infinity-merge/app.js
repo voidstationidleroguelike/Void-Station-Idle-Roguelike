@@ -15,7 +15,9 @@
     moveAdBtn:$("moveAdBtn"), moveAdLabel:$("moveAdLabel"), goldAdBtn:$("goldAdBtn"), goldAdLabel:$("goldAdLabel"),
     leaderboardModal:$("leaderboardModal"), closeLeaderboardBtn:$("closeLeaderboardBtn"), leaderboardBest:$("leaderboardBest"),
     settingsBtn:$("settingsBtn"), settingsModal:$("settingsModal"), closeSettingsBtn:$("closeSettingsBtn"),
-    soundToggleBtn:$("soundToggleBtn"), soundState:$("soundState")
+    restartRunBtn:$("restartRunBtn"), restartConfirmModal:$("restartConfirmModal"),
+    closeRestartConfirmBtn:$("closeRestartConfirmBtn"), cancelRestartBtn:$("cancelRestartBtn"),
+    confirmRestartBtn:$("confirmRestartBtn")
   };
 
   function todayKey() {
@@ -36,8 +38,7 @@
       board: Array(SIZE * SIZE).fill(null),
       moveAdsWatched: 0,
       adSpawnUpgradeDay: todayKey(),
-      adSpawnUpgradeCountToday: 0,
-      soundEnabled: true
+      adSpawnUpgradeCountToday: 0
     };
   }
 
@@ -58,7 +59,7 @@
       if(typeof x.moveAdsWatched !== "number") x.moveAdsWatched = 0;
       if(typeof x.adSpawnUpgradeDay !== "string") x.adSpawnUpgradeDay = todayKey();
       if(typeof x.adSpawnUpgradeCountToday !== "number") x.adSpawnUpgradeCountToday = 0;
-      if(typeof x.soundEnabled !== "boolean") x.soundEnabled = true;
+      delete x.soundEnabled;
       return x;
     }catch{ return null; }
   }
@@ -77,38 +78,6 @@
     els.msg.textContent = text;
     clearTimeout(msg.t);
     msg.t = setTimeout(() => { if (els.msg.textContent === text) els.msg.textContent = ""; }, ms);
-  }
-
-  let audioContext = null;
-
-  function ensureAudio(){
-    if(!state.soundEnabled) return;
-    try{
-      if(!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      if(audioContext.state === "suspended") audioContext.resume();
-    }catch{}
-  }
-
-  function playMergePop(level=1, count=1){
-    if(!state.soundEnabled) return;
-    ensureAudio();
-    if(!audioContext) return;
-    try{
-      const now = audioContext.currentTime;
-      const osc = audioContext.createOscillator();
-      const gain = audioContext.createGain();
-      const base = 210 + Math.min(420, level * 18) + Math.min(80, count * 10);
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(base, now);
-      osc.frequency.exponentialRampToValueAtTime(Math.max(110, base * .62), now + .09);
-      gain.gain.setValueAtTime(.0001, now);
-      gain.gain.exponentialRampToValueAtTime(.16, now + .008);
-      gain.gain.exponentialRampToValueAtTime(.0001, now + .11);
-      osc.connect(gain);
-      gain.connect(audioContext.destination);
-      osc.start(now);
-      osc.stop(now + .12);
-    }catch{}
   }
 
   function randomEmpty(board=state.board){
@@ -263,9 +232,6 @@
       }
 
       const h = hammerAwards(merges);
-      if(merges){
-        playMergePop(Math.max(...result.mergedLevels), merges);
-      }
       const spawned = addRandomTile(true);
 
       lastPopIds = new Set(result.resultIds);
@@ -344,8 +310,6 @@
     els.best.textContent = state.bestLevel.toLocaleString();
     els.worldBest.textContent = globalBestLevel > 0 ? globalBestLevel.toLocaleString() : "—";
     els.leaderboardBest.textContent = globalBestLevel > 0 ? globalBestLevel.toLocaleString() : "—";
-    els.soundState.textContent = state.soundEnabled ? "ON" : "OFF";
-    els.soundState.style.color = state.soundEnabled ? "#2ecc71" : "#8f8f99";
 
     els.spawnCostLabel.textContent = `Lv. ${state.spawnLevel} • ◆${sp}`;
     els.spawnBtn.disabled = state.coins < sp || randomEmpty() < 0;
@@ -392,7 +356,6 @@
   }
 
   els.grid.addEventListener("pointerdown", e => {
-    ensureAudio();
     if(animating) return;
     const cell = e.target.closest(".cell");
     const index = cell ? Number(cell.dataset.index) : -1;
@@ -417,7 +380,7 @@
   els.grid.addEventListener("pointercancel", () => gesture = null);
 
   window.addEventListener("keydown", e => {
-    if(!els.leaderboardModal.hidden) return;
+    if(!els.leaderboardModal.hidden || !els.settingsModal.hidden || !els.restartConfirmModal.hidden) return;
     const map = { ArrowLeft:"left", ArrowRight:"right", ArrowUp:"up", ArrowDown:"down" };
     if(map[e.key]){ e.preventDefault(); performSwipe(map[e.key]); }
   });
@@ -551,12 +514,50 @@
     if(e.target === els.settingsModal) els.settingsModal.hidden = true;
   });
 
-  els.soundToggleBtn.addEventListener("click", () => {
-    state.soundEnabled = !state.soundEnabled;
-    if(state.soundEnabled) ensureAudio();
+  function restartRun(){
+    if(animating) return;
+
+    // Keep persistent / anti-abuse progress while resetting the active run.
+    const preservedBestLevel = Math.max(1, Number(state.bestLevel) || 1);
+    const preservedMoveAdsWatched = Math.max(0, Number(state.moveAdsWatched) || 0);
+    const preservedAdDay = typeof state.adSpawnUpgradeDay === "string"
+      ? state.adSpawnUpgradeDay
+      : todayKey();
+    const preservedAdCountToday = Math.max(0, Number(state.adSpawnUpgradeCountToday) || 0);
+
+    state = fresh();
+    state.bestLevel = preservedBestLevel;
+    state.moveAdsWatched = preservedMoveAdsWatched;
+    state.adSpawnUpgradeDay = preservedAdDay;
+    state.adSpawnUpgradeCountToday = preservedAdCountToday;
+
+    ensureDailyReset();
+    ensureStart();
     save();
     render();
-    msg(`Sound ${state.soundEnabled ? "on" : "off"}.`);
+    msg("Run restarted.");
+  }
+
+  function closeRestartConfirm(){
+    els.restartConfirmModal.hidden = true;
+  }
+
+  els.restartRunBtn.addEventListener("click", () => {
+    if(animating) return;
+    els.settingsModal.hidden = true;
+    els.restartConfirmModal.hidden = false;
+  });
+
+  els.closeRestartConfirmBtn.addEventListener("click", closeRestartConfirm);
+  els.cancelRestartBtn.addEventListener("click", closeRestartConfirm);
+
+  els.restartConfirmModal.addEventListener("click", e => {
+    if(e.target === els.restartConfirmModal) closeRestartConfirm();
+  });
+
+  els.confirmRestartBtn.addEventListener("click", () => {
+    closeRestartConfirm();
+    restartRun();
   });
 
   els.worldBestBtn.addEventListener("click", async () => {
@@ -587,19 +588,6 @@
         els.leaderboardBest.textContent = globalBestLevel.toLocaleString();
       }
     }
-  });
-
-  let tap = 0;
-  $("gameTitle").addEventListener("click", () => {
-    const now = Date.now();
-    if(now - tap < 450){
-      localStorage.removeItem(SAVE_KEY);
-      state = fresh();
-      ensureStart();
-      render();
-      msg("Prototype reset.");
-    }
-    tap = now;
   });
 
   ensureStart();
