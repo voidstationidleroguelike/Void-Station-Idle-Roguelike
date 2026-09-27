@@ -231,6 +231,34 @@ body{touch-action:manipulation} button{font:inherit}
   background:#10271a;
 }
 
+.settings-row.danger-row{
+  border-color:#6e2727;
+  background:#241111;
+}
+.settings-row.danger-row strong{color:#ff8f8f}
+.settings-row.danger-row b{color:#ff6b6b}
+.restart-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-top:16px;
+}
+.restart-actions button{
+  min-height:46px;
+  border-radius:11px;
+  font-weight:850;
+}
+.restart-cancel{
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+}
+.restart-confirm{
+  border:1px solid #8b2e2e;
+  background:#401717;
+  color:#ffd7d7;
+}
+
 
 /* Web-only details */
 .web-purchase-note:disabled{opacity:.55;cursor:not-allowed}
@@ -430,17 +458,36 @@ body{touch-action:manipulation} button{font:inherit}
       <div class="modal-head">
         <div>
           <h2 id="settingsTitle">Settings</h2>
-          <p>Game and ad preferences</p>
+          <p>Game options</p>
         </div>
         <button id="closeSettingsBtn" class="close-btn" aria-label="Close settings">×</button>
       </div>
 
       <div class="settings-list">
-        <button id="soundToggleBtn" class="settings-row">
-          <span><strong>Sound</strong><small>Merge pop sound</small></span>
-          <b id="soundState">ON</b>
+        <button id="restartRunBtn" class="settings-row danger-row">
+          <span>
+            <strong>Restart run</strong>
+            <small>Reset board, coins, moves, spawn level and hammers</small>
+          </span>
+          <b>RESTART</b>
         </button>
+      </div>
+    </section>
+  </div>
 
+  <div id="restartConfirmModal" class="modal-backdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="restartConfirmTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="restartConfirmTitle">Restart this run?</h2>
+          <p>Your board, coins, moves, spawn level, hammers and merge progress will reset. Your best level and daily ad limits are kept.</p>
+        </div>
+        <button id="closeRestartConfirmBtn" class="close-btn" aria-label="Cancel restart">×</button>
+      </div>
+
+      <div class="restart-actions">
+        <button id="cancelRestartBtn" class="restart-cancel">Cancel</button>
+        <button id="confirmRestartBtn" class="restart-confirm">Restart run</button>
       </div>
     </section>
   </div>
