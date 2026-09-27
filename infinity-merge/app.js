@@ -223,6 +223,7 @@
 
       const merges = result.mergedLevels.length;
       const coins = result.mergedLevels.reduce((s,v)=>s+v,0);
+      const previousBestLevel = state.bestLevel;
 
       if(merges){
         state.coins += coins;
@@ -237,6 +238,15 @@
       lastSpawnId = spawned?.tile?.id ?? null;
       save();
       render();
+
+      if(state.bestLevel > previousBestLevel){
+        window.InfinityFirebase?.submitWorldBest?.(state.bestLevel).then(result => {
+          if(result?.bestLevel){
+            globalBestLevel = Number(result.bestLevel);
+            render();
+          }
+        });
+      }
 
       if(merges){
         msg(`${merges} merge${merges===1 ? "" : "s"} • +${coins} coins • +${merges} Move${merges===1 ? "" : "s"}${h ? ` • +${h} hammer` : ""}`, 1800);
@@ -580,10 +590,18 @@
   render();
 
   // Firestore: read the shared Android / iOS / web world record.
-  window.InfinityFirebase?.refreshWorldBest?.().then(result => {
+  window.InfinityFirebase?.refreshWorldBest?.().then(async result => {
     if(result?.bestLevel){
-      globalBestLevel = result.bestLevel;
+      globalBestLevel = Number(result.bestLevel);
       render();
+    }
+
+    if(state.bestLevel > globalBestLevel){
+      const submitted = await window.InfinityFirebase?.submitWorldBest?.(state.bestLevel);
+      if(submitted?.bestLevel){
+        globalBestLevel = Number(submitted.bestLevel);
+        render();
+      }
     }
   });
 
