@@ -2,15 +2,16 @@
 
 const FPS = 30;
 const FRAME_MS = 1000 / FPS;
-const PLANET_DENSITY_SCALE = 51 / 35;
+const ROTATION_PERIOD = 90;
+const FREE_CRATE_COOLDOWN = 30 * 60 * 1000;
 const SAVE_KEY = "planet-breaker-prototype-v1";
 const materials = {
-  crust: { hp: 4, color: "#ef7a2d", value: 0 },
-  rock: { hp: 12, color: "#bb5630", value: 0 },
-  iron: { hp: 30, color: "#667687", value: 1.2 },
-  crystal: { hp: 18, color: "#884cf4", value: 9 },
-  gold: { hp: 22, color: "#ffc936", value: 18 },
-  core: { hp: 55, color: "#9d2945", value: 2.5 },
+  crust: { hp: 1, color: "#ef7a2d", value: 0, minerals: 0 },
+  rock: { hp: 4, color: "#bb5630", value: 0, minerals: 0 },
+  iron: { hp: 10, color: "#667687", value: 1.2, minerals: .08 },
+  crystal: { hp: 6, color: "#884cf4", value: 9, minerals: 1 },
+  gold: { hp: 7, color: "#ffc936", value: 18, minerals: .35 },
+  core: { hp: 18, color: "#9d2945", value: 2.5, minerals: .04 },
 };
 
 const roomDefs = [
@@ -23,10 +24,14 @@ const roomDefs = [
 
 const defaultState = () => ({
   money: 80,
+  minerals: 0,
   world: 1,
   weapon: { damage: 1, speed: 1, splash: 1 },
   rooms: roomDefs.map((r, i) => ({ level: i === 0 ? 1 : 0, unlocked: i === 0, progress: 0, ready: false, crewLevel: i === 0 ? 1 : 0, autoPurchased: false })),
   slots: { left: false, right: false },
+  crewCards: roomDefs.map(() => 0),
+  nextFreeCrateAt: 0,
+  nextAdCrateAt: 0,
   lastSeen: Date.now(),
 });
 
@@ -44,10 +49,12 @@ const canvas = document.querySelector("#gameCanvas");
 const ctx = canvas.getContext("2d", { alpha: false });
 const roomsEl = document.querySelector("#rooms");
 const moneyLabel = document.querySelector("#moneyLabel");
+const mineralLabel = document.querySelector("#mineralLabel");
 const worldLabel = document.querySelector("#worldLabel");
 const planetPercent = document.querySelector("#planetPercent");
 const planetName = document.querySelector("#planetName");
 const weaponDialog = document.querySelector("#weaponDialog");
+const crewDialog = document.querySelector("#crewDialog");
 
 function loadState() {
   try {
@@ -59,6 +66,7 @@ function loadState() {
       ...stored,
       weapon: { ...fresh.weapon, ...stored.weapon },
       slots: { ...fresh.slots, ...stored.slots },
+      crewCards: fresh.crewCards.map((cards, i) => stored.crewCards?.[i] ?? cards),
       rooms: fresh.rooms.map((room, i) => ({ ...room, ...(stored.rooms?.[i] || {}) })),
     };
   } catch { return defaultState(); }
@@ -86,16 +94,23 @@ function roomIncome(i) {
   const crewMultiplier = 1 + room.crewLevel * 0.5;
   return roomDefs[i].base * room.level * milestone * crewMultiplier * worldScale();
 }
-function roomUpgradeCost(i) { return roomDefs[i].base * 6 * Math.pow(1.16, state.rooms[i].level) * worldScale(); }
+function isNextRoomLevelMilestone(i) { return (state.rooms[i].level + 1) % 10 === 0; }
+function roomUpgradeCost(i) {
+  const base = roomDefs[i].base * 6 * Math.pow(1.16, state.rooms[i].level) * worldScale();
+  return base * (isNextRoomLevelMilestone(i) ? 3 : 1);
+}
 function roomAutoCost(i) { return roomDefs[i].autoCost * worldScale(); }
 function weaponCost(type) {
   const level = state.weapon[type];
-  const bases = { damage: 65, speed: 120, splash: 180 };
-  return bases[type] * Math.pow(1.72, level - 1) * worldScale();
+  const bases = { damage: 250, speed: 450, splash: 800 };
+  return bases[type] * Math.pow(2.05, level - 1) * worldScale();
 }
-function weaponDamage() { return (3 + state.weapon.damage * 3.5) * Math.pow(1.13, state.world - 1); }
-function fireInterval() { return Math.max(0.16, 1.05 * Math.pow(0.9, state.weapon.speed - 1)); }
-function splashRadius() { return (0.7 + state.weapon.splash * 0.48) * PLANET_DENSITY_SCALE; }
+function weaponDamage() { return Math.pow(1.1, state.weapon.damage - 1) * Math.pow(1.1, state.world - 1); }
+function fireRateMultiplier() { return Math.pow(1.1, state.weapon.speed - 1); }
+function fireInterval() { return Math.max(0.2, 1.2 / fireRateMultiplier()); }
+function splashPercent() { return state.weapon.splash * 10; }
+function cardsRequired(i) { return Math.max(2, state.rooms[i].crewLevel * 3); }
+function crewUpgradeCost(i) { return 20 * Math.pow(1.8, state.rooms[i].crewLevel - 1); }
 
 function createPlanet() {
   const cols = 51;
@@ -118,7 +133,7 @@ function createPlanet() {
       cells.push({ x, y, type, hp: base, maxHp: base, alive: true });
     }
   }
-  planet = { cols, rows, cells, total: cells.length, remaining: cells.length, shotClock: 0 };
+  planet = { cols, rows, cells, total: cells.length, remaining: cells.length, shotClock: 0, rotation: 0 };
   target = { x: cols / 2, y: rows - 3 };
   planetName.textContent = ["DUST ROCK", "IRON MOON", "VIOLET CORE", "GOLDEN GIANT", "EMBER WORLD"][(state.world - 1) % 5];
 }
@@ -139,6 +154,16 @@ function layoutPlanet() {
   return { cell, left: (w - size) / 2, top: Math.max(6, (h - size) / 2 - 7), size };
 }
 
+function cellScreenPosition(c, layout = layoutPlanet()) {
+  const centerX = layout.left + layout.size / 2;
+  const centerY = layout.top + layout.size / 2;
+  const localX = (c.x + .5 - planet.cols / 2) * layout.cell;
+  const localY = (c.y + .5 - planet.rows / 2) * layout.cell;
+  const cos = Math.cos(planet.rotation);
+  const sin = Math.sin(planet.rotation);
+  return { x: centerX + localX * cos - localY * sin, y: centerY + localX * sin + localY * cos };
+}
+
 function draw() {
   const w = canvas.clientWidth;
   const h = canvas.clientHeight;
@@ -149,13 +174,16 @@ function draw() {
     if (!c.alive) continue;
     const damage = 1 - c.hp / c.maxHp;
     ctx.fillStyle = damage > 0.65 ? "#402d36" : materials[c.type].color;
-    ctx.fillRect(l.left + c.x * l.cell + 0.25, l.top + c.y * l.cell + 0.25, l.cell - 0.5, l.cell - 0.5);
+    const pos = cellScreenPosition(c, l);
+    ctx.fillRect(pos.x - l.cell / 2 + .25, pos.y - l.cell / 2 + .25, l.cell - .5, l.cell - .5);
   }
   if (target) {
     ctx.strokeStyle = "#ffffff55";
     ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(l.left + (target.x + .5) * l.cell, l.top + (target.y + .5) * l.cell, 7, 0, Math.PI * 2);
+    const targetCell = nearestAliveTarget(target);
+    const pos = targetCell ? cellScreenPosition(targetCell, l) : null;
+    if (pos) ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2);
     ctx.stroke();
   }
   for (const shot of shots) {
@@ -187,29 +215,36 @@ function spawnShot() {
   const l = layoutPlanet();
   const aim = nearestAliveTarget(target || { x: planet.cols / 2, y: planet.rows - 1 });
   if (!aim) return;
-  const tx = l.left + (aim.x + .5) * l.cell;
-  const ty = l.top + (aim.y + .5) * l.cell;
+  const pos = cellScreenPosition(aim, l);
+  const tx = pos.x;
+  const ty = pos.y;
   const sx = canvas.clientWidth / 2;
   const sy = canvas.clientHeight + 8;
   shots.push({ x: sx, y: sy, tx, ty, cell: aim, speed: 850 });
 }
 
 function hitPlanet(cell, x, y) {
-  const radius = splashRadius();
   const l = layoutPlanet();
   let reward = 0;
+  let mineralReward = 0;
+  const splash = splashPercent();
+  const maxRing = Math.ceil(splash / 100);
   for (const c of planet.cells) {
     if (!c.alive) continue;
-    const d = Math.hypot(c.x - cell.x, c.y - cell.y);
-    if (d > radius) continue;
-    c.hp -= weaponDamage() * Math.max(.25, 1 - d / (radius + .5));
+    const ring = Math.max(Math.abs(c.x - cell.x), Math.abs(c.y - cell.y));
+    if (ring > maxRing) continue;
+    const damageFactor = ring === 0 ? 1 : Math.max(0, Math.min(1, (splash - (ring - 1) * 100) / 100));
+    if (damageFactor <= 0) continue;
+    c.hp -= weaponDamage() * damageFactor;
     if (c.hp <= 0) {
       c.alive = false;
       planet.remaining--;
       reward += materials[c.type].value * worldScale();
+      mineralReward += materials[c.type].minerals;
+      const pos = cellScreenPosition(c, l);
       for (let i = 0; i < 2; i++) particles.push({
-        x: l.left + (c.x + .5) * l.cell,
-        y: l.top + (c.y + .5) * l.cell,
+        x: pos.x,
+        y: pos.y,
         vx: (Math.random() - .5) * 60,
         vy: (Math.random() - .5) * 60,
         life: 1,
@@ -219,7 +254,10 @@ function hitPlanet(cell, x, y) {
   }
   if (reward > 0) {
     state.money += reward;
-    showToast(`Minerals +${formatNumber(reward)}`);
+    showToast(`Credits +${formatNumber(reward)}`);
+  }
+  if (mineralReward > 0) {
+    state.minerals += mineralReward;
   }
   if (planet.remaining <= 0) completeWorld();
 }
@@ -238,10 +276,11 @@ function completeWorld() {
   showToast(`World cleared! +${formatNumber(bonus)}`);
   createPlanet();
   renderUI();
-  saveState();
+  openCrate("planet");
 }
 
 function update(dt) {
+  planet.rotation = (planet.rotation + dt * Math.PI * 2 / ROTATION_PERIOD) % (Math.PI * 2);
   planet.shotClock += dt;
   if (planet.shotClock >= fireInterval()) {
     planet.shotClock %= fireInterval();
@@ -307,6 +346,7 @@ function roomCard(i) {
   const autoButton = auto
     ? `<button class="action action--auto" disabled>AUTO ACTIVE</button>`
     : `<button class="action action--auto buy-auto" data-room="${i}" ${qualified ? "" : "disabled"}>${qualified ? "ACTIVATE AUTO" : `REQUIRES ${def.crew.toUpperCase()} LV.${def.autoLevel}`}<small>${qualified ? formatNumber(roomAutoCost(i)) : "CREW REQUIRED"}</small></button>`;
+  const milestone = isNextRoomLevelMilestone(i);
   return `<article class="room" data-room-card="${i}">
     <div class="room__top">
       <div class="room__icon">${def.icon}</div>
@@ -316,7 +356,7 @@ function roomCard(i) {
     <div class="progress"><i data-progress="${i}"></i></div>
     <div class="room__actions">
       <button class="action action--secondary collect-room" data-room="${i}" ${room.ready ? "" : "disabled"}>${room.ready ? `COLLECT ${formatNumber(roomIncome(i))}` : "PRODUCING"}</button>
-      <button class="action upgrade-room" data-room="${i}">UPGRADE<small>${formatNumber(roomUpgradeCost(i))}</small></button>
+      <button class="action upgrade-room" data-room="${i}">${milestone ? "MILESTONE ×2" : "UPGRADE"}<small>${formatNumber(roomUpgradeCost(i))}${milestone ? " · 1 CREW CARD" : ""}</small></button>
       ${autoButton}
     </div>
   </article>`;
@@ -330,29 +370,87 @@ function renderWeaponMenu() {
   document.querySelector("#weaponStats").innerHTML = `
     <div class="stat"><strong>${weaponDamage().toFixed(1)}</strong><small>DAMAGE</small></div>
     <div class="stat"><strong>${(1 / fireInterval()).toFixed(1)}/s</strong><small>FIRE RATE</small></div>
-    <div class="stat"><strong>${splashRadius().toFixed(1)}</strong><small>SPLASH</small></div>`;
+    <div class="stat"><strong>${splashPercent()}%</strong><small>SPLASH</small></div>`;
   const data = [
-    ["damage", "Damage", "+3.5 direct damage"],
-    ["speed", "Fire Rate", "10% faster firing"],
-    ["splash", "Splash", "Damage a larger pixel area"],
+    ["damage", "Damage", "+10% damage"],
+    ["speed", "Fire Rate", "+10% firing speed"],
+    ["splash", "Splash", "+10 percentage points"],
   ];
   document.querySelector("#weaponUpgrades").innerHTML = data.map(([key, name, desc]) => `<div class="upgrade"><div><strong>${name} Lv.${state.weapon[key]}</strong><p>${desc}</p></div><button class="action weapon-upgrade" data-type="${key}">UPGRADE<small>${formatNumber(weaponCost(key))}</small></button></div>`).join("");
+}
+
+function renderCrewMenu() {
+  document.querySelector("#crewList").innerHTML = roomDefs.map((def, i) => {
+    const room = state.rooms[i];
+    const needed = cardsRequired(i);
+    const canUpgrade = state.crewCards[i] >= needed && state.minerals >= crewUpgradeCost(i);
+    return `<article class="crew-card">
+      <div class="crew-card__portrait">👤</div>
+      <div><strong>${def.crew} · Lv.${room.crewLevel}</strong><p>${def.name} income ×${(1 + room.crewLevel * .5).toFixed(1)} · Cards ${state.crewCards[i]}/${needed}</p></div>
+      <button type="button" class="action crew-upgrade" data-room="${i}" ${canUpgrade ? "" : "disabled"}>LEVEL UP<small>◆ ${formatNumber(crewUpgradeCost(i))}</small></button>
+    </article>`;
+  }).join("");
+  refreshCrateUI();
+}
+
+function refreshCrateUI() {
+  const remaining = Math.max(0, state.nextFreeCrateAt - Date.now());
+  const button = document.querySelector("#freeCrate");
+  const label = document.querySelector("#freeCrateTimer");
+  if (!button || !label) return;
+  button.disabled = remaining > 0;
+  if (remaining <= 0) label.textContent = "READY";
+  else {
+    const minutes = Math.floor(remaining / 60000);
+    const seconds = Math.floor((remaining % 60000) / 1000);
+    label.textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
+  }
+  const adButton = document.querySelector("#adCrate");
+  if (adButton) {
+    const adRemaining = Math.max(0, state.nextAdCrateAt - Date.now());
+    adButton.disabled = adRemaining > 0;
+    const adLabel = adButton.querySelector("small");
+    if (adRemaining <= 0) adLabel.textContent = "WATCH AD · PROTOTYPE";
+    else adLabel.textContent = `AVAILABLE IN ${Math.ceil(adRemaining / 60000)} MIN`;
+  }
+}
+
+function openCrate(kind) {
+  const config = {
+    free: { cards: 3, minerals: 15, label: "Free Supply Pod" },
+    ad: { cards: 6, minerals: 30, label: "Rewarded Crate" },
+    mineral: { cards: 9, minerals: 0, label: "Mineral Crate" },
+    planet: { cards: 5, minerals: 25, label: "Planet Chest" },
+  }[kind];
+  if (!config) return;
+  for (let n = 0; n < config.cards; n++) {
+    const i = Math.floor(Math.random() * roomDefs.length);
+    state.crewCards[i]++;
+  }
+  state.minerals += config.minerals;
+  showToast(`${config.label}: ${config.cards} cards${config.minerals ? ` + ◆${config.minerals}` : ""}`);
+  renderCrewMenu();
+  renderRooms();
+  saveState();
 }
 
 function renderUI() {
   worldLabel.textContent = state.world;
   renderRooms();
   renderWeaponMenu();
+  renderCrewMenu();
   refreshDynamicUI();
 }
 
 function refreshDynamicUI() {
   moneyLabel.textContent = formatNumber(state.money);
+  mineralLabel.textContent = formatNumber(state.minerals);
   planetPercent.textContent = `${Math.ceil(planet.remaining / planet.total * 100)}%`;
   roomDefs.forEach((_, i) => {
     const bar = document.querySelector(`[data-progress="${i}"]`);
     if (bar) bar.style.width = `${state.rooms[i].progress * 100}%`;
   });
+  refreshCrateUI();
 }
 
 function spend(amount) {
@@ -372,14 +470,38 @@ function showToast(message) {
 canvas.addEventListener("pointerdown", (event) => {
   const rect = canvas.getBoundingClientRect();
   const l = layoutPlanet();
-  const x = (event.clientX - rect.left - l.left) / l.cell;
-  const y = (event.clientY - rect.top - l.top) / l.cell;
+  const centerX = l.left + l.size / 2;
+  const centerY = l.top + l.size / 2;
+  const screenX = event.clientX - rect.left - centerX;
+  const screenY = event.clientY - rect.top - centerY;
+  const cos = Math.cos(-planet.rotation);
+  const sin = Math.sin(-planet.rotation);
+  const localX = screenX * cos - screenY * sin;
+  const localY = screenX * sin + screenY * cos;
+  const x = localX / l.cell + planet.cols / 2 - .5;
+  const y = localY / l.cell + planet.rows / 2 - .5;
   const picked = nearestAliveTarget({ x, y });
   if (picked) target = { x: picked.x, y: picked.y };
 });
 
 document.querySelector("#scrollEconomy").addEventListener("click", () => document.querySelector("#economy").scrollIntoView());
 document.querySelector("#openWeapons").addEventListener("click", () => { renderWeaponMenu(); weaponDialog.showModal(); });
+document.querySelector("#openCrew").addEventListener("click", () => { renderCrewMenu(); crewDialog.showModal(); });
+document.querySelector("#freeCrate").addEventListener("click", () => {
+  if (Date.now() < state.nextFreeCrateAt) return;
+  state.nextFreeCrateAt = Date.now() + FREE_CRATE_COOLDOWN;
+  openCrate("free");
+});
+document.querySelector("#adCrate").addEventListener("click", () => {
+  if (Date.now() < state.nextAdCrateAt) return;
+  state.nextAdCrateAt = Date.now() + 30 * 60 * 1000;
+  openCrate("ad");
+});
+document.querySelector("#mineralCrate").addEventListener("click", () => {
+  if (state.minerals < 100) { showToast("Not enough minerals"); return; }
+  state.minerals -= 100;
+  openCrate("mineral");
+});
 document.querySelector("#resetGame").addEventListener("click", () => {
   if (!confirm("Reset the entire prototype?")) return;
   state = defaultState();
@@ -393,7 +515,15 @@ document.addEventListener("click", (event) => {
   if (upgrade) {
     const i = Number(upgrade.dataset.room);
     const cost = roomUpgradeCost(i);
-    if (spend(cost)) { state.rooms[i].level++; renderRooms(); }
+    if (spend(cost)) {
+      state.rooms[i].level++;
+      if (state.rooms[i].level % 10 === 0) {
+        state.crewCards[i]++;
+        showToast(`${roomDefs[i].name} milestone ×2 + 1 ${roomDefs[i].crew} card`);
+      }
+      renderRooms();
+      renderCrewMenu();
+    }
   }
   const collect = event.target.closest(".collect-room");
   if (collect) {
@@ -425,6 +555,22 @@ document.addEventListener("click", (event) => {
       room.progress = 0;
       renderRooms();
       showToast(`${def.name} automation activated`);
+    }
+  }
+  const crewUpgrade = event.target.closest(".crew-upgrade");
+  if (crewUpgrade) {
+    const i = Number(crewUpgrade.dataset.room);
+    const needed = cardsRequired(i);
+    const mineralCost = crewUpgradeCost(i);
+    if (state.crewCards[i] < needed) showToast("Not enough character cards");
+    else if (state.minerals < mineralCost) showToast("Not enough minerals");
+    else {
+      state.crewCards[i] -= needed;
+      state.minerals -= mineralCost;
+      state.rooms[i].crewLevel++;
+      renderCrewMenu();
+      renderRooms();
+      showToast(`${roomDefs[i].crew} reached level ${state.rooms[i].crewLevel}`);
     }
   }
   const slot = event.target.closest(".weapon-slot--empty");

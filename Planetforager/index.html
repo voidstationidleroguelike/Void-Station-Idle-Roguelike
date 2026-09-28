@@ -17,7 +17,9 @@
           </div>
           <div class="topbar__right">
             <div class="money"><span class="coin">●</span><strong id="moneyLabel">0</strong></div>
+            <div class="minerals" title="Minerals"><span>◆</span><strong id="mineralLabel">0</strong></div>
             <button id="openWeapons" class="button button--outline">WEAPONS</button>
+            <button id="openCrew" class="button button--outline">CREW</button>
           </div>
         </header>
 
@@ -63,6 +65,22 @@
         <p class="hint">Tap the planet to choose where all active weapons aim.</p>
         <div id="weaponStats" class="weapon-stats"></div>
         <div id="weaponUpgrades" class="upgrade-list"></div>
+      </form>
+    </dialog>
+
+    <dialog id="crewDialog" class="modal">
+      <form method="dialog" class="modal__panel">
+        <div class="section-heading">
+          <div><span class="eyebrow">PERSONNEL</span><h2>Crew & Supply Pods</h2></div>
+          <button class="close-button" value="close" aria-label="Close">×</button>
+        </div>
+        <div class="crate-grid">
+          <button type="button" id="freeCrate" class="crate-button"><strong>FREE SUPPLY POD</strong><small id="freeCrateTimer">READY</small></button>
+          <button type="button" id="adCrate" class="crate-button"><strong>REWARDED CRATE</strong><small>WATCH AD · PROTOTYPE</small></button>
+          <button type="button" id="mineralCrate" class="crate-button"><strong>MINERAL CRATE</strong><small>◆ 100</small></button>
+        </div>
+        <p class="hint">Duplicate cards level up crew. Higher crew levels increase income and satisfy automation requirements.</p>
+        <div id="crewList" class="crew-list"></div>
       </form>
     </dialog>
 
