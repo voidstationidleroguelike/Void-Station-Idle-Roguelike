@@ -82,74 +82,89 @@
     }
   }
 
-  async function getCallableApi() {
-    if (!callablePromise) {
-      callablePromise = Promise.all([
-        import("https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js"),
-        import("https://www.gstatic.com/firebasejs/12.19.0/firebase-functions.js")
-      ]).then(([appSdk, functionsSdk]) => {
-        const app = appSdk.getApps().length
-          ? appSdk.getApp()
-          : appSdk.initializeApp({
-              apiKey: FIREBASE.apiKey,
-              authDomain: FIREBASE.authDomain,
-              projectId: FIREBASE.projectId,
-              storageBucket: FIREBASE.storageBucket,
-              messagingSenderId: FIREBASE.messagingSenderId,
-              appId: FIREBASE.appId,
-              measurementId: FIREBASE.measurementId
-            });
-
-        const functions = functionsSdk.getFunctions(app, FIREBASE.functionsRegion);
-        const submit = functionsSdk.httpsCallable(functions, "submitWorldBest");
-
-        return { submit };
-      });
-    }
-
-    return callablePromise;
+  function documentUrl() {
+    return (
+      `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(FIREBASE.projectId)}` +
+      `/databases/(default)/documents/${encodeURIComponent(FIREBASE.collection)}/${encodeURIComponent(FIREBASE.document)}`
+    );
   }
 
   async function submitWorldBest(bestLevel) {
     const level = Number(bestLevel);
 
-    if (!Number.isInteger(level) || level < 1) {
+    if (!Number.isInteger(level) || level < 1 || level > 100000) {
       return {
         ok: false,
         bestLevel: cachedBest,
-        error: new Error("Invalid best level")
+        newRecord: false
       };
     }
 
-    // No reason to call the backend if this browser already knows
-    // about an equal or higher world record.
     if (level <= cachedBest) {
       return {
         ok: true,
         bestLevel: cachedBest,
-        newRecord: false,
-        skipped: true
+        newRecord: false
       };
     }
 
-    try {
-      const { submit } = await getCallableApi();
-      const result = await submit({ bestLevel: level });
+    // Refresh immediately before writing so an already-higher world record
+    // is never intentionally replaced by this client.
+    const latest = await refreshWorldBest();
+    if (latest?.bestLevel >= level) {
+      return {
+        ok: true,
+        bestLevel: latest.bestLevel,
+        newRecord: false
+      };
+    }
 
-      const serverBest = Number(result?.data?.bestLevel);
-      if (!Number.isInteger(serverBest) || serverBest < 1) {
-        throw new Error("Cloud Function returned an invalid bestLevel");
+    const url =
+      `${documentUrl()}` +
+      `?updateMask.fieldPaths=${encodeURIComponent(FIREBASE.field)}` +
+      `&key=${encodeURIComponent(FIREBASE.apiKey)}`;
+
+    try {
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fields: {
+            [FIREBASE.field]: {
+              integerValue: String(level)
+            }
+          }
+        })
+      });
+
+      if (response.status === 403) {
+        const refreshed = await refreshWorldBest();
+        return {
+          ok: refreshed.ok,
+          bestLevel: refreshed.bestLevel,
+          newRecord: false
+        };
       }
 
-      setCachedBest(serverBest, "cloud-function");
+      if (!response.ok) {
+        throw new Error(`Firestore HTTP ${response.status}`);
+      }
+
+      const payload = await response.json();
+      const serverBest = parseBestLevel(payload) ?? level;
+
+      setCachedBest(serverBest, "firebase-write");
 
       return {
         ok: true,
         bestLevel: serverBest,
-        newRecord: !!result?.data?.newRecord
+        newRecord: serverBest === level
       };
     } catch (error) {
-      console.warn("WORLD BEST submit failed.", error);
+      console.warn("BEST IN WORLD submit failed.", error);
+
       return {
         ok: false,
         bestLevel: cachedBest,
