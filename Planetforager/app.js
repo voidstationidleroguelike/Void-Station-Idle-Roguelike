@@ -14,6 +14,15 @@ const materials = {
   core: { hp: 18, color: "#9d2945", value: 2.5, minerals: .04 },
 };
 
+const planetThemes = [
+  { name: "DUST ROCK", lobes: 5, roughness: .45, phase: .3, colors: { crust: "#ef7a2d", rock: "#bb5630", iron: "#667687", crystal: "#884cf4", gold: "#ffc936", core: "#9d2945" } },
+  { name: "FROZEN MOON", lobes: 7, roughness: .75, phase: 1.2, colors: { crust: "#bfeaff", rock: "#6598b8", iron: "#526779", crystal: "#66f5ff", gold: "#d9ff75", core: "#28507a" } },
+  { name: "TOXIC WORLD", lobes: 4, roughness: 1.0, phase: 2.1, colors: { crust: "#91d34f", rock: "#477d43", iron: "#536b55", crystal: "#d8ff43", gold: "#ffd44e", core: "#315834" } },
+  { name: "CRIMSON GIANT", lobes: 9, roughness: .65, phase: .7, colors: { crust: "#f05252", rock: "#8d2f3c", iron: "#71555d", crystal: "#ff7bd4", gold: "#ffb83e", core: "#501c30" } },
+  { name: "VIOLET CORE", lobes: 6, roughness: 1.15, phase: 1.7, colors: { crust: "#9b64ef", rock: "#593889", iron: "#6d6580", crystal: "#eb77ff", gold: "#ffd35d", core: "#321f5c" } },
+  { name: "MACHINE PLANET", lobes: 12, roughness: .35, phase: 0, colors: { crust: "#9da9b5", rock: "#596774", iron: "#344554", crystal: "#58e5ff", gold: "#ffcf48", core: "#25313d" } },
+];
+
 const roomDefs = [
   { name: "Mining Bay", icon: "⛏", base: 8, cycle: 2.0, unlock: 0, crew: "Mara", autoLevel: 1, autoCost: 250 },
   { name: "Refinery", icon: "▣", base: 55, cycle: 4.0, unlock: 700, crew: "Kip", autoLevel: 2, autoCost: 4200 },
@@ -105,7 +114,7 @@ function weaponCost(type) {
   const bases = { damage: 250, speed: 450, splash: 800 };
   return bases[type] * Math.pow(2.05, level - 1) * worldScale();
 }
-function weaponDamage() { return Math.pow(1.1, state.weapon.damage - 1) * Math.pow(1.1, state.world - 1); }
+function weaponDamage() { return Math.pow(1.1, state.weapon.damage - 1); }
 function fireRateMultiplier() { return Math.pow(1.1, state.weapon.speed - 1); }
 function fireInterval() { return Math.max(0.2, 1.2 / fireRateMultiplier()); }
 function splashPercent() { return state.weapon.splash * 10; }
@@ -113,29 +122,35 @@ function cardsRequired(i) { return Math.max(2, state.rooms[i].crewLevel * 3); }
 function crewUpgradeCost(i) { return 20 * Math.pow(1.8, state.rooms[i].crewLevel - 1); }
 
 function createPlanet() {
-  const cols = 51;
-  const rows = 51;
-  const radius = 24.1;
+  const themeIndex = (state.world - 1) % planetThemes.length;
+  const themeCycle = Math.floor((state.world - 1) / planetThemes.length);
+  const theme = planetThemes[themeIndex];
+  const cols = Math.min(81, 51 + (state.world - 1) * 4);
+  const rows = cols;
+  const radius = cols / 2 - 1.4;
   const cells = [];
   for (let y = 0; y < rows; y++) {
     for (let x = 0; x < cols; x++) {
       const dx = x + 0.5 - cols / 2;
       const dy = y + 0.5 - rows / 2;
       const distance = Math.hypot(dx, dy);
-      if (distance > radius) continue;
-      const depth = 1 - distance / radius;
+      const angle = Math.atan2(dy, dx);
+      const edgeNoise = Math.sin(angle * theme.lobes + theme.phase) * theme.roughness + Math.sin(angle * (theme.lobes + 5) - theme.phase) * .28;
+      const localRadius = radius + edgeNoise;
+      if (distance > localRadius) continue;
+      const depth = 1 - distance / localRadius;
       const roll = Math.random();
       let type = depth > 0.72 ? "core" : depth > 0.3 ? "rock" : "crust";
       if (roll < 0.035) type = "gold";
       else if (roll < 0.085) type = "crystal";
       else if (roll < 0.16 && depth > 0.2) type = "iron";
-      const base = materials[type].hp * Math.pow(1.22, state.world - 1);
+      const base = materials[type].hp * Math.pow(1.4, state.world - 1);
       cells.push({ x, y, type, hp: base, maxHp: base, alive: true });
     }
   }
-  planet = { cols, rows, cells, total: cells.length, remaining: cells.length, shotClock: 0, rotation: 0 };
+  planet = { cols, rows, cells, total: cells.length, remaining: cells.length, shotClock: 0, rotation: 0, theme };
   target = { x: cols / 2, y: rows - 3 };
-  planetName.textContent = ["DUST ROCK", "IRON MOON", "VIOLET CORE", "GOLDEN GIANT", "EMBER WORLD"][(state.world - 1) % 5];
+  planetName.textContent = `${theme.name}${themeCycle ? ` MK ${themeCycle + 1}` : ""} · ${cols}×${rows}`;
 }
 
 function resizeCanvas() {
@@ -170,13 +185,20 @@ function draw() {
   ctx.fillStyle = "#07111d";
   ctx.fillRect(0, 0, w, h);
   const l = layoutPlanet();
+  const centerX = l.left + l.size / 2;
+  const centerY = l.top + l.size / 2;
+  ctx.save();
+  ctx.translate(centerX, centerY);
+  ctx.rotate(planet.rotation);
   for (const c of planet.cells) {
     if (!c.alive) continue;
     const damage = 1 - c.hp / c.maxHp;
-    ctx.fillStyle = damage > 0.65 ? "#402d36" : materials[c.type].color;
-    const pos = cellScreenPosition(c, l);
-    ctx.fillRect(pos.x - l.cell / 2 + .25, pos.y - l.cell / 2 + .25, l.cell - .5, l.cell - .5);
+    ctx.fillStyle = damage > 0.65 ? "#402d36" : (planet.theme.colors[c.type] || materials[c.type].color);
+    const x = (c.x + .5 - planet.cols / 2) * l.cell;
+    const y = (c.y + .5 - planet.rows / 2) * l.cell;
+    ctx.fillRect(x - l.cell / 2 - .12, y - l.cell / 2 - .12, l.cell + .24, l.cell + .24);
   }
+  ctx.restore();
   if (target) {
     ctx.strokeStyle = "#ffffff55";
     ctx.lineWidth = 1;
@@ -248,7 +270,7 @@ function hitPlanet(cell, x, y) {
         vx: (Math.random() - .5) * 60,
         vy: (Math.random() - .5) * 60,
         life: 1,
-        color: materials[c.type].color,
+        color: planet.theme.colors[c.type] || materials[c.type].color,
       });
     }
   }
@@ -503,11 +525,17 @@ document.querySelector("#mineralCrate").addEventListener("click", () => {
   openCrate("mineral");
 });
 document.querySelector("#resetGame").addEventListener("click", () => {
-  if (!confirm("Reset the entire prototype?")) return;
+  if (!confirm("Reset all progress and start again from World 1?")) return;
+  localStorage.removeItem(SAVE_KEY);
   state = defaultState();
+  shots = [];
+  particles = [];
+  target = null;
   createPlanet();
   renderUI();
   saveState();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast("Save reset — World 1");
 });
 
 document.addEventListener("click", (event) => {
