@@ -190,13 +190,24 @@ function draw() {
   ctx.save();
   ctx.translate(centerX, centerY);
   ctx.rotate(planet.rotation);
+  const materialPaths = new Map();
   for (const c of planet.cells) {
     if (!c.alive) continue;
     const damage = 1 - c.hp / c.maxHp;
-    ctx.fillStyle = damage > 0.65 ? "#402d36" : (planet.theme.colors[c.type] || materials[c.type].color);
+    const color = damage > 0.65 ? "#402d36" : (planet.theme.colors[c.type] || materials[c.type].color);
     const x = (c.x + .5 - planet.cols / 2) * l.cell;
     const y = (c.y + .5 - planet.rows / 2) * l.cell;
-    ctx.fillRect(x - l.cell / 2 - .12, y - l.cell / 2 - .12, l.cell + .24, l.cell + .24);
+    let path = materialPaths.get(color);
+    if (!path) {
+      path = new Path2D();
+      materialPaths.set(color, path);
+    }
+    path.moveTo(x + l.cell * .58, y);
+    path.arc(x, y, l.cell * .58, 0, Math.PI * 2);
+  }
+  for (const [color, path] of materialPaths) {
+    ctx.fillStyle = color;
+    ctx.fill(path);
   }
   ctx.restore();
   if (target) {
@@ -329,6 +340,7 @@ function update(dt) {
     p.life -= dt * 1.7;
     if (p.life <= 0) particles.splice(i, 1);
   }
+  let roomFinished = false;
   roomDefs.forEach((def, i) => {
     const room = state.rooms[i];
     if (!room.unlocked || room.ready) return;
@@ -338,9 +350,13 @@ function update(dt) {
       if (room.crewLevel >= def.autoLevel && room.autoPurchased) {
         state.money += roomIncome(i);
         room.progress = 0;
-      } else room.ready = true;
+      } else {
+        room.ready = true;
+        roomFinished = true;
+      }
     }
   });
+  if (roomFinished) renderRooms();
   autosaveClock += dt;
   if (autosaveClock > 5) { autosaveClock = 0; saveState(); }
 }
