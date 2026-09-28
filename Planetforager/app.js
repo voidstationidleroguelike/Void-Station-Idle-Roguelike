@@ -469,8 +469,14 @@ function refreshDynamicUI() {
   mineralLabel.textContent = formatNumber(state.minerals);
   planetPercent.textContent = `${Math.ceil(planet.remaining / planet.total * 100)}%`;
   roomDefs.forEach((_, i) => {
+    const room = state.rooms[i];
     const bar = document.querySelector(`[data-progress="${i}"]`);
-    if (bar) bar.style.width = `${state.rooms[i].progress * 100}%`;
+    if (bar) bar.style.width = `${room.progress * 100}%`;
+    const collect = document.querySelector(`.collect-room[data-room="${i}"]`);
+    if (collect) {
+      collect.disabled = !room.ready;
+      collect.textContent = room.ready ? `COLLECT ${formatNumber(roomIncome(i))}` : "PRODUCING";
+    }
   });
   refreshCrateUI();
 }
