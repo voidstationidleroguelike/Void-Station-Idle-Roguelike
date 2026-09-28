@@ -72,11 +72,8 @@
   async function initAdSense() {
     if (!adsenseConfigured()) return false;
 
-    const src =
-      `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${encodeURIComponent(adsense.client)}`;
-
-    // Auto Ads needs only the AdSense loader. Placement is controlled in AdSense.
-    await loadScript(src, { crossOrigin: "anonymous" });
+    // AdSense Auto Ads is loaded once from index.html <head>.
+    // Do not inject a second copy of the AdSense script here.
     return true;
   }
 
@@ -88,10 +85,7 @@
     clearTimeout(state.timer);
     rewardedStates.delete(slot);
 
-    try {
-      window.googletag?.destroySlots?.([slot]);
-    } catch {}
-
+    try { window.googletag?.destroySlots?.([slot]); } catch {}
     state.resolve(result);
   }
 
@@ -109,7 +103,6 @@
 
       try {
         state.shown = !!event.makeRewardedVisible();
-
         if (!state.shown) {
           finishRewarded(event.slot, {
             provider: "google-ad-manager",
@@ -132,7 +125,6 @@
     pubads.addEventListener("rewardedSlotGranted", event => {
       const state = rewardedStates.get(event.slot);
       if (!state) return;
-
       state.earned = true;
       state.payload = event.payload || null;
     });
@@ -151,17 +143,15 @@
     });
 
     pubads.addEventListener("slotRenderEnded", event => {
-      if (!event.isEmpty) return;
+      if (!event.isEmpty || !rewardedStates.has(event.slot)) return;
 
-      if (rewardedStates.has(event.slot)) {
-        finishRewarded(event.slot, {
-          provider: "google-ad-manager",
-          available: true,
-          shown: false,
-          earned: false,
-          noFill: true
-        });
-      }
+      finishRewarded(event.slot, {
+        provider: "google-ad-manager",
+        available: true,
+        shown: false,
+        earned: false,
+        noFill: true
+      });
     });
   }
 
@@ -204,7 +194,6 @@
       await Promise.all(tasks);
       initialized = true;
       notifyState();
-
       return adsenseConfigured() || gamConfigured();
     })();
 
@@ -223,14 +212,8 @@
     }
 
     const ready = await initGPT();
-
     if (!ready) {
-      return {
-        provider: "web",
-        available: false,
-        shown: false,
-        earned: false
-      };
+      return { provider: "web", available: false, shown: false, earned: false };
     }
 
     return new Promise(resolve => {
