@@ -5,24 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#07111d" />
     <title>Planet Breaker Prototype</title>
-    <link rel="stylesheet" href="styles.css?v=8" />
+    <link rel="stylesheet" href="styles.css?v=13" />
   </head>
   <body>
     <main id="app">
+      <header class="topbar">
+        <div>
+          <span class="eyebrow">WORLD</span>
+          <strong id="worldLabel">1</strong>
+        </div>
+        <div class="topbar__right">
+          <div class="money"><span class="coin">●</span><strong id="moneyLabel">0</strong></div>
+          <div class="minerals" title="Diamonds"><span>◆</span><strong id="mineralLabel">0</strong></div>
+          <button id="resetGame" class="button button--reset">RESET SAVE</button>
+          <button id="openWeapons" class="button button--outline">WEAPONS</button>
+          <button id="openCrew" class="button button--outline">CREW</button>
+        </div>
+      </header>
+
       <section class="battle-screen" aria-label="Planet battle">
-        <header class="topbar">
-          <div>
-            <span class="eyebrow">WORLD</span>
-            <strong id="worldLabel">1</strong>
-          </div>
-          <div class="topbar__right">
-            <div class="money"><span class="coin">●</span><strong id="moneyLabel">0</strong></div>
-            <div class="minerals" title="Minerals"><span>◆</span><strong id="mineralLabel">0</strong></div>
-            <button id="resetGame" class="button button--reset">RESET SAVE</button>
-            <button id="openWeapons" class="button button--outline">WEAPONS</button>
-            <button id="openCrew" class="button button--outline">CREW</button>
-          </div>
-        </header>
 
         <div class="canvas-wrap">
           <canvas id="gameCanvas" aria-label="Destructible pixel planet"></canvas>
@@ -95,6 +96,6 @@
     </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=10"></script>
+    <script src="app.js?v=13"></script>
   </body>
 </html>

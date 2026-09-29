@@ -4,7 +4,7 @@ const FPS = 30;
 const FRAME_MS = 1000 / FPS;
 const ROTATION_PERIOD = 90;
 const FREE_CRATE_COOLDOWN = 30 * 60 * 1000;
-const SAVE_KEY = "planet-breaker-prototype-v1";
+const SAVE_KEY = "planet-breaker-prototype-v2";
 const materials = {
   crust: { hp: 1, color: "#ef7a2d", value: 0, minerals: 0 },
   rock: { hp: 4, color: "#bb5630", value: 0, minerals: 0 },
@@ -24,11 +24,11 @@ const planetThemes = [
 ];
 
 const roomDefs = [
-  { name: "Mining Bay", icon: "⛏", base: 8, cycle: 2.0, unlock: 0, crew: "Mara", autoLevel: 1, autoCost: 250 },
-  { name: "Refinery", icon: "▣", base: 55, cycle: 4.0, unlock: 700, crew: "Kip", autoLevel: 2, autoCost: 4200 },
-  { name: "Trade Deck", icon: "↗", base: 310, cycle: 7.0, unlock: 9000, crew: "Vex", autoLevel: 3, autoCost: 52000 },
-  { name: "Cargo Exchange", icon: "◆", base: 1800, cycle: 12.0, unlock: 85000, crew: "Unit-8", autoLevel: 4, autoCost: 480000 },
-  { name: "Quantum Bank", icon: "◎", base: 12000, cycle: 20.0, unlock: 750000, crew: "Nyx", autoLevel: 5, autoCost: 4200000 },
+  { name: "Mining Bay", icon: "⛏", base: 8, cycle: 2.0, unlock: 0, crew: "Name 1", bonus: "income", autoCost: 250 },
+  { name: "Refinery", icon: "▣", base: 55, cycle: 4.0, unlock: 700, crew: "Name 2", bonus: "speed", autoCost: 4200 },
+  { name: "Trade Deck", icon: "↗", base: 310, cycle: 7.0, unlock: 9000, crew: "Name 3", bonus: "income", autoCost: 52000 },
+  { name: "Cargo Exchange", icon: "◆", base: 1800, cycle: 12.0, unlock: 85000, crew: "Name 4", bonus: "speed", autoCost: 480000 },
+  { name: "Quantum Bank", icon: "◎", base: 12000, cycle: 20.0, unlock: 750000, crew: "Name 5", bonus: "income", autoCost: 4200000 },
 ];
 
 const defaultState = () => ({
@@ -92,28 +92,37 @@ function saveState() {
 
 function formatNumber(value) {
   if (value < 1000) return Math.floor(value).toLocaleString("en-US");
-  const units = ["K", "M", "B", "T"];
+  const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No"];
   let n = value;
   let i = -1;
   while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
   return `${n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2)}${units[i]}`;
 }
 
-function worldScale() { return Math.pow(10, state.world - 1); }
+function worldScale() { return 1; }
+function roomMaxLevel(world = state.world) { return 100 + (world - 1) * 50; }
 function roomBaseIncome(i, level = state.rooms[i].level) {
-  const milestone = Math.pow(2, Math.floor(level / 10));
-  const levelGrowth = Math.pow(1.05, Math.max(0, level - 1));
+  const milestone = 1 + Math.floor(level / 10);
+  const levelGrowth = Math.pow(1.02, Math.max(0, level - 1));
   return roomDefs[i].base * level * levelGrowth * milestone * worldScale();
 }
+function crewIncomeMultiplier(i) {
+  return roomDefs[i].bonus === "income" ? 1 + state.rooms[i].crewLevel * .1 : 1;
+}
+function crewSpeedMultiplier(i) {
+  return roomDefs[i].bonus === "speed" ? 1 + state.rooms[i].crewLevel * .1 : 1;
+}
+function roomCycle(i) { return roomDefs[i].cycle / crewSpeedMultiplier(i); }
 function roomIncome(i) {
   const room = state.rooms[i];
   if (!room.unlocked) return 0;
-  const crewMultiplier = 1 + room.crewLevel * 0.5;
-  return roomBaseIncome(i) * crewMultiplier;
+  return roomBaseIncome(i) * crewIncomeMultiplier(i);
 }
 function isNextRoomLevelMilestone(i) { return (state.rooms[i].level + 1) % 10 === 0; }
 function roomUpgradeCost(i) {
-  const cycleTarget = isNextRoomLevelMilestone(i) ? 12 : 8;
+  const level = state.rooms[i].level;
+  let cycleTarget = level === 1 ? 1 : level <= 4 ? 3 : level <= 8 ? 5 : level < 20 ? 6 : 8;
+  if (isNextRoomLevelMilestone(i)) cycleTarget = level < 10 ? 8 : level < 20 ? 10 : 12;
   return roomBaseIncome(i) * cycleTarget;
 }
 function roomAutoCost(i) { return roomDefs[i].autoCost * worldScale(); }
@@ -130,8 +139,10 @@ function weaponDamage() { return Math.pow(1.1, state.weapon.damage - 1); }
 function fireRateMultiplier() { return Math.pow(1.1, state.weapon.speed - 1); }
 function fireInterval() { return Math.max(0.2, 1.2 / fireRateMultiplier()); }
 function splashPercent() { return state.weapon.splash * 10; }
-function cardsRequired(i) { return Math.max(2, state.rooms[i].crewLevel * 3); }
-function crewUpgradeCost(i) { return 20 * Math.pow(1.8, state.rooms[i].crewLevel - 1); }
+function cardsRequired(i) {
+  const level = state.rooms[i].crewLevel;
+  return level === 0 ? 1 : level * 5;
+}
 
 function createPlanet() {
   const themeIndex = (state.world - 1) % planetThemes.length;
@@ -363,10 +374,10 @@ function update(dt) {
   roomDefs.forEach((def, i) => {
     const room = state.rooms[i];
     if (!room.unlocked || room.ready) return;
-    room.progress += dt / def.cycle;
+    room.progress += dt / roomCycle(i);
     if (room.progress >= 1) {
       room.progress = 1;
-      if (room.crewLevel >= def.autoLevel && room.autoPurchased) {
+      if (room.crewLevel >= requiredCrewLevel(i) && room.autoPurchased) {
         state.money += roomIncome(i);
         room.progress = 0;
       } else {
@@ -405,16 +416,18 @@ function roomCard(i) {
     ? `<button class="action action--auto" disabled>AUTO ACTIVE</button>`
     : `<button class="action action--auto buy-auto" data-room="${i}" ${qualified ? "" : "disabled"}>${qualified ? "ACTIVATE AUTO" : `REQUIRES ${def.crew.toUpperCase()} LV.${autoLevel}`}<small>${qualified ? formatNumber(roomAutoCost(i)) : "CREW REQUIRED"}</small></button>`;
   const milestone = isNextRoomLevelMilestone(i);
+  const atMax = room.level >= roomMaxLevel();
+  const milestoneMultiplier = 1 + Math.floor((room.level + 1) / 10);
   return `<article class="room" data-room-card="${i}">
     <div class="room__top">
       <div class="room__icon">${def.icon}</div>
-      <div class="room__info"><h3 class="room__name">${def.name}</h3><div class="room__income">+${formatNumber(roomIncome(i))} / ${def.cycle}s</div><span class="room__level">LEVEL ${room.level}</span></div>
+      <div class="room__info"><h3 class="room__name">${def.name}</h3><div class="room__income">+${formatNumber(roomIncome(i))} / ${roomCycle(i).toFixed(1)}s</div><span class="room__level">LEVEL ${room.level}/${roomMaxLevel()}</span></div>
       <div class="crew"><div class="crew__portrait">${room.crewLevel ? "👤" : "+"}</div><small class="${auto ? "auto" : ""}">${auto ? "AUTO" : autoLevel === 0 ? "NO CREW REQ." : `${def.crew} ${room.crewLevel}/${autoLevel}`}</small></div>
     </div>
     <div class="progress"><i data-progress="${i}"></i></div>
     <div class="room__actions">
       <button class="action action--secondary collect-room" data-room="${i}" ${room.ready ? "" : "disabled"}>${room.ready ? `COLLECT ${formatNumber(roomIncome(i))}` : "PRODUCING"}</button>
-      <button class="action upgrade-room" data-room="${i}">${milestone ? "MILESTONE ×2" : "UPGRADE"}<small>${formatNumber(roomUpgradeCost(i))}${milestone ? " · 1 CREW CARD" : ""}</small></button>
+      <button class="action upgrade-room" data-room="${i}" ${atMax ? "disabled" : ""}>${atMax ? "MAX LEVEL" : milestone ? `MILESTONE ×${milestoneMultiplier}` : "UPGRADE"}<small>${atMax ? "MAX REWARD CLAIMED" : `${formatNumber(roomUpgradeCost(i))}${milestone ? " · CARD + DIAMONDS" : ""}`}</small></button>
       ${autoButton}
     </div>
   </article>`;
@@ -441,11 +454,14 @@ function renderCrewMenu() {
   document.querySelector("#crewList").innerHTML = roomDefs.map((def, i) => {
     const room = state.rooms[i];
     const needed = cardsRequired(i);
-    const canUpgrade = state.crewCards[i] >= needed && state.minerals >= crewUpgradeCost(i);
+    const canUpgrade = state.crewCards[i] >= needed;
+    const bonusText = def.bonus === "speed"
+      ? `Speed +${room.crewLevel * 10}%`
+      : `Income +${room.crewLevel * 10}%`;
     return `<article class="crew-card">
-      <div class="crew-card__portrait">👤</div>
-      <div><strong>${def.crew} · Lv.${room.crewLevel}</strong><p>${def.name} income ×${(1 + room.crewLevel * .5).toFixed(1)} · Cards ${state.crewCards[i]}/${needed}</p></div>
-      <button type="button" class="action crew-upgrade" data-room="${i}" ${canUpgrade ? "" : "disabled"}>LEVEL UP<small>◆ ${formatNumber(crewUpgradeCost(i))}</small></button>
+      <div class="crew-card__portrait">${room.crewLevel ? "👤" : "?"}</div>
+      <div><strong>${def.crew} · ${room.crewLevel ? `Lv.${room.crewLevel}` : "LOCKED"}</strong><p>${def.name} · ${bonusText} · Cards ${state.crewCards[i]}/${needed}</p></div>
+      <button type="button" class="action crew-upgrade" data-room="${i}" ${canUpgrade ? "" : "disabled"}>${room.crewLevel ? "LEVEL UP" : "UNLOCK"}<small>${needed} CARD${needed === 1 ? "" : "S"}</small></button>
     </article>`;
   }).join("");
   refreshCrateUI();
@@ -512,14 +528,14 @@ function renderWorldComplete() {
     <div class="reward-stat"><small>TIME</small><strong>${formatDuration(reward.seconds)}</strong></div>
     <div class="reward-stat"><small>DIAMONDS</small><strong>◆ ${reward.diamonds}</strong></div>
     <div class="reward-stat"><small>CREW CARDS</small><strong>${reward.cards}</strong></div>
-    <div class="reward-stat"><small>NEXT MULTIPLIER</small><strong>×${formatNumber(Math.pow(10, state.world))}</strong></div>`;
+    <div class="reward-stat"><small>NEXT ROOM CAP</small><strong>LV.${roomMaxLevel(state.world + 1)}</strong></div>`;
   document.querySelector("#continueWorld").textContent = `CONTINUE TO WORLD ${state.world + 1}`;
   if (!worldDialog.open) worldDialog.showModal();
 }
 
 function startNextWorld() {
   state.world++;
-  state.money = 80 * worldScale();
+  state.money = 80;
   state.weapon = { damage: 1, speed: 1, splash: 1 };
   state.rooms.forEach((room, i) => {
     room.level = i === 0 ? 1 : 0;
@@ -539,7 +555,7 @@ function startNextWorld() {
   saveState();
   worldDialog.close();
   window.scrollTo({ top: 0, behavior: "smooth" });
-  showToast(`World ${state.world} · income ×${formatNumber(worldScale())}`);
+  showToast(`World ${state.world} · room cap ${roomMaxLevel()}`);
 }
 
 function refreshDynamicUI() {
@@ -626,12 +642,22 @@ document.addEventListener("click", (event) => {
   const upgrade = event.target.closest(".upgrade-room");
   if (upgrade) {
     const i = Number(upgrade.dataset.room);
+    if (state.rooms[i].level >= roomMaxLevel()) {
+      showToast("Room already at max level");
+      return;
+    }
     const cost = roomUpgradeCost(i);
     if (spend(cost)) {
       state.rooms[i].level++;
       if (state.rooms[i].level % 10 === 0) {
         state.crewCards[i]++;
-        showToast(`${roomDefs[i].name} milestone ×2 + 1 ${roomDefs[i].crew} card`);
+        state.minerals += 2;
+        showToast(`${roomDefs[i].name} milestone ×${1 + state.rooms[i].level / 10}: card + ◆2`);
+      }
+      if (state.rooms[i].level === roomMaxLevel()) {
+        state.crewCards[i] += 5;
+        state.minerals += 25;
+        showToast(`${roomDefs[i].name} MAX: 5 cards + ◆25`);
       }
       renderRooms();
       renderCrewMenu();
@@ -674,12 +700,9 @@ document.addEventListener("click", (event) => {
   if (crewUpgrade) {
     const i = Number(crewUpgrade.dataset.room);
     const needed = cardsRequired(i);
-    const mineralCost = crewUpgradeCost(i);
     if (state.crewCards[i] < needed) showToast("Not enough character cards");
-    else if (state.minerals < mineralCost) showToast("Not enough minerals");
     else {
       state.crewCards[i] -= needed;
-      state.minerals -= mineralCost;
       state.rooms[i].crewLevel++;
       renderCrewMenu();
       renderRooms();
@@ -703,7 +726,7 @@ function applyOfflineProgress() {
   let earned = 0;
   roomDefs.forEach((def, i) => {
     const room = state.rooms[i];
-    if (room.unlocked && room.crewLevel >= requiredCrewLevel(i) && room.autoPurchased) earned += away / def.cycle * roomIncome(i);
+    if (room.unlocked && room.crewLevel >= requiredCrewLevel(i) && room.autoPurchased) earned += away / roomCycle(i) * roomIncome(i);
   });
   if (earned >= 1) { state.money += earned; setTimeout(() => showToast(`Offline income +${formatNumber(earned)}`), 300); }
 }
