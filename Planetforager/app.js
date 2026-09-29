@@ -35,8 +35,11 @@ const defaultState = () => ({
   money: 80,
   minerals: 0,
   world: 1,
+  worldComplete: false,
+  worldReward: null,
+  worldStartedAt: Date.now(),
   weapon: { damage: 1, speed: 1, splash: 1 },
-  rooms: roomDefs.map((r, i) => ({ level: i === 0 ? 1 : 0, unlocked: i === 0, progress: 0, ready: false, crewLevel: i === 0 ? 1 : 0, autoPurchased: false })),
+  rooms: roomDefs.map((r, i) => ({ level: i === 0 ? 1 : 0, unlocked: i === 0, progress: 0, ready: false, crewLevel: 0, autoPurchased: false })),
   slots: { left: false, right: false },
   crewCards: roomDefs.map(() => 0),
   nextFreeCrateAt: 0,
@@ -64,6 +67,7 @@ const planetPercent = document.querySelector("#planetPercent");
 const planetName = document.querySelector("#planetName");
 const weaponDialog = document.querySelector("#weaponDialog");
 const crewDialog = document.querySelector("#crewDialog");
+const worldDialog = document.querySelector("#worldDialog");
 
 function loadState() {
   try {
@@ -95,20 +99,28 @@ function formatNumber(value) {
   return `${n >= 100 ? n.toFixed(0) : n >= 10 ? n.toFixed(1) : n.toFixed(2)}${units[i]}`;
 }
 
-function worldScale() { return Math.pow(1.3, state.world - 1); }
+function worldScale() { return Math.pow(10, state.world - 1); }
+function roomBaseIncome(i, level = state.rooms[i].level) {
+  const milestone = Math.pow(2, Math.floor(level / 10));
+  const levelGrowth = Math.pow(1.05, Math.max(0, level - 1));
+  return roomDefs[i].base * level * levelGrowth * milestone * worldScale();
+}
 function roomIncome(i) {
   const room = state.rooms[i];
   if (!room.unlocked) return 0;
-  const milestone = Math.pow(2, Math.floor(room.level / 10));
   const crewMultiplier = 1 + room.crewLevel * 0.5;
-  return roomDefs[i].base * room.level * milestone * crewMultiplier * worldScale();
+  return roomBaseIncome(i) * crewMultiplier;
 }
 function isNextRoomLevelMilestone(i) { return (state.rooms[i].level + 1) % 10 === 0; }
 function roomUpgradeCost(i) {
-  const base = roomDefs[i].base * 6 * Math.pow(1.16, state.rooms[i].level) * worldScale();
-  return base * (isNextRoomLevelMilestone(i) ? 3 : 1);
+  const cycleTarget = isNextRoomLevelMilestone(i) ? 12 : 8;
+  return roomBaseIncome(i) * cycleTarget;
 }
 function roomAutoCost(i) { return roomDefs[i].autoCost * worldScale(); }
+function requiredCrewLevel(i) {
+  if (state.world === 1) return i === 0 ? 0 : 1;
+  return Math.ceil((state.world + i) / 3);
+}
 function weaponCost(type) {
   const level = state.weapon[type];
   const bases = { damage: 250, speed: 450, splash: 800 };
@@ -296,23 +308,27 @@ function hitPlanet(cell, x, y) {
 }
 
 function completeWorld() {
-  const bonus = 350 * Math.pow(1.55, state.world - 1);
-  state.money += bonus;
-  state.world++;
-  state.rooms.forEach((room, i) => {
-    room.progress = 0;
-    room.ready = false;
-    room.autoPurchased = false;
-    if (i > 0) { room.level = 0; room.unlocked = false; }
-    else room.level = Math.max(1, room.level);
-  });
-  showToast(`World cleared! +${formatNumber(bonus)}`);
-  createPlanet();
-  renderUI();
-  openCrate("planet");
+  if (state.worldComplete) return;
+  const diamonds = 20 + state.world * 5;
+  const cards = 5;
+  for (let n = 0; n < cards; n++) {
+    const i = Math.floor(Math.random() * roomDefs.length);
+    state.crewCards[i]++;
+  }
+  state.minerals += diamonds;
+  state.worldComplete = true;
+  state.worldReward = {
+    diamonds,
+    cards,
+    seconds: Math.max(1, Math.floor((Date.now() - state.worldStartedAt) / 1000)),
+  };
+  shots = [];
+  renderWorldComplete();
+  saveState();
 }
 
 function update(dt) {
+  if (state.worldComplete) return;
   planet.rotation = (planet.rotation + dt * Math.PI * 2 / ROTATION_PERIOD) % (Math.PI * 2);
   planet.shotClock += dt;
   if (planet.shotClock >= fireInterval()) {
@@ -379,17 +395,18 @@ function roomCard(i) {
   if (!room.unlocked) {
     return `<article class="room room--locked"><div class="room__top"><div class="room__icon">🔒</div><div class="room__info"><h3 class="room__name">${def.name}</h3><span class="room__level">Unlock ${formatNumber(def.unlock * worldScale())}</span></div></div><button class="action unlock-room" data-room="${i}">UNLOCK<small>${formatNumber(def.unlock * worldScale())}</small></button></article>`;
   }
-  const qualified = room.crewLevel >= def.autoLevel;
+  const autoLevel = requiredCrewLevel(i);
+  const qualified = room.crewLevel >= autoLevel;
   const auto = qualified && room.autoPurchased;
   const autoButton = auto
     ? `<button class="action action--auto" disabled>AUTO ACTIVE</button>`
-    : `<button class="action action--auto buy-auto" data-room="${i}" ${qualified ? "" : "disabled"}>${qualified ? "ACTIVATE AUTO" : `REQUIRES ${def.crew.toUpperCase()} LV.${def.autoLevel}`}<small>${qualified ? formatNumber(roomAutoCost(i)) : "CREW REQUIRED"}</small></button>`;
+    : `<button class="action action--auto buy-auto" data-room="${i}" ${qualified ? "" : "disabled"}>${qualified ? "ACTIVATE AUTO" : `REQUIRES ${def.crew.toUpperCase()} LV.${autoLevel}`}<small>${qualified ? formatNumber(roomAutoCost(i)) : "CREW REQUIRED"}</small></button>`;
   const milestone = isNextRoomLevelMilestone(i);
   return `<article class="room" data-room-card="${i}">
     <div class="room__top">
       <div class="room__icon">${def.icon}</div>
       <div class="room__info"><h3 class="room__name">${def.name}</h3><div class="room__income">+${formatNumber(roomIncome(i))} / ${def.cycle}s</div><span class="room__level">LEVEL ${room.level}</span></div>
-      <div class="crew"><div class="crew__portrait">${room.crewLevel ? "👤" : "+"}</div><small class="${auto ? "auto" : ""}">${auto ? "AUTO" : `${def.crew} ${room.crewLevel}/${def.autoLevel}`}</small></div>
+      <div class="crew"><div class="crew__portrait">${room.crewLevel ? "👤" : "+"}</div><small class="${auto ? "auto" : ""}">${auto ? "AUTO" : autoLevel === 0 ? "NO CREW REQ." : `${def.crew} ${room.crewLevel}/${autoLevel}`}</small></div>
     </div>
     <div class="progress"><i data-progress="${i}"></i></div>
     <div class="room__actions">
@@ -478,6 +495,48 @@ function renderUI() {
   renderWeaponMenu();
   renderCrewMenu();
   refreshDynamicUI();
+}
+
+function formatDuration(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function renderWorldComplete() {
+  const reward = state.worldReward || { diamonds: 0, cards: 0, seconds: 0 };
+  document.querySelector("#worldCompleteTitle").textContent = `WORLD ${state.world} DESTROYED`;
+  document.querySelector("#worldCompleteStats").innerHTML = `
+    <div class="reward-stat"><small>TIME</small><strong>${formatDuration(reward.seconds)}</strong></div>
+    <div class="reward-stat"><small>DIAMONDS</small><strong>◆ ${reward.diamonds}</strong></div>
+    <div class="reward-stat"><small>CREW CARDS</small><strong>${reward.cards}</strong></div>
+    <div class="reward-stat"><small>NEXT MULTIPLIER</small><strong>×${formatNumber(Math.pow(10, state.world))}</strong></div>`;
+  document.querySelector("#continueWorld").textContent = `CONTINUE TO WORLD ${state.world + 1}`;
+  if (!worldDialog.open) worldDialog.showModal();
+}
+
+function startNextWorld() {
+  state.world++;
+  state.money = 80 * worldScale();
+  state.weapon = { damage: 1, speed: 1, splash: 1 };
+  state.rooms.forEach((room, i) => {
+    room.level = i === 0 ? 1 : 0;
+    room.unlocked = i === 0;
+    room.progress = 0;
+    room.ready = false;
+    room.autoPurchased = false;
+  });
+  state.worldComplete = false;
+  state.worldReward = null;
+  state.worldStartedAt = Date.now();
+  shots = [];
+  particles = [];
+  target = null;
+  createPlanet();
+  renderUI();
+  saveState();
+  worldDialog.close();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  showToast(`World ${state.world} · income ×${formatNumber(worldScale())}`);
 }
 
 function refreshDynamicUI() {
@@ -598,7 +657,8 @@ document.addEventListener("click", (event) => {
     const i = Number(auto.dataset.room);
     const room = state.rooms[i];
     const def = roomDefs[i];
-    if (room.crewLevel < def.autoLevel) showToast(`${def.crew} must reach level ${def.autoLevel}`);
+    const autoLevel = requiredCrewLevel(i);
+    if (room.crewLevel < autoLevel) showToast(`${def.crew} must reach level ${autoLevel}`);
     else if (spend(roomAutoCost(i))) {
       room.autoPurchased = true;
       room.ready = false;
@@ -635,11 +695,12 @@ window.addEventListener("resize", resizeCanvas);
 window.addEventListener("beforeunload", saveState);
 
 function applyOfflineProgress() {
+  if (state.worldComplete) return;
   const away = Math.min(4 * 3600, Math.max(0, (Date.now() - (state.lastSeen || Date.now())) / 1000));
   let earned = 0;
   roomDefs.forEach((def, i) => {
     const room = state.rooms[i];
-    if (room.unlocked && room.crewLevel >= def.autoLevel && room.autoPurchased) earned += away / def.cycle * roomIncome(i);
+    if (room.unlocked && room.crewLevel >= requiredCrewLevel(i) && room.autoPurchased) earned += away / def.cycle * roomIncome(i);
   });
   if (earned >= 1) { state.money += earned; setTimeout(() => showToast(`Offline income +${formatNumber(earned)}`), 300); }
 }
@@ -648,4 +709,7 @@ applyOfflineProgress();
 createPlanet();
 resizeCanvas();
 renderUI();
+document.querySelector("#continueWorld").addEventListener("click", startNextWorld);
+worldDialog.addEventListener("cancel", event => event.preventDefault());
+if (state.worldComplete) setTimeout(renderWorldComplete, 0);
 requestAnimationFrame(gameLoop);

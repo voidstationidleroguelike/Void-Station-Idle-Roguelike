@@ -103,6 +103,14 @@ h1, h2 { margin: 2px 0 0; }
 .crew-card { display: grid; grid-template-columns: 48px 1fr auto; gap: 10px; align-items: center; padding: 11px; border: 1px solid #263e55; border-radius: 12px; background: #122335; }
 .crew-card__portrait { width: 44px; height: 44px; display: grid; place-items: center; border: 2px solid #587e9d; border-radius: 50%; background: #233d54; }
 .crew-card p { margin: 2px 0 0; color: var(--muted); font-size: .68rem; }
+.world-complete { text-align: center; }
+.world-complete h2 { margin: 8px 0; color: #fff; }
+.reward-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 18px 0; }
+.reward-stat { padding: 13px 6px; border: 1px solid #31506b; border-radius: 12px; background: #091521; }
+.reward-stat small, .reward-stat strong { display: block; }
+.reward-stat small { margin-bottom: 4px; color: var(--muted); font-size: .62rem; letter-spacing: .08em; }
+.reward-stat strong { color: #dffbff; }
+.continue-world { width: 100%; min-height: 56px; background: var(--cyan); }
 .milestone { color: #ffd65c; font-weight: 900; }
 .toast { position: fixed; z-index: 20; left: 50%; bottom: 22px; transform: translate(-50%, 20px); padding: 10px 16px; border: 1px solid #3c667e; border-radius: 30px; color: white; background: #102437ee; opacity: 0; transition: .2s; pointer-events: none; }
 .toast--show { transform: translate(-50%, 0); opacity: 1; }

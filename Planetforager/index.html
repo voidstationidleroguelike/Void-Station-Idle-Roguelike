@@ -84,7 +84,17 @@
       </form>
     </dialog>
 
+    <dialog id="worldDialog" class="modal world-complete">
+      <div class="modal__panel">
+        <span class="eyebrow">MISSION COMPLETE</span>
+        <h2 id="worldCompleteTitle">WORLD DESTROYED</h2>
+        <p class="hint">Crew levels, crew cards, diamonds and unlocked weapon slots are permanent. Credits, rooms and weapon upgrades reset.</p>
+        <div id="worldCompleteStats" class="reward-grid"></div>
+        <button type="button" id="continueWorld" class="action continue-world">CONTINUE</button>
+      </div>
+    </dialog>
+
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
   </body>
 </html>
