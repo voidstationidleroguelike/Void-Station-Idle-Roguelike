@@ -137,7 +137,7 @@ function createPlanet() {
   const themeIndex = (state.world - 1) % planetThemes.length;
   const themeCycle = Math.floor((state.world - 1) / planetThemes.length);
   const theme = planetThemes[themeIndex];
-  const cols = Math.min(81, 51 + (state.world - 1) * 4);
+  const cols = Math.min(89, 61 + (state.world - 1) * 4);
   const rows = cols;
   const radius = cols / 2 - 1.4;
   const cells = [];
@@ -146,21 +146,21 @@ function createPlanet() {
       const dx = x + 0.5 - cols / 2;
       const dy = y + 0.5 - rows / 2;
       const distance = Math.hypot(dx, dy);
-      const angle = Math.atan2(dy, dx);
-      const edgeNoise = Math.sin(angle * theme.lobes + theme.phase) * theme.roughness + Math.sin(angle * (theme.lobes + 5) - theme.phase) * .28;
-      const localRadius = radius + edgeNoise;
+      const localRadius = radius;
       if (distance > localRadius) continue;
       const depth = 1 - distance / localRadius;
       const roll = Math.random();
-      let type = depth > 0.72 ? "core" : depth > 0.3 ? "rock" : "crust";
-      if (roll < 0.035) type = "gold";
-      else if (roll < 0.085) type = "crystal";
-      else if (roll < 0.16 && depth > 0.2) type = "iron";
+      let type = depth < .18 ? "crust"
+        : depth < .38 ? "rock"
+        : depth < .58 ? "iron"
+        : depth < .78 ? "crystal"
+        : "core";
+      if (roll < 0.028 && depth > .08 && depth < .88) type = "gold";
       const base = materials[type].hp * Math.pow(1.4, state.world - 1);
       cells.push({ x, y, type, hp: base, maxHp: base, alive: true });
     }
   }
-  planet = { cols, rows, cells, total: cells.length, remaining: cells.length, shotClock: 0, rotation: 0, theme };
+  planet = { cols, rows, radius, cells, total: cells.length, remaining: cells.length, shotClock: 0, rotation: 0, theme };
   target = { x: cols / 2, y: rows - 3 };
   planetName.textContent = `${theme.name}${themeCycle ? ` MK ${themeCycle + 1}` : ""} · ${cols}×${rows}`;
 }
@@ -202,6 +202,9 @@ function draw() {
   ctx.save();
   ctx.translate(centerX, centerY);
   ctx.rotate(planet.rotation);
+  ctx.beginPath();
+  ctx.arc(0, 0, (planet.radius + .45) * l.cell, 0, Math.PI * 2);
+  ctx.clip();
   const materialPaths = new Map();
   for (const c of planet.cells) {
     if (!c.alive) continue;
@@ -214,8 +217,8 @@ function draw() {
       path = new Path2D();
       materialPaths.set(color, path);
     }
-    path.moveTo(x + l.cell * .58, y);
-    path.arc(x, y, l.cell * .58, 0, Math.PI * 2);
+    path.moveTo(x + l.cell * .74, y);
+    path.arc(x, y, l.cell * .74, 0, Math.PI * 2);
   }
   for (const [color, path] of materialPaths) {
     ctx.fillStyle = color;
