@@ -1,346 +1,130 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-  <meta name="theme-color" content="#050505" />
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Infinity Merge</title>
-  <meta name="description" content="Swipe, merge tiles, upgrade your spawn level and climb higher and higher." />
-
-  <meta property="og:title" content="Infinity Merge" />
-  <meta property="og:description" content="Swipe. Merge. Climb." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="assets/promo-1024x500.png" />
-
-  <link rel="icon" type="image/png" href="assets/logo-512x512.png" />
-  <link rel="apple-touch-icon" href="assets/logo-512x512.png" />
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1531025343110744"
-     crossorigin="anonymous"></script>
+  <meta name="description" content="Swipe, merge matching tiles, earn Gold, upgrade your spawn level and climb as high as you can in Infinity Merge.">
   <style>
-:root{
-  --bg:#050505; --panel:#0d0d0f; --panel2:#141416; --line:#242428; --text:#f6f6f7; --muted:#8f8f99; --accent:#f2cf5b;
-}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
-html,body{
-  margin:0;min-height:100%;background:var(--bg);color:var(--text);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-  overscroll-behavior:none;
-}
-body{touch-action:manipulation} button{font:inherit}
-#app{
-  min-height:100dvh;max-width:760px;margin:0 auto;display:flex;flex-direction:column;
-  padding:0 14px calc(10px + env(safe-area-inset-bottom));
-}
-.safe-top{height:env(safe-area-inset-top)}
-.page-layout{
-  width:100%;
-  min-height:100dvh;
-}
-
-
-.topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:10px 1px 7px}
-.brand-title{
-  display:flex;align-items:baseline;gap:5px;
-  font-size:20px;font-weight:950;letter-spacing:-.045em;
-  filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))
-}
-.brand-infinity{color:#fff}
-.brand-merge{
-  color:#b647f2;
-  background:linear-gradient(180deg,#ef6fff 0%,#a62ff0 72%,#7d22dd 100%);
-  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
-  text-shadow:none
-}
-.brand-sub{color:var(--muted);font-size:11px;margin-top:1px}
-.coins-wrap{display:flex;align-items:center;gap:7px;font-weight:900;font-size:18px;white-space:nowrap}
-.coin-dot{color:var(--accent);font-size:15px;line-height:1;text-shadow:0 0 10px rgba(242,207,91,.22)}
-.stats{display:grid;grid-template-columns:.85fr .85fr 1.3fr;gap:6px;margin-bottom:7px}
-.stat{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:7px 8px;min-width:0;color:var(--text);text-align:left}
-.stat span{display:block;color:var(--muted);font-size:8px;letter-spacing:.08em;font-weight:800;white-space:nowrap}
-.stat strong{display:block;margin-top:2px;font-size:14px}
-.stat.danger{border-color:#a92b2b;box-shadow:0 0 0 2px rgba(220,38,38,.28), 0 0 18px rgba(220,38,38,.18)}
-.stat.danger strong,.stat.danger span{color:#ffd6d6}
-.stat-button:active{transform:scale(.985)}
-.game-area{display:flex;flex:1 1 auto;min-height:0;flex-direction:column;align-items:center;justify-content:center;padding:0 0 5px}
-.grid{
-  --grid-size:4;width:min(100%,560px);aspect-ratio:1;display:grid;
-  grid-template-columns:repeat(var(--grid-size),minmax(0,1fr));gap:clamp(4px,.95vw,8px);
-  padding:clamp(4px,.95vw,8px);background:#0a0a0b;border:1px solid var(--line);border-radius:16px;
-  touch-action:none;position:relative;overflow:visible
-}
-.cell{position:relative;min-width:0;min-height:0;border-radius:clamp(6px,1.2vw,11px);background:#101013;border:1px solid #1d1d22;overflow:hidden}
-.tile{
-  position:absolute;inset:0;display:grid;place-items:center;border-radius:inherit;font-weight:950;color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.35);font-size:clamp(16px,5.6vw,34px);backface-visibility:hidden
-}
-.tile.hidden-for-swipe{opacity:0}.tile.pop{animation:pop .20s ease}.tile.spawn-pop{animation:spawnPop .22s ease}
-@keyframes pop{0%{transform:scale(.78)}62%{transform:scale(1.13)}100%{transform:scale(1)}}
-@keyframes spawnPop{0%{transform:scale(.30);opacity:.2}70%{transform:scale(1.08);opacity:1}100%{transform:scale(1);opacity:1}}
-.swipe-ghost{
-  position:fixed;display:grid;place-items:center;pointer-events:none;z-index:99999;font-weight:950;color:#fff;
-  text-shadow:0 1px 2px rgba(0,0,0,.35);backface-visibility:hidden;will-change:transform
-}
-.cell.hammer-target{outline:3px solid var(--accent);outline-offset:-3px}
-.message{min-height:19px;margin-top:4px;color:var(--muted);text-align:center;font-size:11px}
-.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:2px}
-.control-btn{
-  min-height:56px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:12px;
-  padding:8px 10px;display:flex;align-items:center;justify-content:flex-start;gap:9px;text-align:left;min-width:0;
-  transition:background .15s ease,border-color .15s ease, box-shadow .15s ease, transform .08s ease, opacity .15s ease;
-}
-.control-btn:active{transform:scale(.985)}
-.control-btn:disabled{opacity:.42}
-.control-btn.available{box-shadow:0 0 0 1px rgba(255,255,255,.04) inset, 0 8px 22px rgba(0,0,0,.18)}
-.control-btn.active{border-color:var(--accent);background:#19170f}
-@keyframes movePulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(46,204,113,.08)}
-  50%{box-shadow:0 0 0 4px rgba(46,204,113,.28),0 0 18px rgba(46,204,113,.24)}
-}
-.control-btn.move-rescue{
-  animation:movePulse 1.15s ease-in-out infinite;
-  border-color:#2ecc71 !important;
-  background:#143221 !important;
-}
-.spawn-main-btn{grid-column:1/-1;min-height:68px;justify-content:center;text-align:center}
-.spawn-main-btn .control-icon{font-size:22px}
-.spawn-main-btn .control-copy{align-items:center}
-.spawn-main-btn .control-copy strong{font-size:16px}
-.spawn-main-btn .control-copy small{font-size:12px}
-.reward-btn{border-color:#2e2940;grid-column:1/-1}
-.gold-ad-btn{border-color:#3a2e12}
-.control-icon{font-size:18px;line-height:1;flex:0 0 auto}
-.control-copy{min-width:0;display:flex;flex-direction:column}
-.control-copy strong{font-size:11px;line-height:1.15;white-space:nowrap}
-.control-copy small{color:#edf1ff;font-size:12px;line-height:1.15;margin-top:3px;white-space:nowrap;font-weight:900;letter-spacing:.01em}
-.hint{color:#72727b;text-align:center;font-size:9px;padding-top:7px}
-.modal-backdrop{
-  position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.76);
-  padding:calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));display:grid;place-items:center
-}
-.modal-backdrop[hidden]{display:none}
-.modal{width:min(100%,420px);background:#101012;border:1px solid #2a2a2f;border-radius:16px;padding:16px}
-.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.modal h2{margin:0;font-size:19px}
-.modal p{color:var(--muted);font-size:11px;margin:3px 0 0}
-.close-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:10px;color:var(--text);background:var(--panel2);font-size:23px}
-.leaderboard-your-score{margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px}
-.leaderboard-your-score span,.leaderboard-your-score small{display:block;color:var(--muted);font-size:10px}
-.leaderboard-your-score strong{display:block;font-size:32px;margin:2px 0 4px}
-.leaderboard-placeholder{margin-top:10px}
-.fake-row{display:grid;grid-template-columns:40px 1fr 50px;gap:8px;padding:10px 4px;border-bottom:1px solid var(--line);font-size:12px}
-@media(max-height:760px){
-  .brand-sub,.hint{display:none}.topbar{padding-top:7px;padding-bottom:5px}.stats{margin-bottom:5px}
-  .control-btn{min-height:47px}.spawn-main-btn{min-height:56px}.game-area{padding-bottom:2px}.message{min-height:15px}
-}
-@media(min-width:650px){
-  #app{padding-left:20px;padding-right:20px}
-}
-
-@keyframes upgradePulse{
-  0%,100%{box-shadow:0 0 0 0 transparent}
-  50%{box-shadow:0 0 0 4px var(--upgrade-pulse-color, rgba(255,255,255,.24)),0 0 18px var(--upgrade-pulse-color, rgba(255,255,255,.18))}
-}
-.control-btn.spawn-upgrade-ready{
-  animation:upgradePulse 1.2s ease-in-out infinite;
-}
-
-/* Center the half-width controls as balanced icon + text groups. */
-.controls .control-btn:not(.spawn-main-btn){
-  justify-content:center;
-  text-align:center;
-}
-.controls .control-btn:not(.spawn-main-btn) .control-copy{
-  align-items:center;
-}
-.controls .control-btn:not(.spawn-main-btn) .control-icon{
-  margin-right:1px;
-}
-.currency-icon{
-  color:var(--accent);
-  text-shadow:0 0 10px rgba(242,207,91,.25);
-}
-.reward-btn{
-  justify-content:center !important;
-  text-align:center;
-}
-.reward-btn .control-copy{
-  align-items:center !important;
-}
-
-.top-actions{display:flex;align-items:center;gap:10px}
-.restart-top-btn{width:34px;height:34px;border:1px solid #6e2727;border-radius:10px;background:#241111;color:#ff8f8f;display:grid;place-items:center;font-size:20px;font-weight:900;padding:0;cursor:pointer}
-.restart-top-btn:active{transform:scale(.96)}
-.restart-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:9px;
-  margin-top:16px;
-}
-.restart-actions button{
-  min-height:46px;
-  border-radius:11px;
-  font-weight:850;
-}
-.restart-cancel{
-  border:1px solid var(--line);
-  background:var(--panel2);
-  color:var(--text);
-}
-.restart-confirm{
-  border:1px solid #8b2e2e;
-  background:#401717;
-  color:#ffd7d7;
-}
-
-
-/* Web-only details */
-.web-purchase-note:disabled{opacity:.55;cursor:not-allowed}
-.world-record-card{text-align:center}
-.world-record-card strong{font-size:48px}
-@media (min-width:900px){
-  body{
-    background:
-      radial-gradient(circle at 50% 0%, rgba(122,48,210,.09), transparent 40%),
-      var(--bg);
-  }
-}
-
-
-
+    :root{
+      --bg:#050505;
+      --panel:#0d0d0f;
+      --line:#242428;
+      --text:#f6f6f7;
+      --muted:#9797a0;
+      --accent:#f2cf5b;
+      --purple:#b647f2;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:
+        radial-gradient(circle at 50% 0%,rgba(122,48,210,.12),transparent 34%),
+        var(--bg);
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Arial,sans-serif;
+    }
+    body{min-height:100vh}
+    .wrap{max-width:920px;margin:0 auto;padding:46px 20px 56px}
+    .hero{text-align:center}
+    .logo{
+      width:112px;height:112px;border-radius:24px;
+      box-shadow:0 18px 50px rgba(0,0,0,.35);
+    }
+    h1{
+      margin:18px 0 5px;
+      font-size:clamp(38px,8vw,62px);
+      letter-spacing:-.05em;
+      line-height:1;
+    }
+    .merge{
+      background:linear-gradient(180deg,#ef6fff 0%,#a62ff0 72%,#7d22dd 100%);
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .tagline{color:var(--muted);font-size:18px;margin:8px 0 26px}
+    .promo{
+      display:block;width:100%;max-width:820px;margin:0 auto;
+      border-radius:20px;border:1px solid var(--line);
+      box-shadow:0 24px 70px rgba(0,0,0,.35);
+    }
+    .section{
+      margin-top:26px;background:var(--panel);
+      border:1px solid var(--line);border-radius:18px;padding:24px;
+    }
+    h2{font-size:22px;margin:0 0 14px}
+    p{color:#d9d9df;line-height:1.65;margin:8px 0}
+    .rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:16px}
+    .rule{
+      background:#101013;border:1px solid #1d1d22;
+      border-radius:14px;padding:17px;
+    }
+    .rule strong{display:block;font-size:15px;margin-bottom:5px}
+    .rule span{color:var(--muted);font-size:14px;line-height:1.5}
+    .buttons{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px}
+    .btn{
+      display:inline-block;padding:12px 17px;border-radius:12px;
+      text-decoration:none;font-weight:800;
+      border:1px solid var(--line);background:#111114;color:var(--text);
+    }
+    .btn.primary{border-color:#69309b;background:#24132f;color:#f4dcff}
+    .footer{
+      margin-top:30px;padding-top:20px;border-top:1px solid var(--line);
+      text-align:center;color:var(--muted);font-size:13px;
+    }
+    .footer a{color:#aa8cff;text-decoration:none;margin:0 9px}
+    @media(max-width:620px){
+      .wrap{padding-top:32px}
+      .rules{grid-template-columns:1fr}
+      .section{padding:19px}
+    }
   </style>
 </head>
 <body>
-  <div class="page-layout">
-<div id="app">
-      <div class="safe-top"></div>
-<header class="topbar">
-      <div>
-        <div class="brand-title" id="gameTitle">
-          <span class="brand-infinity">Infinity</span>
-          <span class="brand-merge">Merge</span>
+  <main class="wrap">
+    <section class="hero">
+      <img class="logo" src="../assets/logo-512x512.png" alt="Infinity Merge logo">
+      <h1>Infinity <span class="merge">Merge</span></h1>
+      <p class="tagline">Swipe. Merge. Climb.</p>
+
+      <img class="promo" src="../assets/promo-1024x500.png" alt="Infinity Merge gameplay">
+    </section>
+
+    <section class="section">
+      <h2>Simple to learn. Hard to master.</h2>
+      <p>Infinity Merge is an endless number-merging puzzle. Swipe the board, combine matching tiles and build higher and higher values while managing your Moves and Gold.</p>
+
+      <div class="rules">
+        <div class="rule">
+          <strong>1. Swipe</strong>
+          <span>Swipe in any direction to move the tiles across the board.</span>
         </div>
-        <div class="brand-sub">Swipe. Merge. Climb.</div>
+        <div class="rule">
+          <strong>2. Merge</strong>
+          <span>Matching tiles combine into a higher-value tile.</span>
+        </div>
+        <div class="rule">
+          <strong>3. Manage Moves</strong>
+          <span>Every valid swipe costs 1 Move. Each merge gives you +1 Move.</span>
+        </div>
+        <div class="rule">
+          <strong>4. Upgrade</strong>
+          <span>Earn Gold, improve your spawn level and use Hammers when the board gets difficult.</span>
+        </div>
       </div>
-      <div class="top-actions">
-        <button id="restartRunBtn" class="restart-top-btn" aria-label="Restart run" title="Restart run">↻</button>
-        <div class="coins-wrap"><span class="coin-dot">◆</span><span id="coins">0</span></div>
-      </div>
-    </header>
 
-    <section class="stats">
-      <div id="movesStat" class="stat"><span>MOVES</span><strong id="movesLabel">4</strong></div>
-      <div class="stat"><span>BEST</span><strong id="bestLevelLabel">1</strong></div>
-      <button id="worldBestBtn" class="stat stat-button">
-        <span>BEST IN WORLD</span><strong id="worldBestLabel">—</strong>
-      </button>
+      <div class="buttons">
+        <a class="btn primary" href="../">Play in browser</a>
+        <a class="btn" href="../support/">Support</a>
+        <a class="btn" href="../privacy/">Privacy Policy</a>
+      </div>
     </section>
 
-    <main class="game-area">
-      <div id="grid" class="grid" aria-label="4 by 4 merge board"></div>
-      <div id="message" class="message" aria-live="polite"></div>
-    </main>
-
-    <section class="controls">
-      <button id="spawnBtn" class="control-btn spawn-main-btn">
-        <span class="control-icon">＋</span>
-        <span class="control-copy">
-          <strong>Spawn</strong>
-          <small id="spawnCostLabel">Lv. 1 • ◆1</small>
-        </span>
-      </button>
-
-      <button id="spawnUpgradeBtn" class="control-btn">
-        <span class="control-icon">⬆</span>
-        <span class="control-copy">
-          <strong>Spawn upgrade</strong>
-          <small id="spawnUpgradeLabel">Lv. 2 • ◆20</small>
-        </span>
-      </button>
-
-      <button id="buyMoveBtn" class="control-btn">
-        <span class="control-icon">➜</span>
-        <span class="control-copy">
-          <strong>+1 Move</strong>
-          <small id="buyMoveLabel">◆5</small>
-        </span>
-      </button>
-
-      <button id="hammerBtn" class="control-btn">
-        <span class="control-icon">🔨</span>
-        <span class="control-copy">
-          <strong id="hammerLabel">Hammer ×0</strong>
-          <small id="hammerProgress">Next 0/25 merges</small>
-        </span>
-      </button>
-
-      <button id="goldAdBtn" class="control-btn gold-ad-btn">
-        <span class="control-icon currency-icon">◆</span>
-        <span class="control-copy">
-          <strong>Gold ad</strong>
-          <small id="goldAdLabel">+◆10</small>
-        </span>
-      </button>
-
-      <button id="moveAdBtn" class="control-btn reward-btn">
-        <span class="control-icon">▶</span>
-        <span class="control-copy">
-          <strong>Watch ad</strong>
-          <small id="moveAdLabel">+2 Moves • 3/3 to Spawn Up</small>
-        </span>
-      </button>
-    </section>
-
-      <footer class="hint">
-        Swipe anywhere on the board. Every valid swipe costs 1 Move. Each merge gives +1 Move.
-      </footer>
+    <div class="footer">
+      <span>Infinity Merge</span>
+      <a href="../support/">Support</a>
+      <a href="../privacy/">Privacy</a>
     </div>
-</div>
-
-  <div id="restartConfirmModal" class="modal-backdrop" hidden>
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="restartConfirmTitle">
-      <div class="modal-head">
-        <div>
-          <h2 id="restartConfirmTitle">Restart this run?</h2>
-          <p>Your board, coins, moves, spawn level, hammers and merge progress will reset. Your best level and daily ad limits are kept.</p>
-        </div>
-        <button id="closeRestartConfirmBtn" class="close-btn" aria-label="Cancel restart">×</button>
-      </div>
-
-      <div class="restart-actions">
-        <button id="cancelRestartBtn" class="restart-cancel">Cancel</button>
-        <button id="confirmRestartBtn" class="restart-confirm">Restart run</button>
-      </div>
-    </section>
-  </div>
-
-  <div id="leaderboardModal" class="modal-backdrop" hidden>
-    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="leaderboardTitle">
-      <div class="modal-head">
-        <div>
-          <h2 id="leaderboardTitle">Best in World</h2>
-          <p>Shared record across web, Android and iOS.</p>
-        </div>
-        <button id="closeLeaderboardBtn" class="close-btn" aria-label="Close leaderboard">×</button>
-      </div>
-
-      <div class="leaderboard-your-score world-record-card">
-        <span>WORLD BEST</span>
-        <strong id="leaderboardBest">—</strong>
-        <small>Loaded from Firebase.</small>
-      </div>
-    </section>
-  </div>
-
-  <script src="web-ads-config.js?v=20260928-2"></script>
-  <script src="web-ads.js?v=20260928-2"></script>
-  <script src="firebase.js?v=20260928-2"></script>
-  <script src="app.js?v=20260928-2"></script>
-
-  <footer style="text-align:center;padding:24px 12px 30px;font-size:12px;color:#777;">
-    <a href="support/" style="color:#9b8cff;text-decoration:none;margin:0 8px;">Support</a>
-    <a href="privacy/" style="color:#9b8cff;text-decoration:none;margin:0 8px;">Privacy Policy</a>
-  </footer>
-
+  </main>
 </body>
 </html>
