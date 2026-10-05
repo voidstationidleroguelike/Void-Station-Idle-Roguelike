@@ -45,11 +45,16 @@
     const uniqueLines = unique(markingLines)
       .filter((line) => line && line.length >= 3);
 
+    const cleanMetadata = dedupeMetadata(metadata);
+    const systems = detectSystems(uniqueLines, cleanMetadata);
+    const warnings = buildWarnings(uniqueLines, cleanMetadata, language);
+
     return {
       markingText: uniqueLines.join("\n"),
       markingLines: uniqueLines,
-      systems: detectSystems(uniqueLines, metadata),
-      metadata: dedupeMetadata(metadata),
+      systems,
+      metadata: cleanMetadata,
+      warnings,
       rawText: normalized,
     };
   }
@@ -98,6 +103,14 @@
   function extractAtexFromLine(input) {
     const line = String(input || "");
 
+    /*
+     * The graphical ATEX Ex symbol is not text and is therefore NOT part of
+     * OCR matching. We only isolate the textual ATEX category line here.
+     *
+     * Preserve the characters OCR actually returned. We deliberately accept
+     * I/l/1 inside the parenthesised part as a candidate, but we do not change
+     * one into another. The user must verify/correct the extracted line.
+     */
     const match = line.match(
       /\b(?:II|I)\s+(?:M[12]|[123])(?:\s*\(\s*[123Iil]\s*\))?\s*(?:G|D|GD)\b/i
     );
@@ -107,8 +120,9 @@
     }
 
     return match[0]
-      .replace(/\(\s*[Iil]\s*\)/g, "(I)")
       .replace(/\s+/g, " ")
+      .replace(/\(\s*/g, "(")
+      .replace(/\s*\)/g, ")")
       .trim();
   }
 
@@ -133,11 +147,11 @@
       });
     }
 
-    const ce = line.match(/\bCE\s*\d{2,4}\b/i);
+    const ce = line.match(/\bCE(?:\s*\d{2,4})?\b/i);
     if (ce) {
       items.push({
         key: "ce",
-        label: language === "en" ? "CE / notified body" : "CE / kontrollorgan",
+        label: language === "en" ? "CE marking" : "CE-merking",
         value: ce[0].replace(/\s+/g, " ").trim(),
       });
     }
@@ -176,6 +190,26 @@
 
   function isAtexCategory(line) {
     return /\b(?:II|I)\s+(?:M[12]|[123])(?:\s*\(\s*[123Iil]\s*\))?\s*(?:G|D|GD)\b/i.test(line);
+  }
+
+  function buildWarnings(markingLines, metadata, language) {
+    const warnings = [];
+    const hasAtexEvidence = metadata.some(
+      (item) => item.key === "atexCertificate"
+    );
+    const hasAtexCategory = markingLines.some(isAtexCategory);
+
+    if (hasAtexEvidence && !hasAtexCategory) {
+      warnings.push({
+        key: "atexCategoryNotRead",
+        text:
+          language === "en"
+            ? "ATEX evidence was found, but the ATEX category line was not read reliably. The graphical Ex symbol is not OCR text. Check the plate and enter the ATEX category line manually."
+            : "ATEX ble funnet på skiltet, men ATEX-kategorilinjen ble ikke lest sikkert. Det grafiske Ex-symbolet er ikke OCR-tekst. Kontroller skiltet og skriv inn ATEX-kategorilinjen manuelt."
+      });
+    }
+
+    return warnings;
   }
 
   function normalizeOcr(text) {

@@ -7,6 +7,7 @@
   let selectedDataUrl = null;
   let selectedSystems = new Set();
   let hasInterpreted = false;
+  let lastExtractedMetadata = [];
 
   function init() {
     renderSystemSelector();
@@ -160,7 +161,9 @@
     panel.classList.remove("is-hidden");
 
     hideOcrStatus();
+    lastExtractedMetadata = [];
     renderOcrMetadata([]);
+    renderOcrWarnings([]);
   }
 
   function clearSelectedImage() {
@@ -182,7 +185,9 @@
       ?.classList.add("is-hidden");
 
     hideOcrStatus();
+    lastExtractedMetadata = [];
     renderOcrMetadata([]);
+    renderOcrWarnings([]);
   }
 
   // -------------------------------------------------------------------
@@ -223,7 +228,9 @@
         currentLanguage()
       );
 
-      renderOcrMetadata(extracted.metadata);
+      lastExtractedMetadata = extracted.metadata || [];
+      renderOcrMetadata(lastExtractedMetadata);
+      renderOcrWarnings(extracted.warnings || []);
 
       if (!extracted.markingLines.length) {
         showOcrStatus(
@@ -305,6 +312,32 @@
     panel.classList.remove("is-hidden");
   }
 
+
+  function renderOcrWarnings(items) {
+    const panel = document.getElementById("ocrWarningPanel");
+    const list = document.getElementById("ocrWarningList");
+
+    if (!panel || !list) {
+      return;
+    }
+
+    list.innerHTML = "";
+
+    if (!items?.length) {
+      panel.classList.add("is-hidden");
+      return;
+    }
+
+    items.forEach((item) => {
+      const row = document.createElement("p");
+      row.className = "ocr-warning__item";
+      row.textContent = item.text;
+      list.appendChild(row);
+    });
+
+    panel.classList.remove("is-hidden");
+  }
+
   // -------------------------------------------------------------------
   // Interpretation
   // -------------------------------------------------------------------
@@ -334,6 +367,7 @@
       {
         language,
         systems: [...selectedSystems],
+        metadata: lastExtractedMetadata,
       }
     );
 
@@ -365,8 +399,58 @@
       sections.appendChild(renderSection(section));
     });
 
+    renderResultMetadata(result.metadata || [], sections);
+
     panel.classList.remove("is-hidden");
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+
+  function renderResultMetadata(items, container) {
+    if (!items?.length || !container) {
+      return;
+    }
+
+    const relevant = items.filter((item) =>
+      ["ce", "atexCertificate", "iecexCertificate", "ambient"].includes(item.key)
+    );
+
+    if (!relevant.length) {
+      return;
+    }
+
+    const card = document.createElement("article");
+    card.className = "interpretation-section interpretation-section--plate-info";
+
+    const heading = document.createElement("div");
+    heading.className = "interpretation-section__heading";
+
+    const title = document.createElement("strong");
+    title.textContent =
+      currentLanguage() === "en"
+        ? "Other relevant plate information"
+        : "Annen relevant skiltinfo";
+
+    heading.appendChild(title);
+    card.appendChild(heading);
+
+    relevant.forEach((item) => {
+      const row = document.createElement("div");
+      row.className = "plate-info-row";
+
+      const label = document.createElement("span");
+      label.className = "plate-info-row__label";
+      label.textContent = item.label;
+
+      const value = document.createElement("code");
+      value.className = "plate-info-row__value";
+      value.textContent = item.value;
+
+      row.append(label, value);
+      card.appendChild(row);
+    });
+
+    container.appendChild(card);
   }
 
   function renderSection(section) {

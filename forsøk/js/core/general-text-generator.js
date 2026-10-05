@@ -10,6 +10,7 @@
 
     if (!templates) return "";
 
+    // `systems` contains only successfully parsed sections, not UI toggles.
     const systems = interpreted?.systems || [];
     const sections = interpreted?.sections || [];
     const sentences = [];
@@ -25,9 +26,11 @@
       sentences.push(templates.iecexOnly);
     }
 
-    const iecex = sections.find((section) => section.system === "iecex");
+    const iecexSections = sections.filter(
+      (section) => section.system === "iecex"
+    );
 
-    if (iecex) {
+    iecexSections.forEach((iecex, index) => {
       const grouped = groupIecexTokens(iecex.tokens || []);
 
       if (grouped.main.length) {
@@ -46,7 +49,9 @@
         );
       }
 
-      const ip = grouped.other.find((value) => /^IP\d{2}[A-Z]?$/i.test(value));
+      const ip = grouped.other.find(
+        (value) => /^IP\d{2}[A-Z]?$/i.test(value)
+      );
 
       if (ip) {
         sentences.push(fill(templates.ip, { ip }));
@@ -55,7 +60,17 @@
       if (grouped.unknown.length) {
         sentences.push(templates.unknown);
       }
-    }
+    });
+
+    const ceItems = (interpreted?.metadata || []).filter(
+      (item) => item.key === "ce"
+    );
+
+    ceItems.forEach((item) => {
+      if (templates.ce) {
+        sentences.push(fill(templates.ce, { ce: item.value }));
+      }
+    });
 
     sentences.push(templates.verify);
 

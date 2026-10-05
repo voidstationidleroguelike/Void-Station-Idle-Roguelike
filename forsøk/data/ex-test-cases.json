@@ -124,6 +124,61 @@
         "mustShowUnknown": true,
         "mustNotAutoCorrect": true
       }
+    },
+    {
+      "id": "atex-symbol-not-ocr-text",
+      "title": {
+        "no": "ATEX-symbol skal ikke OCR-leses",
+        "en": "ATEX symbol is not OCR text"
+      },
+      "input": {
+        "ocrText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nIECEx ABC 06.0012\nII 2 (I) G\nABC 00 ATEX 4012"
+      },
+      "expected": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (I) G",
+        "systems": [
+          "iecex",
+          "atex"
+        ],
+        "atexSymbolSource": "ui-asset-not-ocr",
+        "mustRenderAtexSymbolWhenAtexSectionParsed": true
+      }
+    },
+    {
+      "id": "selected-atex-without-parsed-atex",
+      "title": {
+        "no": "Valgt ATEX skal ikke gi falsk ATEX-resultat",
+        "en": "Selected ATEX must not create a false ATEX result"
+      },
+      "input": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55",
+        "selectedSystems": [
+          "atex",
+          "iecex"
+        ]
+      },
+      "expected": {
+        "parsedSystems": [
+          "iecex"
+        ],
+        "mustNotSayAtexFound": true
+      }
+    },
+    {
+      "id": "multiple-ex-lines-and-ce",
+      "title": {
+        "no": "Flere EX-linjer og CE-merking",
+        "en": "Multiple EX lines and CE marking"
+      },
+      "input": {
+        "ocrText": "II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4\nII 2 D Ex tD A21 IP65 T90°C\nCE 0158\nTÜV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "mustReadWholePlate": true,
+        "mustKeepMultipleRelevantLines": true,
+        "ce": "CE 0158",
+        "mustNotStopAfterFirstExLine": true
+      }
     }
   ]
 }

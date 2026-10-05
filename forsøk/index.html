@@ -308,7 +308,7 @@
           </div>
 
           <img id="selectedImagePreview"
-               alt="Valgt bilde for OCR">
+               alt="Valgt bilde">
 
           <p id="selectedImageName"
              class="selected-image__name"></p>
@@ -335,11 +335,18 @@
             </strong>
             <div id="ocrMetadataList"></div>
           </section>
+
+          <section id="ocrWarningPanel"
+                   class="ocr-warning is-hidden"
+                   role="alert">
+            <strong>Kontroller ATEX-merking</strong>
+            <div id="ocrWarningList"></div>
+          </section>
         </section>
 
         <p class="help-text"
            data-i18n="marking.ocrNote">
-          Tekstlesingen kjører lokalt i nettleseren. Kontroller alltid OCR-teksten før merkingen tolkes.
+          Kontroller at merkingen som ble lest fra bildet stemmer med skiltet før du tolker.
         </p>
       </section>
 
@@ -369,7 +376,18 @@
 
         <p class="help-text"
            data-i18n="marking.reviewNote">
-          Kontroller alltid OCR-teksten og faglig forklaring mot godkjent materiale før bruk.
+          Kontroller at merkingen stemmer med skiltet før resultatet brukes.
+        </p>
+      </section>
+
+      <section id="markingDisclaimer"
+               class="marking-disclaimer">
+        <strong data-i18n="marking.disclaimerTitle">Viktig informasjon</strong>
+        <p data-i18n="marking.disclaimerText">
+          Innholdet i guiden er ment som en veiledning. Vær oppmerksom på at innhold i standarder kan
+          oppdateres, og bør sjekkes hvis det skal brukes som beslutningsgrunnlag. Trainor Elsikkerhet AS
+          fraskriver seg alt ansvar for hendelser som kan oppstå som følge av feiltolkning av innholdet
+          i guiden.
         </p>
       </section>
     </main>

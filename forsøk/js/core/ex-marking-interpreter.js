@@ -15,36 +15,34 @@
       .filter(Boolean);
 
     const detected = detectSystems(lines);
-    const systems = unique([...selectedSystems, ...detected]);
+    const requestedSystems = unique([...selectedSystems, ...detected]);
     const sections = [];
 
-    if (systems.includes("iecex")) {
-      const exLine = findIecexLine(lines);
-
-      if (exLine) {
+    if (requestedSystems.includes("iecex")) {
+      findIecexLines(lines).forEach((exLine, index) => {
         sections.push({
           system: "iecex",
           title: "IECEx",
+          lineIndex: index,
           fullLine: exLine,
           tokens: tokenizeIecex(exLine),
         });
-      }
+      });
     }
 
-    if (systems.includes("atex")) {
-      const atexLine = findAtexLine(lines);
-
-      if (atexLine) {
+    if (requestedSystems.includes("atex")) {
+      findAtexLines(lines).forEach((atexLine, index) => {
         sections.push({
           system: "atex",
           title: "ATEX",
+          lineIndex: index,
           fullLine: atexLine,
           tokens: tokenizeAtex(atexLine),
         });
-      }
+      });
     }
 
-    if (systems.includes("other")) {
+    if (requestedSystems.includes("other")) {
       const usedLines = new Set(sections.map((section) => section.fullLine));
       const leftovers = lines.filter((line) => !usedLines.has(line));
 
@@ -58,10 +56,27 @@
       });
     }
 
+    /*
+     * Critical: result.systems represents systems that were actually parsed,
+     * not merely toggles the user selected. This prevents the summary from
+     * claiming ATEX was found when no ATEX category line exists.
+     */
+    const parsedSystems = unique(
+      sections.map((section) => section.system)
+    );
+
+    const metadata = mergeMetadata(
+      Array.isArray(options.metadata) ? options.metadata : [],
+      extractInlineMetadata(lines, language)
+    );
+
     return {
-      systems,
+      requestedSystems,
+      detectedSystems: detected,
+      systems: parsedSystems,
       sections,
-      generalText: buildGeneralText(systems, language),
+      metadata,
+      generalText: buildGeneralText(parsedSystems, language),
     };
   }
 
@@ -79,12 +94,12 @@
     return systems;
   }
 
-  function findIecexLine(lines) {
-    return lines.find((line) => /^Ex\b/i.test(line)) || null;
+  function findIecexLines(lines) {
+    return lines.filter((line) => /^Ex\b/i.test(line));
   }
 
-  function findAtexLine(lines) {
-    return lines.find(isAtexCategory) || null;
+  function findAtexLines(lines) {
+    return lines.filter(isAtexCategory);
   }
 
   function isAtexCategory(line) {
@@ -209,11 +224,48 @@
   }
 
   function normalizeLookup(value) {
-    if (/^\(\s*[Iil]\s*\)$/.test(value)) {
-      return "(1)";
-    }
-
+    /*
+     * Do not silently normalize ambiguous OCR characters such as I/l/1.
+     * The raw token stays visible until the user corrects it.
+     */
     return value;
+  }
+
+
+  function extractInlineMetadata(lines, language) {
+    const metadata = [];
+
+    lines.forEach((line) => {
+      const ce = line.match(/\bCE(?:\s*\d{2,4})?\b/i);
+
+      if (ce) {
+        metadata.push({
+          key: "ce",
+          label: language === "en" ? "CE marking" : "CE-merking",
+          value: ce[0].replace(/\s+/g, " ").trim(),
+        });
+      }
+    });
+
+    return metadata;
+  }
+
+  function mergeMetadata(...groups) {
+    const seen = new Set();
+    const merged = [];
+
+    groups.flat().forEach((item) => {
+      if (!item?.key || !item?.value) return;
+
+      const key = `${item.key}|${item.value}`.toLowerCase();
+
+      if (seen.has(key)) return;
+
+      seen.add(key);
+      merged.push(item);
+    });
+
+    return merged;
   }
 
   function buildGeneralText(systems, language) {

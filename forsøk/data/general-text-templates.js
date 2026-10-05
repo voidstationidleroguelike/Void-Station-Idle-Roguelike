@@ -14,10 +14,12 @@ window.EX_APP.generalTextTemplates = {
       "Hovedutstyrets merking er {main}.",
     ip:
       "Utstyret er også merket {ip}.",
+    ce:
+      "Skiltet er også merket {ce}.",
     unknown:
       "Ett eller flere elementer er ikke definert i biblioteket og må kontrolleres manuelt.",
     verify:
-      "Kontroller alltid OCR-teksten og faglig forklaring mot godkjent materiale før bruk."
+      "Kontroller at merkingen stemmer med skiltet før resultatet brukes."
   },
 
   en: {
@@ -33,9 +35,11 @@ window.EX_APP.generalTextTemplates = {
       "The main equipment marking is {main}.",
     ip:
       "The equipment is also marked {ip}.",
+    ce:
+      "The plate is also marked {ce}.",
     unknown:
       "One or more elements are not defined in the library and must be checked manually.",
     verify:
-      "Always verify OCR text and technical explanations against approved material before use."
+      "Check that the marking matches the actual plate before using the result."
   }
 };

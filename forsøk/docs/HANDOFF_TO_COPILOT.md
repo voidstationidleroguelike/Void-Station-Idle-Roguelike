@@ -423,3 +423,47 @@ The first acceptance case is the current primary reference:
 Ex db [ia IIC Ga] IIB T4 Gb IP55
 II 2 (1) G
 ```
+
+
+## ATEX graphical Ex symbol and OCR
+
+The ATEX Ex symbol is graphical artwork and is **not expected to be read as
+text by OCR**.
+
+Correct flow:
+
+```text
+OCR finds textual ATEX category line, e.g. II 2 (I) G
+            ↓
+parser creates an ATEX result section
+            ↓
+UI prepends/renders the approved ATEX Ex-symbol asset
+```
+
+An ATEX certificate number can be used as evidence that ATEX information is
+present on the plate, but it must **not** be used to invent a missing category
+line. If the certificate is detected but the category line is not read
+reliably, show a warning and require manual correction/entry.
+
+The general generated text must be based on successfully parsed result
+sections, never merely on selected system toggles.
+
+
+## Multiple marking lines and CE
+
+Image reading must process the entire plate.
+
+Do not stop after the first EX line. A single plate may contain multiple
+relevant marking lines, for example separate gas and dust lines.
+
+The result model therefore supports multiple IECEx/Ex sections and multiple
+ATEX category lines.
+
+CE marking should also be retained as relevant plate information, e.g.:
+
+```text
+CE 0158
+```
+
+CE is shown separately from the EX code breakdown. Do not treat the CE marking
+as an IECEx or ATEX code token.

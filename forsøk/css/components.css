@@ -859,3 +859,72 @@
   background: #f5fbf6;
   box-shadow: 0 0 0 2px rgba(54, 180, 74, .12);
 }
+
+
+.ocr-warning {
+  margin-top: 10px;
+  padding: 11px 12px;
+  border: 1px solid #d8a100;
+  border-left-width: 4px;
+  border-radius: 11px;
+  background: #fff9e8;
+}
+
+.ocr-warning > strong {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.ocr-warning__item {
+  margin: 0;
+  color: var(--text);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+
+.marking-disclaimer {
+  margin: 12px 0 20px;
+  padding: 14px 15px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.marking-disclaimer strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 12px;
+}
+
+.marking-disclaimer p {
+  margin: 0;
+}
+
+
+.interpretation-section--plate-info {
+  border-left: 4px solid var(--ex-green);
+}
+
+.plate-info-row {
+  display: grid;
+  grid-template-columns: minmax(110px, 36%) 1fr;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+
+.plate-info-row__label {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.plate-info-row__value {
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
