@@ -225,6 +225,12 @@
           <span data-i18n="marking.manual">manuell merking</span>
         </div>
 
+        <div id="ocrCandidateBanner"
+             class="candidate-banner is-hidden">
+          <strong data-i18n="marking.foundMarking">Fant følgende merking</strong>
+          <span data-i18n="marking.checkForErrors">Kontroller for feil før du tolker.</span>
+        </div>
+
         <label class="field-label"
                for="markingInput"
                data-i18n="marking.inputLabel">
@@ -321,6 +327,14 @@
             <span id="ocrSpinner" class="ocr-spinner" aria-hidden="true"></span>
             <span id="ocrStatusText"></span>
           </div>
+
+          <section id="ocrMetadataPanel"
+                   class="ocr-metadata is-hidden">
+            <strong data-i18n="marking.otherRelevant">
+              Annen relevant skiltinfo
+            </strong>
+            <div id="ocrMetadataList"></div>
+          </section>
         </section>
 
         <p class="help-text"
@@ -333,15 +347,29 @@
                class="panel is-hidden">
         <div class="panel__heading-row">
           <h3 data-i18n="marking.result">Resultat</h3>
-          <span class="status-chip" data-i18n="marking.structural">STRUKTUR</span>
+          <span class="status-chip" data-i18n="marking.interpretation">TOLKNING</span>
         </div>
 
-        <div id="markingSummary" class="marking-summary"></div>
-        <div id="markingLines" class="marking-lines"></div>
+        <div id="markingGeneralText" class="marking-general-text"></div>
+        <div id="markingSections" class="marking-sections"></div>
+
+        <section id="tokenDetailPanel"
+                 class="token-detail is-hidden"
+                 aria-live="polite">
+          <div class="token-detail__heading">
+            <strong id="tokenDetailTitle"></strong>
+            <button id="closeTokenDetail"
+                    class="text-button token-detail__close"
+                    type="button"
+                    aria-label="Lukk">×</button>
+          </div>
+
+          <p id="tokenDetailText"></p>
+        </section>
 
         <p class="help-text"
-           data-i18n="marking.demoNote">
-          Demo-parseren viser bare UI-flyten. Fagregler legges inn separat og må kvalitetssikres.
+           data-i18n="marking.reviewNote">
+          Kontroller alltid OCR-teksten og faglig forklaring mot godkjent materiale før bruk.
         </p>
       </section>
     </main>
@@ -401,17 +429,23 @@
 
   <!-- Data and configuration -->
   <script src="data/app-config.js"></script>
+  <script src="data/content-meta.js"></script>
+  <script src="data/general-text-templates.js"></script>
   <script src="data/translations.js"></script>
   <script src="data/courses.js"></script>
   <script src="data/ex-demo-rules.js"></script>
   <script src="data/marking-systems.js"></script>
   <script src="data/ex-marking-rules.js"></script>
+  <script src="data/ex-code-library.js"></script>
 
   <!-- Core -->
   <script src="js/core/i18n.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/pan-zoom.js"></script>
   <script src="js/core/ex-marking-parser.js"></script>
+  <script src="js/core/ex-code-extractor.js"></script>
+  <script src="js/core/ex-marking-interpreter.js"></script>
+  <script src="js/core/general-text-generator.js"></script>
 
   <!-- Browser OCR engine.
        Runs OCR in the client browser; selected images are not sent to our server. -->

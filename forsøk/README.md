@@ -175,3 +175,28 @@ The current prototype now uses:
 - the supplied official Ex / ATEX-style symbol in the marking-system selector
 
 These can still be replaced locally with final approved artwork while keeping the same layout.
+
+
+## Copilot handoff
+
+For continuation in another coding assistant, start with:
+
+```text
+docs/HANDOFF_TO_COPILOT.md
+```
+
+
+## Technical content governance
+
+The current handoff now includes:
+
+```text
+data/content-meta.js
+data/general-text-templates.js
+data/ex-test-cases.json
+docs/EX_CODE_LIBRARY_SCHEMA.md
+docs/TEST_CASES.md
+```
+
+All technical user-facing content is intended to be bilingual: Norwegian and
+English.

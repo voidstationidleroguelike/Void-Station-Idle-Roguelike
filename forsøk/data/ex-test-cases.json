@@ -1,0 +1,129 @@
+{
+  "version": 1,
+  "languages": [
+    "no",
+    "en"
+  ],
+  "notes": {
+    "no": "Disse testene verifiserer struktur og UI-flyt, ikke full samsvarsvurdering.",
+    "en": "These tests verify structure and UI flow, not full compliance assessment."
+  },
+  "cases": [
+    {
+      "id": "mixed-atex-iecex-associated-gas",
+      "title": {
+        "no": "ATEX + IECEx med associated-del",
+        "en": "ATEX + IECEx with associated section"
+      },
+      "input": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G",
+        "selectedSystems": [
+          "atex",
+          "iecex"
+        ]
+      },
+      "expected": {
+        "systems": [
+          "atex",
+          "iecex"
+        ],
+        "sections": {
+          "iecex": {
+            "fullLine": "Ex db [ia IIC Ga] IIB T4 Gb IP55",
+            "tokens": [
+              "Ex db",
+              "[",
+              "ia",
+              "IIC",
+              "Ga",
+              "]",
+              "IIB",
+              "T4",
+              "Gb",
+              "IP55"
+            ],
+            "associatedTokens": [
+              "ia",
+              "IIC",
+              "Ga"
+            ],
+            "mainTokens": [
+              "Ex db",
+              "IIB",
+              "T4",
+              "Gb"
+            ],
+            "otherTokens": [
+              "IP55"
+            ]
+          },
+          "atex": {
+            "fullLine": "II 2 (1) G",
+            "tokens": [
+              "Ex",
+              "II",
+              "2",
+              "(1)",
+              "G"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-dust-line",
+      "title": {
+        "no": "Eldre støvmerking",
+        "en": "Legacy dust marking"
+      },
+      "input": {
+        "markingText": "II 2 D Ex tD A21 IP65 T90°C",
+        "selectedSystems": [
+          "other"
+        ]
+      },
+      "expected": {
+        "systems": [
+          "other"
+        ],
+        "preserveFullLine": true,
+        "mustNotInventModernEquivalent": true
+      }
+    },
+    {
+      "id": "ocr-noise-filter",
+      "title": {
+        "no": "OCR-søppel rundt EX-merking",
+        "en": "OCR noise around EX marking"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH\nTel +49 12345\nEx db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G\nFax +49 67890"
+      },
+      "expected": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G",
+        "discardManufacturerText": true,
+        "discardPhoneText": true
+      }
+    },
+    {
+      "id": "unknown-token",
+      "title": {
+        "no": "Ukjent kode skal ikke gjettes",
+        "en": "Unknown code must not be guessed"
+      },
+      "input": {
+        "markingText": "Ex db XYZ IIB T4 Gb",
+        "selectedSystems": [
+          "iecex"
+        ]
+      },
+      "expected": {
+        "unknownTokens": [
+          "XYZ"
+        ],
+        "mustShowUnknown": true,
+        "mustNotAutoCorrect": true
+      }
+    }
+  ]
+}

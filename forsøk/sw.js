@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v1";
+const CACHE_VERSION = "ex-pocket-guide-v11";
 
 const APP_SHELL = [
   "./",
@@ -11,21 +11,37 @@ const APP_SHELL = [
   "./css/views.css",
 
   "./data/app-config.js",
+  "./data/general-text-templates.js",
+  "./data/content-meta.js",
   "./data/translations.js",
   "./data/courses.js",
   "./data/ex-demo-rules.js",
+  "./data/marking-systems.js",
+  "./data/ex-marking-rules.js",
+  "./data/ex-code-library.js",
 
   "./js/app.js",
   "./js/core/i18n.js",
   "./js/core/router.js",
   "./js/core/pan-zoom.js",
+  "./js/core/ex-marking-parser.js",
+  "./js/core/ex-code-extractor.js",
+  "./js/core/ex-marking-interpreter.js",
+  "./js/core/general-text-generator.js",
+
   "./js/services/ocr-service.js",
+  "./js/services/pwa-service.js",
+
   "./js/features/guide.js",
   "./js/features/marking.js",
   "./js/features/poster.js",
   "./js/features/courses.js",
 
   "./assets/branding/trainor-apave-placeholder.svg",
+  "./assets/home/ex-home-symbol.png",
+  "./assets/marking-systems/atex-official-symbol.png",
+  "./assets/marking-systems/iecex-placeholder.svg",
+  "./assets/marking-systems/other-placeholder.svg",
   "./assets/poster/poster-no.svg",
   "./assets/poster/poster-en.svg",
   "./assets/pwa/icon-192.svg",
@@ -60,13 +76,14 @@ self.addEventListener("fetch", (event) => {
 
   const url = new URL(request.url);
 
-  // Navigation: network first, fall back to app shell.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const copy = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put("./index.html", copy));
+          caches.open(CACHE_VERSION).then((cache) =>
+            cache.put("./index.html", copy)
+          );
           return response;
         })
         .catch(() => caches.match("./index.html"))
@@ -74,7 +91,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Same-origin static assets: cache first, then network.
   if (url.origin === self.location.origin) {
     event.respondWith(
       caches.match(request).then((cached) => {
@@ -86,7 +102,10 @@ self.addEventListener("fetch", (event) => {
           }
 
           const copy = response.clone();
-          caches.open(CACHE_VERSION).then((cache) => cache.put(request, copy));
+          caches.open(CACHE_VERSION).then((cache) =>
+            cache.put(request, copy)
+          );
+
           return response;
         });
       })
