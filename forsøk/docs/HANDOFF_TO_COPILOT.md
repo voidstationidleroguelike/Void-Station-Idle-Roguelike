@@ -20,7 +20,7 @@ Build a mobile-first HTML/CSS/JavaScript EX pocket-guide web app that can:
 ## Visual direction
 
 - Mobile-first
-- Trainor / Groupe Apave branding placeholder at top
+- Trainor / Groupe Apave logo asset at top
 - EX guide uses blue + green as main working colors
 - Trainor orange remains brand accent
 - Home EX symbol uses the supplied round EX symbol
@@ -483,3 +483,27 @@ assets/poster/poster-en.webp
 
 Do not mass-convert branding, UI icons, SVG vectors or approved symbol files
 just for consistency. WebP is primarily for the large raster content.
+
+
+## Stable final asset names
+
+Do not rename these when replacing temporary artwork with approved files:
+
+```text
+assets/branding/trainor-apave-logo.svg
+assets/marking-systems/atex-official-symbol.png
+assets/marking-systems/iecex-symbol.svg
+assets/marking-systems/other-marking-symbol.svg
+assets/poster/poster-no.webp
+assets/poster/poster-en.webp
+```
+
+Pocket Guide final content should use:
+
+```text
+assets/pocket-guide/no/page-01.webp ... page-20.webp
+assets/pocket-guide/en/page-01.webp ... page-20.webp
+```
+
+The goal is that approved assets can simply overwrite these paths without any
+code changes.

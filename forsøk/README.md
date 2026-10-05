@@ -39,7 +39,7 @@ The prototype includes:
 - service worker
 - offline app shell
 - install prompt support where the browser exposes it
-- home-screen icon placeholders
+- home-screen icons
 - iOS web-app meta tags
 - safe-area handling
 - mobile-first layout
@@ -161,7 +161,7 @@ ATEX / IECEx / Other
 Image scanning remains automatic and may detect more than one scheme on the
 same plate.
 
-Official artwork can replace the placeholder assets in:
+Official artwork can replace the replaceable assets in:
 
 ```text
 assets/marking-systems/

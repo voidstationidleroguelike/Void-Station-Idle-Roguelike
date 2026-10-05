@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v16";
+const CACHE_VERSION = "ex-pocket-guide-v17";
 
 const APP_SHELL = [
   "./",
@@ -37,13 +37,11 @@ const APP_SHELL = [
   "./js/features/poster.js",
   "./js/features/courses.js",
 
-  "./assets/branding/trainor-apave-placeholder.svg",
+  "./assets/branding/trainor-apave-logo.svg",
   "./assets/home/ex-home-symbol.png",
   "./assets/marking-systems/atex-official-symbol.png",
-  "./assets/marking-systems/iecex-placeholder.svg",
-  "./assets/marking-systems/other-placeholder.svg",
-  "./assets/poster/poster-no.svg",
-  "./assets/poster/poster-en.svg",
+  "./assets/marking-systems/iecex-symbol.svg",
+  "./assets/marking-systems/other-marking-symbol.svg",
   "./assets/pwa/icon-192.svg",
   "./assets/pwa/icon-512.svg",
   "./assets/pwa/icon-maskable.svg"

@@ -20,18 +20,12 @@ window.EX_APP.config = {
   },
 
   poster: {
-    no: {
-      primary: "assets/poster/poster-no.webp",
-      fallback: "assets/poster/poster-no.svg",
-    },
-    en: {
-      primary: "assets/poster/poster-en.webp",
-      fallback: "assets/poster/poster-en.svg",
-    },
+    no: "assets/poster/poster-no.webp",
+    en: "assets/poster/poster-en.webp",
   },
 
   branding: {
-    logo: "assets/branding/trainor-apave-placeholder.svg",
+    logo: "assets/branding/trainor-apave-logo.svg",
   },
 
   externalLinks: {

@@ -8,7 +8,7 @@ be shared during development.
 Replace:
 
 ```text
-assets/branding/trainor-apave-placeholder.svg
+assets/branding/trainor-apave-logo.svg
 ```
 
 or update `branding.logo` in:
@@ -84,3 +84,30 @@ Keep supplied symbol artwork as PNG when that is the approved/original asset.
 
 The app is WebP-first for Pocket Guide and Poster, with prototype fallback to
 PNG/SVG while final files are being prepared.
+
+
+## Final asset filenames
+
+Temporary artwork is deliberately stored under the same filenames that final
+approved artwork should use. This makes replacement a simple overwrite.
+
+Replace these files without changing code:
+
+```text
+assets/branding/trainor-apave-logo.svg
+assets/marking-systems/atex-official-symbol.png
+assets/marking-systems/iecex-symbol.svg
+assets/marking-systems/other-marking-symbol.svg
+```
+
+Final large content files:
+
+```text
+assets/poster/poster-no.webp
+assets/poster/poster-en.webp
+
+assets/pocket-guide/no/page-01.webp ... page-20.webp
+assets/pocket-guide/en/page-01.webp ... page-20.webp
+```
+
+There are no poster placeholder files anymore.

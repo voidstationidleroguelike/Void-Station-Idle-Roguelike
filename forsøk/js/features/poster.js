@@ -33,27 +33,11 @@
   function render() {
     const language = window.EX_APP.i18n.getLanguage();
     const image = document.getElementById("posterImage");
-    const asset = window.EX_APP.config.poster[language];
+    const path = window.EX_APP.config.poster[language];
 
-    if (image && asset) {
-      const primary =
-        typeof asset === "string"
-          ? asset
-          : asset.primary;
-
-      const fallback =
-        typeof asset === "string"
-          ? null
-          : asset.fallback;
-
-      image.onerror = fallback
-        ? () => {
-            image.onerror = null;
-            image.src = fallback;
-          }
-        : null;
-
-      image.src = primary;
+    if (image && path) {
+      image.onerror = null;
+      image.src = path;
     }
 
     panZoom?.fit();

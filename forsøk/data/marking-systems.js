@@ -17,7 +17,7 @@ window.EX_APP.markingSystems = [
       no: "Internasjonal IECEx-merking og sertifisering",
       en: "International IECEx marking and certification"
     },
-    asset: "assets/marking-systems/iecex-placeholder.svg"
+    asset: "assets/marking-systems/iecex-symbol.svg"
   },
   {
     id: "other",
@@ -26,6 +26,6 @@ window.EX_APP.markingSystems = [
       no: "Eldre eller landbaserte merkeskilt",
       en: "Older or country-specific markings"
     },
-    asset: "assets/marking-systems/other-placeholder.svg"
+    asset: "assets/marking-systems/other-marking-symbol.svg"
   }
 ];
