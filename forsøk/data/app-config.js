@@ -18,8 +18,8 @@ window.EX_APP.config = {
   },
 
   poster: {
-    no: "assets/poster/poster-placeholder.svg",
-    en: "assets/poster/poster-placeholder.svg",
+    no: "assets/poster/poster-no.svg",
+    en: "assets/poster/poster-en.svg",
   },
 
   branding: {

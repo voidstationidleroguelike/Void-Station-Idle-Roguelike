@@ -5,6 +5,7 @@
   <meta name="viewport"
         content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
   <meta name="theme-color" content="#27465c">
+  <meta name="robots" content="noindex,nofollow,noarchive">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="EX Guide">
@@ -204,6 +205,23 @@
           Skriv inn merkingen, ta bilde eller velg et bilde fra telefonen.
         </p>
 
+        
+        <section class="marking-system-section">
+          <div class="section-label" data-i18n="marking.chooseSystem">
+            Velg merkesystem
+          </div>
+
+          <div id="markingSystemGrid" class="marking-system-grid"></div>
+
+          <p id="markingSystemHelp" class="help-text">
+            Velg system for manuell tolkning. Ved bilde/skanning prøver appen å oppdage systemet automatisk.
+          </p>
+        </section>
+
+        <div class="divider">
+          <span data-i18n="marking.manual">manuell merking</span>
+        </div>
+
         <label class="field-label"
                for="markingInput"
                data-i18n="marking.inputLabel">
@@ -292,11 +310,19 @@
                   data-i18n="marking.readImage">
             Les merkingen fra bildet
           </button>
+
+          <div id="ocrStatus"
+               class="ocr-status is-hidden"
+               role="status"
+               aria-live="polite">
+            <span id="ocrSpinner" class="ocr-spinner" aria-hidden="true"></span>
+            <span id="ocrStatusText"></span>
+          </div>
         </section>
 
         <p class="help-text"
            data-i18n="marking.ocrNote">
-          OCR-kallet ligger i en egen, plattformuavhengig service slik at samme HTML-kode kan brukes på både iOS og Android.
+          Tekstlesingen kjører lokalt i nettleseren. Kontroller alltid OCR-teksten før merkingen tolkes.
         </p>
       </section>
 
@@ -304,10 +330,11 @@
                class="panel is-hidden">
         <div class="panel__heading-row">
           <h3 data-i18n="marking.result">Resultat</h3>
-          <span class="status-chip">DEMO</span>
+          <span class="status-chip" data-i18n="marking.structural">STRUKTUR</span>
         </div>
 
-        <div id="markingTokens" class="token-list"></div>
+        <div id="markingSummary" class="marking-summary"></div>
+        <div id="markingLines" class="marking-lines"></div>
 
         <p class="help-text"
            data-i18n="marking.demoNote">
@@ -374,11 +401,18 @@
   <script src="data/translations.js"></script>
   <script src="data/courses.js"></script>
   <script src="data/ex-demo-rules.js"></script>
+  <script src="data/marking-systems.js"></script>
+  <script src="data/ex-marking-rules.js"></script>
 
   <!-- Core -->
   <script src="js/core/i18n.js"></script>
   <script src="js/core/router.js"></script>
   <script src="js/core/pan-zoom.js"></script>
+  <script src="js/core/ex-marking-parser.js"></script>
+
+  <!-- Browser OCR engine.
+       Runs OCR in the client browser; selected images are not sent to our server. -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 
   <!-- Cross-platform services -->
   <script src="js/services/ocr-service.js"></script>

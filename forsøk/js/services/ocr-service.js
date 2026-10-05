@@ -4,29 +4,65 @@
   window.EX_APP = window.EX_APP || {};
 
   /*
-   * Cross-platform OCR service boundary.
+   * Browser-first OCR service.
    *
-   * IMPORTANT:
-   * The UI and feature code are plain HTML/CSS/JavaScript and do not care
-   * whether the finished app runs on Android or iOS.
+   * Tesseract.js runs recognition in the user's browser.
+   * The selected image is processed client-side and is not uploaded by this
+   * application code.
    *
-   * The first production target is mobile web/PWA. OCR can later be connected
-   * here using a browser-capable local OCR implementation. If the same web
-   * project is wrapped with Capacitor later, this service remains the single
-   * integration point for Android and iOS as well.
+   * For the EX marking use case we start with English OCR data because the
+   * important content is mainly Latin letters, digits and technical codes.
+   * The OCR result is returned as raw text so the user can verify/edit it
+   * before relying on any interpretation.
    *
-   * Until then, this service deliberately returns null so the prototype can
-   * demonstrate the complete UI flow without pretending OCR is implemented.
+   * This file remains the one OCR boundary if the same HTML project is later
+   * wrapped for Android/iOS.
    */
 
-  async function recognizeImage(dataUrl) {
+  async function recognizeImage(dataUrl, onProgress) {
     if (!dataUrl) {
       return null;
     }
 
-    // Production OCR implementation belongs here.
-    // Keep feature code in marking.js unchanged.
-    return null;
+    if (!window.Tesseract?.recognize) {
+      throw new Error(
+        "OCR-biblioteket kunne ikke lastes. Kontroller internettilkoblingen og prøv igjen."
+      );
+    }
+
+    const result = await window.Tesseract.recognize(
+      dataUrl,
+      "eng",
+      {
+        logger(message) {
+          if (typeof onProgress === "function") {
+            onProgress({
+              status: message.status || "",
+              progress:
+                typeof message.progress === "number"
+                  ? message.progress
+                  : null,
+            });
+          }
+        },
+      }
+    );
+
+    const text = result?.data?.text || "";
+
+    return cleanOcrText(text);
+  }
+
+  function cleanOcrText(text) {
+    /*
+     * Only harmless whitespace cleanup here.
+     * Do NOT silently "correct" I/1, O/0 etc. in EX markings.
+     */
+    return String(text)
+      .replace(/\r/g, "\n")
+      .replace(/[ \t]+/g, " ")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
   }
 
   window.EX_APP.ocrService = {

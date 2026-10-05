@@ -26,7 +26,8 @@ const APP_SHELL = [
   "./js/features/courses.js",
 
   "./assets/branding/trainor-apave-placeholder.svg",
-  "./assets/poster/poster-placeholder.svg",
+  "./assets/poster/poster-no.svg",
+  "./assets/poster/poster-en.svg",
   "./assets/pwa/icon-192.svg",
   "./assets/pwa/icon-512.svg",
   "./assets/pwa/icon-maskable.svg"

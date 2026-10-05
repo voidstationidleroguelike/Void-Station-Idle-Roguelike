@@ -120,3 +120,49 @@ docs/DEPLOYMENT.md
 
 A private Git repository is a good place for source control, but remember that
 repository privacy and deployed website access are separate settings.
+
+
+## Browser OCR
+
+The current web prototype now performs OCR in the browser with Tesseract.js.
+
+- works in desktop browsers and mobile browsers
+- the selected image is processed client-side by the application code
+- first OCR use downloads the OCR engine/language data from the configured CDN
+- OCR text is placed into the editable marking field before interpretation
+- the app deliberately does not auto-correct ambiguous technical characters
+
+For a production/offline build, the OCR library and language data can be
+vendored with the project instead of loaded from a CDN.
+
+
+## Line-aware EX marking parser
+
+The project now preserves OCR line breaks and structurally classifies each
+nameplate line. See:
+
+```text
+data/ex-marking-rules.js
+js/core/ex-marking-parser.js
+docs/EX_MARKING_PARSER.md
+```
+
+Gas/dust and electrical/mechanical are handled as separate dimensions.
+
+
+## EX marking system selection
+
+Manual interpretation now starts with:
+
+```text
+ATEX / IECEx / Other
+```
+
+Image scanning remains automatic and may detect more than one scheme on the
+same plate.
+
+Official artwork can replace the placeholder assets in:
+
+```text
+assets/marking-systems/
+```

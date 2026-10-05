@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <rect width="240" height="160" rx="20" fill="#ffffff"/>
+  <polygon points="120,18 184,55 184,105 120,142 56,105 56,55"
+           fill="#ffd900" stroke="#111111" stroke-width="8"/>
+  <text x="120" y="98" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="54"
+        font-weight="700" fill="#111111">Ex</text>
+</svg>
