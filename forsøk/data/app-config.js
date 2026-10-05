@@ -11,15 +11,23 @@ window.EX_APP.config = {
     startPage: 1,
 
     /*
-     * Files can be PNG, JPG, WEBP or SVG.
-     * The loader tries .png first, then .svg as a placeholder fallback.
+     * Production content assets are WebP.
+     * Development fallback remains PNG/SVG so the prototype still opens
+     * before the final exported pages are copied into the project.
      */
     basePath: "assets/pocket-guide",
+    preferredExtension: "webp",
   },
 
   poster: {
-    no: "assets/poster/poster-no.svg",
-    en: "assets/poster/poster-en.svg",
+    no: {
+      primary: "assets/poster/poster-no.webp",
+      fallback: "assets/poster/poster-no.svg",
+    },
+    en: {
+      primary: "assets/poster/poster-en.webp",
+      fallback: "assets/poster/poster-en.svg",
+    },
   },
 
   branding: {

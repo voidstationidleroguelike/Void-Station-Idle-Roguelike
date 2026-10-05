@@ -100,12 +100,26 @@
     const number = String(page).padStart(2, "0");
     const base = `${config.guide.basePath}/${language}/page-${number}`;
 
+    const candidates = [
+      `${base}.${config.guide.preferredExtension || "webp"}`,
+      `${base}.png`,
+      `${base}.svg`,
+    ];
+
+    let candidateIndex = 0;
+
     image.onerror = () => {
-      image.onerror = null;
-      image.src = `${base}.svg`;
+      candidateIndex += 1;
+
+      if (candidateIndex >= candidates.length) {
+        image.onerror = null;
+        return;
+      }
+
+      image.src = candidates[candidateIndex];
     };
 
-    image.src = `${base}.png`;
+    image.src = candidates[candidateIndex];
 
     document.getElementById("guidePageIndicator").textContent =
       `${page} / ${config.guide.pageCount}`;

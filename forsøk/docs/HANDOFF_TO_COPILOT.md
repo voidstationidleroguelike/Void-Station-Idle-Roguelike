@@ -467,3 +467,19 @@ CE 0158
 
 CE is shown separately from the EX code breakdown. Do not treat the CE marking
 as an IECEx or ATEX code token.
+
+## WebP content assets
+
+Production Pocket Guide pages and Poster images use WebP.
+
+Expected final paths:
+
+```text
+assets/pocket-guide/no/page-01.webp ... page-20.webp
+assets/pocket-guide/en/page-01.webp ... page-20.webp
+assets/poster/poster-no.webp
+assets/poster/poster-en.webp
+```
+
+Do not mass-convert branding, UI icons, SVG vectors or approved symbol files
+just for consistency. WebP is primarily for the large raster content.

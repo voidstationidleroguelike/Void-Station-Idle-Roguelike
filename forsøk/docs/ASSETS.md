@@ -64,3 +64,23 @@ vector artwork.
 
 Files shipped in `app/src/main/assets/` are packaged in the application.
 They should not be treated as secret merely because they are inside the APK.
+
+## Production image format
+
+Large content imagery should use WebP:
+
+```text
+assets/pocket-guide/no/page-01.webp ... page-20.webp
+assets/pocket-guide/en/page-01.webp ... page-20.webp
+
+assets/poster/poster-no.webp
+assets/poster/poster-en.webp
+```
+
+Do **not** convert every project asset to WebP.
+
+Keep logos, UI icons and vector placeholders as SVG where appropriate.
+Keep supplied symbol artwork as PNG when that is the approved/original asset.
+
+The app is WebP-first for Pocket Guide and Poster, with prototype fallback to
+PNG/SVG while final files are being prepared.
