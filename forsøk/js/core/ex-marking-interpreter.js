@@ -11,11 +11,17 @@
 
     const lines = normalize(rawText)
       .split("\n")
-      .map((line) => line.trim())
+      .map((line) =>
+        normalizeKnownExConfusions(line.trim())
+      )
       .filter(Boolean);
 
     const detected = detectSystems(lines);
-    const requestedSystems = unique([...selectedSystems, ...detected]);
+    const requestedSystems = unique([
+      ...selectedSystems,
+      ...detected,
+    ]);
+
     const sections = [];
 
     if (requestedSystems.includes("iecex")) {
@@ -43,30 +49,35 @@
     }
 
     if (requestedSystems.includes("other")) {
-      const usedLines = new Set(sections.map((section) => section.fullLine));
-      const leftovers = lines.filter((line) => !usedLines.has(line));
+      const usedLines = new Set(
+        sections.map((section) => section.fullLine)
+      );
+
+      const leftovers = lines.filter(
+        (line) => !usedLines.has(line)
+      );
 
       leftovers.forEach((line) => {
         sections.push({
           system: "other",
-          title: language === "en" ? "Other" : "Annet",
+          title:
+            language === "en"
+              ? "Other"
+              : "Annet",
           fullLine: line,
           tokens: tokenizeGeneric(line),
         });
       });
     }
 
-    /*
-     * Critical: result.systems represents systems that were actually parsed,
-     * not merely toggles the user selected. This prevents the summary from
-     * claiming ATEX was found when no ATEX category line exists.
-     */
     const parsedSystems = unique(
       sections.map((section) => section.system)
     );
 
     const metadata = mergeMetadata(
-      Array.isArray(options.metadata) ? options.metadata : [],
+      Array.isArray(options.metadata)
+        ? options.metadata
+        : [],
       extractInlineMetadata(lines, language)
     );
 
@@ -76,7 +87,8 @@
       systems: parsedSystems,
       sections,
       metadata,
-      generalText: buildGeneralText(parsedSystems, language),
+      generalText:
+        buildGeneralText(parsedSystems, language),
     };
   }
 
@@ -103,12 +115,82 @@
   }
 
   function isAtexCategory(line) {
-    return /\b(?:II|I)\s+(?:M[12]|[123])(?:\s*\(\s*[123Iil]\s*\))?\s*(?:G|D|GD)\b/i.test(line);
+    return /^II\s+[123](?:\s*\([123]\))?\s*(?:GD|G|D)\b/.test(
+      String(line || "")
+    );
+  }
+
+  // ---------------------------------------------------------------
+  // Same context-aware normalization used for manual entry.
+  // ---------------------------------------------------------------
+
+  function normalizeKnownRomanGroups(value) {
+    let text = String(value || "");
+    const iLike = "[Iil1|!]";
+
+    text = text.replace(
+      new RegExp(
+        `(^|[^A-Za-z0-9])(${iLike}{3})([ABC])\\b`,
+        "g"
+      ),
+      (match, prefix, roman, suffix) =>
+        `${prefix}III${suffix}`
+    );
+
+    text = text.replace(
+      new RegExp(
+        `(^|[^A-Za-z0-9])(${iLike}{2})([ABC])\\b`,
+        "g"
+      ),
+      (match, prefix, roman, suffix) =>
+        `${prefix}II${suffix}`
+    );
+
+    return text;
+  }
+
+  function normalizeAtexEquipmentGroup(value) {
+    return String(value || "").replace(
+      /(?:^|[^A-Za-z0-9])([Iil1|!]{2})\s*([123])(?:\s*\(\s*([123Iil|!])\s*\))?\s*(GD|G|D)\b/g,
+      (
+        match,
+        group,
+        category,
+        associated,
+        atmosphere
+      ) => {
+        const associatedCategory = associated
+          ? (/^[Iil|!]$/.test(associated)
+              ? "1"
+              : associated)
+          : null;
+
+        return [
+          "II",
+          category,
+          associatedCategory
+            ? `(${associatedCategory})`
+            : null,
+          atmosphere,
+        ]
+          .filter(Boolean)
+          .join(" ");
+      }
+    );
+  }
+
+  function normalizeKnownExConfusions(value) {
+    return normalizeAtexEquipmentGroup(
+      normalizeKnownRomanGroups(value)
+    );
   }
 
   function tokenizeIecex(line) {
-    let source = line
-      .replace(/\bIP\s+(\d{2}[A-Z]?)\b/gi, "IP$1")
+    let source = normalizeKnownExConfusions(line)
+      .replace(
+        /\bIP\s+(\d{2}[A-Z]?)\b/gi,
+        "IP$1"
+      )
       .replace(/\[/g, " [ ")
       .replace(/\]/g, " ] ")
       .replace(/\s+/g, " ")
@@ -120,43 +202,65 @@
     for (let i = 0; i < raw.length; i += 1) {
       const current = raw[i];
 
-      // User requested "Ex db" as one element.
       if (
         /^Ex$/i.test(current) &&
-        /^(?:d|db|da|dc|e|eb|ec|i|ia|ib|ic|m|ma|mb|mc|p|q|h)$/i.test(raw[i + 1] || "")
+        /^(?:d|db|da|dc|e|eb|ec|i|ia|ib|ic|m|ma|mb|mc|p|q|h|ta|tb|tc|tD)$/i.test(
+          raw[i + 1] || ""
+        )
       ) {
-        tokens.push(makeToken(`Ex ${raw[i + 1]}`, "iecex"));
+        tokens.push(
+          makeToken(
+            `Ex ${raw[i + 1]}`,
+            "iecex"
+          )
+        );
         i += 1;
         continue;
       }
 
-      // Keep "op is", "op pr", "op sh" together.
       if (
         /^op$/i.test(current) &&
-        /^(?:is|pr|sh)$/i.test(raw[i + 1] || "")
+        /^(?:is|pr|sh)$/i.test(
+          raw[i + 1] || ""
+        )
       ) {
-        tokens.push(makeToken(`op ${raw[i + 1]}`, "iecex"));
+        tokens.push(
+          makeToken(
+            `op ${raw[i + 1]}`,
+            "iecex"
+          )
+        );
         i += 1;
         continue;
       }
 
-      tokens.push(makeToken(current, "iecex"));
+      tokens.push(
+        makeToken(current, "iecex")
+      );
     }
 
     return tokens;
   }
 
   function tokenizeAtex(line) {
-    // The official Ex symbol is represented as a separate UI element even if
-    // it isn't OCR text on the category line.
-    const tokens = [makeToken("Ex", "atex", { officialSymbol: true })];
+    const tokens = [
+      makeToken(
+        "Ex",
+        "atex",
+        { officialSymbol: true }
+      ),
+    ];
 
-    String(line)
+    normalizeKnownExConfusions(line)
       .replace(/\s+/g, " ")
       .trim()
       .split(" ")
       .filter(Boolean)
-      .forEach((value) => tokens.push(makeToken(value, "atex")));
+      .forEach((value) =>
+        tokens.push(
+          makeToken(value, "atex")
+        )
+      );
 
     return tokens;
   }
@@ -169,20 +273,30 @@
       .trim()
       .split(" ")
       .filter(Boolean)
-      .map((value) => makeToken(value, "other"));
+      .map((value) =>
+        makeToken(value, "other")
+      );
   }
 
   function makeToken(value, system, extras = {}) {
     return {
       value,
       system,
-      known: Boolean(resolveDefinition(system, value)),
+      known:
+        Boolean(
+          resolveDefinition(system, value)
+        ),
       ...extras,
     };
   }
 
-  function getDefinition(system, value, language = "no") {
-    const definition = resolveDefinition(system, value);
+  function getDefinition(
+    system,
+    value,
+    language = "no"
+  ) {
+    const definition =
+      resolveDefinition(system, value);
 
     if (!definition) {
       return {
@@ -201,6 +315,8 @@
         definition.title?.no ||
         value,
       text:
+        definition.detailed?.[language] ||
+        definition.detailed?.no ||
         definition.short?.[language] ||
         definition.short?.no ||
         "",
@@ -209,11 +325,48 @@
   }
 
   function resolveDefinition(system, value) {
-    const library = window.EX_APP.exCodeLibrary || {};
+    const library =
+      window.EX_APP.exCodeLibrary || {};
+
     const lookup = normalizeLookup(value);
 
     if (/^IP\d{2}[A-Z]?$/i.test(value)) {
       return library.iecex?.IP || null;
+    }
+
+    const dustTemperature = String(value).match(
+      /^T\s*(\d{2,3})\s*°?C$/i
+    );
+
+    if (dustTemperature) {
+      const degrees = dustTemperature[1];
+      return {
+        title: {
+          no: `${value} – maksimal overflatetemperatur`,
+          en: `${value} – maximum surface temperature`,
+        },
+        detailed: {
+          no: `På støvmerking kan maksimal overflatetemperatur oppgis direkte i °C. ${value} angir her en maksimal overflatetemperatur på ${degrees} °C.`,
+          en: `For dust marking, the maximum surface temperature may be stated directly in °C. ${value} here indicates a maximum surface temperature of ${degrees} °C.`,
+        },
+      };
+    }
+
+    const temperatureRange = String(value).match(
+      /^(T[1-6])\.{2,3}(T[1-6])$/i
+    );
+
+    if (temperatureRange) {
+      return {
+        title: {
+          no: `${value} – temperaturklasseområde`,
+          en: `${value} – temperature-class range`,
+        },
+        detailed: {
+          no: `Et område som ${value} betyr at temperaturklassen varierer med de angitte drifts- eller omgivelsesbetingelsene. Kontroller skiltets temperaturdata og sertifikatet for hvilken klasse som gjelder i den aktuelle situasjonen.`,
+          en: `A range such as ${value} means that the temperature class varies with the stated operating or ambient conditions. Check the plate temperature data and certificate to determine which class applies in the actual situation.`,
+        },
+      };
     }
 
     return (
@@ -224,25 +377,31 @@
   }
 
   function normalizeLookup(value) {
-    /*
-     * Do not silently normalize ambiguous OCR characters such as I/l/1.
-     * The raw token stays visible until the user corrects it.
-     */
     return value;
   }
 
-
-  function extractInlineMetadata(lines, language) {
+  function extractInlineMetadata(
+    lines,
+    language
+  ) {
     const metadata = [];
 
     lines.forEach((line) => {
-      const ce = line.match(/\bCE(?:\s*\d{2,4})?\b/i);
+      const ce = line.match(
+        /\bCE(?:\s*\d{2,4})?\b/i
+      );
 
       if (ce) {
         metadata.push({
           key: "ce",
-          label: language === "en" ? "CE marking" : "CE-merking",
-          value: ce[0].replace(/\s+/g, " ").trim(),
+          label:
+            language === "en"
+              ? "CE marking"
+              : "CE-merking",
+          value:
+            ce[0]
+              .replace(/\s+/g, " ")
+              .trim(),
         });
       }
     });
@@ -255,11 +414,16 @@
     const merged = [];
 
     groups.flat().forEach((item) => {
-      if (!item?.key || !item?.value) return;
+      if (!item?.key || !item?.value) {
+        return;
+      }
 
-      const key = `${item.key}|${item.value}`.toLowerCase();
+      const key =
+        `${item.key}|${item.value}`.toLowerCase();
 
-      if (seen.has(key)) return;
+      if (seen.has(key)) {
+        return;
+      }
 
       seen.add(key);
       merged.push(item);
@@ -268,7 +432,10 @@
     return merged;
   }
 
-  function buildGeneralText(systems, language) {
+  function buildGeneralText(
+    systems,
+    language
+  ) {
     const atex = systems.includes("atex");
     const iecex = systems.includes("iecex");
 

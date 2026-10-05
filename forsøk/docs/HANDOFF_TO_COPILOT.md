@@ -507,3 +507,105 @@ assets/pocket-guide/EN/page-01.webp ... page-20.webp
 
 The goal is that approved assets can simply overwrite these paths without any
 code changes.
+
+## ATEX text-reading tolerance
+
+Real plates frequently contain the ATEX equipment group `II`, which text
+recognition can return as:
+
+```text
+II
+11
+Il
+lI
+ll
+```
+
+The extractor may accept these as ATEX **candidates** when the surrounding
+category syntax matches, e.g.:
+
+```text
+11 2 (2) G Ex ...
+Il 2 D Ex ...
+```
+
+It must preserve the raw characters and ask the user to check the plate. It
+must **not** silently change `11`, `Il`, `lI` or `ll` to `II`.
+
+This is especially important for the R. STAHL example plate containing:
+
+```text
+II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4
+II 2 D Ex tD A21 IP65 T90°C
+CE 0158
+TÜV 05 ATEX 7176 X
+```
+
+## Context-aware `11` / `II` handling
+
+Image text recognition commonly confuses Roman numeral `II` with the number
+`11`.
+
+The parser may normalize this automatically only when the surrounding EX
+grammar makes the intended code clear.
+
+Examples:
+
+```text
+11B   -> IIB
+11C   -> IIC
+111C  -> IIIC
+11 2 (2) G -> II 2 (2) G
+11 2 D     -> II 2 D
+```
+
+Do **not** globally replace every `11` with `II`. Certificate numbers, years,
+addresses and other plate data may legitimately contain `11`.
+
+ATEX is a special case because equipment group `II` is followed by category
+syntax rather than immediately by `A/B/C`. Therefore only normalize it when
+the complete ATEX category pattern matches.
+
+## Staged plate reading
+
+Run image text recognition once over the full plate. Then parse the returned
+text in three deterministic passes:
+
+```text
+1. IECEx / Ex marking
+2. ATEX category marking
+3. Other relevant plate information
+```
+
+Do not stop because pass 1 found an Ex line. ATEX and other information may
+exist elsewhere on the same plate.
+
+In known EX contexts, uppercase `I` may be confused with:
+
+```text
+I  i  l  1  |  !
+```
+
+Normalize these only when the surrounding syntax makes the intended code
+clear, for example `||C -> IIC` or `|| 2 (|) G -> II 2 (1) G`.
+Do not perform global character replacement.
+
+## Clickable-code explanation depth
+
+`data/ex-code-library.js` now contains both `short` and `detailed` bilingual
+text. The detail panel should prefer `detailed` when available.
+
+The current draft covers, among other things:
+
+- protection methods
+- gas groups
+- gas/dust EPL
+- T1–T6 maximum surface temperatures
+- ATEX group/category/G/D structure
+- brackets / associated sections
+- X and U certificate suffixes
+- direct dust temperatures such as `T125°C`
+- legacy placeholders such as `Ex tD` / `A21` without silently converting them
+
+Technical wording remains reviewable content and should be checked before
+production use.

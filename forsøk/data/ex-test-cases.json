@@ -179,6 +179,110 @@
         "ce": "CE 0158",
         "mustNotStopAfterFirstExLine": true
       }
+    },
+    {
+      "id": "stahl-atex-ii-misread-as-11-or-il",
+      "title": {
+        "no": "R. STAHL-skilt – II kan leses som 11/Il",
+        "en": "R. STAHL plate – II may be read as 11/Il"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH\nCE 0158\nTUV 05 ATEX 7176 X\n11 2 (2) G Ex d e mb ib [ib] [op is] IIC T4\nIl 2 D Ex tD A21 IP65 T90°C"
+      },
+      "expected": {
+        "systems": [
+          "atex"
+        ],
+        "mustFindTwoAtexCategoryLines": true,
+        "atexCandidatesPreserveRawText": [
+          "11 2 (2) G",
+          "Il 2 D"
+        ],
+        "mustWarnAboutAmbiguousEquipmentGroup": true,
+        "mustNotSilentlyConvert11OrIlToII": true,
+        "ce": "CE 0158",
+        "atexCertificateContains": "ATEX 7176 X"
+      }
+    },
+    {
+      "id": "context-aware-II-normalization",
+      "title": {
+        "no": "11/II normaliseres kun i kjent EX-kontekst",
+        "en": "11/II normalized only in known EX context"
+      },
+      "input": {
+        "markings": [
+          "Ex db 11B T4 Gb",
+          "Ex ia 11C Ga",
+          "Ex tb 111C T90°C Db",
+          "11 2 (2) G",
+          "11 2 D"
+        ]
+      },
+      "expected": {
+        "normalized": [
+          "Ex db IIB T4 Gb",
+          "Ex ia IIC Ga",
+          "Ex tb IIIC T90°C Db",
+          "II 2 (2) G",
+          "II 2 D"
+        ],
+        "mustNotGloballyReplace11": true
+      }
+    },
+    {
+      "id": "staged-reading-and-I-like-glyphs",
+      "title": {
+        "no": "Tre parserpass og I-lignende tegn",
+        "en": "Three parser passes and I-like glyphs"
+      },
+      "input": {
+        "imageText": "R. STAHL HMI Systems GmbH\n|| 2 (|) G Ex d e mb ib [ib] [op is] ||C T4\n!1 2 D Ex tD A21 IP65 T90°C\nCE 0158\nTUV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "passOrder": [
+          "iecex",
+          "atex",
+          "other"
+        ],
+        "markingContains": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (1) G",
+          "II 2 D"
+        ],
+        "metadataContains": [
+          "CE 0158",
+          "ATEX 7176 X"
+        ],
+        "uppercaseIEquivalentGlyphsInKnownContext": [
+          "I",
+          "i",
+          "l",
+          "1",
+          "|",
+          "!"
+        ],
+        "mustNotGloballyReplaceGlyphs": true
+      }
+    },
+    {
+      "id": "richer-clickable-explanations",
+      "title": {
+        "no": "Mer forklaring på klikkbare koder",
+        "en": "Richer explanations for clickable codes"
+      },
+      "expected": {
+        "T4MentionsMaxSurfaceTemperatureC": 135,
+        "GbMentionsZone": 1,
+        "AtexCategory2MentionsZones": [
+          1,
+          21
+        ],
+        "BracketExplainsAssociatedPart": true,
+        "XExplainsSpecialConditions": true,
+        "DirectDustTemperatureSupported": "T125°C"
+      }
     }
   ]
 }
