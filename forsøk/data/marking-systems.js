@@ -8,7 +8,7 @@ window.EX_APP.markingSystems = [
       no: "Europeisk merking og ATEX-sertifisering",
       en: "European marking and ATEX certification"
     },
-    asset: "assets/marking-systems/atex-placeholder.svg"
+    asset: "assets/marking-systems/atex-official-symbol.png"
   },
   {
     id: "iecex",

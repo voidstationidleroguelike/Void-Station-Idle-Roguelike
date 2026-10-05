@@ -166,3 +166,12 @@ Official artwork can replace the placeholder assets in:
 ```text
 assets/marking-systems/
 ```
+
+
+## EX symbols
+
+The current prototype now uses:
+- a round EX symbol on the home screen (`assets/home/ex-home-symbol.png`)
+- the supplied official Ex / ATEX-style symbol in the marking-system selector
+
+These can still be replaced locally with final approved artwork while keeping the same layout.

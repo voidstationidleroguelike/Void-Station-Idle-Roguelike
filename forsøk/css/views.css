@@ -168,3 +168,17 @@
     margin: 0 auto;
   }
 }
+
+
+.home__hero-symbol {
+  width: 76px;
+  height: 76px;
+  flex: 0 0 76px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Legacy CSS-generated symbol kept disabled once asset-based symbol is used */
+.ex-mark {
+  display: none;
+}

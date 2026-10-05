@@ -626,6 +626,7 @@
   object-fit: contain;
   border-radius: 9px;
   background: #fff;
+  padding: 8px;
 }
 
 .marking-system-card__copy {
