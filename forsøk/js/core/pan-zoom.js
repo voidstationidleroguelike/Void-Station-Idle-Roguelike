@@ -11,6 +11,7 @@
     allowSwipeAtMinScale = false,
     onSwipeLeft,
     onSwipeRight,
+    rotation = 0,
   }) {
     if (!viewport || !image) {
       return null;
@@ -40,9 +41,21 @@
 
       const viewportRect = viewport.getBoundingClientRect();
 
+      const normalizedRotation =
+        ((Number(rotation) % 360) + 360) % 360;
+
+      const quarterTurn =
+        normalizedRotation === 90 || normalizedRotation === 270;
+
+      const visualWidth =
+        quarterTurn ? image.naturalHeight : image.naturalWidth;
+
+      const visualHeight =
+        quarterTurn ? image.naturalWidth : image.naturalHeight;
+
       const fitRatio = Math.min(
-        viewportRect.width / image.naturalWidth,
-        viewportRect.height / image.naturalHeight
+        viewportRect.width / visualWidth,
+        viewportRect.height / visualHeight
       );
 
       image.style.width = `${image.naturalWidth * fitRatio}px`;
@@ -53,7 +66,8 @@
 
     function apply() {
       image.style.transform =
-        `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+        `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ` +
+        `scale(${scale}) rotate(${rotation}deg)`;
     }
 
     function clampScale(value) {

@@ -40,8 +40,8 @@ Build a mobile-first HTML/CSS/JavaScript EX pocket-guide web app that can:
 Assets:
 
 ```text
-assets/pocket-guide/no/page-01.png ... page-20.png
-assets/pocket-guide/en/page-01.png ... page-20.png
+assets/pocket-guide/NO/page-01.png ... page-20.png
+assets/pocket-guide/EN/page-01.png ... page-20.png
 ```
 
 Norwegian page 1 is already present in the prototype.
@@ -475,8 +475,8 @@ Production Pocket Guide pages and Poster images use WebP.
 Expected final paths:
 
 ```text
-assets/pocket-guide/no/page-01.webp ... page-20.webp
-assets/pocket-guide/en/page-01.webp ... page-20.webp
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
 assets/poster/poster-no.webp
 assets/poster/poster-en.webp
 ```
@@ -501,8 +501,8 @@ assets/poster/poster-en.webp
 Pocket Guide final content should use:
 
 ```text
-assets/pocket-guide/no/page-01.webp ... page-20.webp
-assets/pocket-guide/en/page-01.webp ... page-20.webp
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
 ```
 
 The goal is that approved assets can simply overwrite these paths without any

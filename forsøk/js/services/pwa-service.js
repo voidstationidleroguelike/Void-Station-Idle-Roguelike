@@ -9,6 +9,18 @@
     registerServiceWorker();
     bindInstallPrompt();
     bindConnectivityState();
+    tryPortraitLock();
+  }
+
+  async function tryPortraitLock() {
+    try {
+      await screen.orientation?.lock?.("portrait-primary");
+    } catch {
+      /*
+       * Normal browser tabs may reject orientation locking.
+       * The manifest still requests portrait-primary for installed PWA use.
+       */
+    }
   }
 
   async function registerServiceWorker() {

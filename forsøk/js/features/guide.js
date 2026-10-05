@@ -36,6 +36,7 @@
       allowSwipeAtMinScale: true,
       onSwipeLeft: next,
       onSwipeRight: previous,
+      rotation: config.guide.rotationDegrees || 0,
     });
 
     document
@@ -92,31 +93,78 @@
   function render() {
     const language = window.EX_APP.i18n.getLanguage();
     const image = document.getElementById("guideImage");
+    const errorPanel = document.getElementById("guideLoadError");
 
     if (!image) {
       return;
     }
 
     const number = String(page).padStart(2, "0");
-    const base = `${config.guide.basePath}/${language}/page-${number}`;
+    const extension = config.guide.preferredExtension || "webp";
 
-    const candidates = [
-      `${base}.${config.guide.preferredExtension || "webp"}`,
-      `${base}.png`,
-      `${base}.svg`,
-    ];
+    const configuredFolder =
+      config.guide.languageFolders?.[language] ||
+      language.toUpperCase();
+
+    /*
+     * Exact production path comes first:
+     *   assets/pocket-guide/NO/page-01.webp
+     *   assets/pocket-guide/EN/page-01.webp
+     *
+     * Lower-case fallback is kept temporarily so an older deployment does
+     * not show a blank guide while assets are being moved.
+     */
+    const folders = Array.from(
+      new Set([
+        configuredFolder,
+        String(configuredFolder).toLowerCase(),
+      ])
+    );
+
+    const candidates = folders.flatMap((folder) => {
+      const base =
+        `${config.guide.basePath}/${folder}/page-${number}`;
+
+      return [
+        `${base}.${extension}`,
+        `${base}.png`,
+        `${base}.svg`,
+      ];
+    });
 
     let candidateIndex = 0;
+
+    errorPanel?.classList.add("is-hidden");
+    image.classList.remove("is-hidden");
+
+    image.onload = () => {
+      errorPanel?.classList.add("is-hidden");
+      image.classList.remove("is-hidden");
+      panZoom?.fit();
+    };
 
     image.onerror = () => {
       candidateIndex += 1;
 
-      if (candidateIndex >= candidates.length) {
-        image.onerror = null;
+      if (candidateIndex < candidates.length) {
+        image.src = candidates[candidateIndex];
         return;
       }
 
-      image.src = candidates[candidateIndex];
+      image.onerror = null;
+      image.classList.add("is-hidden");
+
+      if (errorPanel) {
+        errorPanel.classList.remove("is-hidden");
+
+        const attempted = errorPanel.querySelector(
+          "[data-guide-attempted-path]"
+        );
+
+        if (attempted) {
+          attempted.textContent = candidates[0];
+        }
+      }
     };
 
     image.src = candidates[candidateIndex];
@@ -125,7 +173,6 @@
       `${page} / ${config.guide.pageCount}`;
 
     updateDots();
-    panZoom?.fit();
   }
 
   function renderDots() {

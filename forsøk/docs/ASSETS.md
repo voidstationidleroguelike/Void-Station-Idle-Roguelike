@@ -22,13 +22,13 @@ data/app-config.js
 Use exactly 20 page files per language:
 
 ```text
-assets/pocket-guide/no/page-01.png
+assets/pocket-guide/NO/page-01.png
 ...
-assets/pocket-guide/no/page-20.png
+assets/pocket-guide/NO/page-20.png
 
-assets/pocket-guide/en/page-01.png
+assets/pocket-guide/EN/page-01.png
 ...
-assets/pocket-guide/en/page-20.png
+assets/pocket-guide/EN/page-20.png
 ```
 
 The viewer is landscape-friendly and supports:
@@ -70,8 +70,8 @@ They should not be treated as secret merely because they are inside the APK.
 Large content imagery should use WebP:
 
 ```text
-assets/pocket-guide/no/page-01.webp ... page-20.webp
-assets/pocket-guide/en/page-01.webp ... page-20.webp
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
 
 assets/poster/poster-no.webp
 assets/poster/poster-en.webp
@@ -106,8 +106,24 @@ Final large content files:
 assets/poster/poster-no.webp
 assets/poster/poster-en.webp
 
-assets/pocket-guide/no/page-01.webp ... page-20.webp
-assets/pocket-guide/en/page-01.webp ... page-20.webp
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
 ```
 
 There are no poster placeholder files anymore.
+
+## Pocket Guide orientation
+
+Pocket Guide production paths are:
+
+```text
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
+```
+
+The viewer rotates the Pocket Guide page 90 degrees at display time and fits
+the rotated dimensions inside the portrait viewport. The source WebP files do
+not need to be physically rotated.
+
+The installed PWA requests `portrait-primary` orientation. A normal browser tab
+may ignore orientation locking; this is a browser limitation.

@@ -24,6 +24,8 @@ window.EX_APP.translations = {
     "route.courses": "EX-kurs",
 
     "guide.swipeHint": "Sveip for å bla",
+    "guide.loadErrorTitle": "Fant ikke guidesiden",
+    "guide.loadErrorText": "Kontroller at filen finnes på denne banen:",
 
     "marking.title": "EX-merking",
     "marking.intro": "Skriv inn merkingen, ta bilde eller velg et bilde fra telefonen.",
@@ -84,6 +86,8 @@ window.EX_APP.translations = {
     "route.courses": "EX courses",
 
     "guide.swipeHint": "Swipe to change page",
+    "guide.loadErrorTitle": "Guide page not found",
+    "guide.loadErrorText": "Check that the file exists at this path:",
 
     "marking.title": "EX marking",
     "marking.intro": "Enter the marking, take a photo or choose an image from the phone.",

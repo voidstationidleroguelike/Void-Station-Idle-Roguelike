@@ -17,6 +17,11 @@ window.EX_APP.config = {
      */
     basePath: "assets/pocket-guide",
     preferredExtension: "webp",
+    rotationDegrees: 90,
+    languageFolders: {
+      no: "NO",
+      en: "EN",
+    },
   },
 
   poster: {
