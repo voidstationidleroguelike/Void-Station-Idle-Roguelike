@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160" viewBox="0 0 240 160">
+  <rect width="240" height="160" rx="20" fill="#ffffff"/>
+  <rect x="34" y="28" width="172" height="104" rx="8" fill="#214f9a"/>
+  <text x="120" y="77" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="34"
+        font-weight="700" fill="#ffffff">IEC</text>
+  <text x="120" y="110" text-anchor="middle"
+        font-family="Arial, sans-serif" font-size="28"
+        font-weight="700" fill="#ffffff">Ex</text>
+</svg>
