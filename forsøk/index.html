@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="no">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#27465c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="EX Guide">
+  <meta name="mobile-web-app-capable" content="yes">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="assets/pwa/icon-192.svg">
+  <link rel="apple-touch-icon" href="assets/pwa/icon-192.svg">
+
+  <title>EX Pocket Guide</title>
+
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/views.css">
+</head>
+
+<body>
+  <div id="app">
+
+    <header class="topbar">
+      <button id="backButton"
+              class="topbar__button topbar__button--back is-hidden"
+              type="button"
+              aria-label="Tilbake">
+        ←
+      </button>
+
+      <div id="topbarTitle" class="topbar__title">EX</div>
+
+      <div class="topbar__actions">
+        <button id="installButton"
+                class="topbar__button topbar__button--install is-hidden"
+                type="button"
+                aria-label="Installer app">
+          ＋
+        </button>
+
+        <button id="languageButton"
+                class="topbar__button topbar__button--language"
+                type="button"
+                aria-label="Bytt språk">
+          NO
+        </button>
+      </div>
+    </header>
+
+    <div id="networkStatus"
+         class="network-status is-hidden"
+         role="status"
+         aria-live="polite">
+      Offline
+    </div>
+
+    <!-- =========================================================
+         HOME
+         ========================================================= -->
+    <main id="view-home" class="view view--active home">
+      <section class="brand-card">
+        <img
+          src="assets/branding/trainor-apave-placeholder.svg"
+          alt="Trainor / Groupe Apave logo placeholder">
+      </section>
+
+      <section class="home__hero">
+        <div class="ex-mark" aria-hidden="true">Ex</div>
+
+        <div>
+          <h1>EX</h1>
+          <p data-i18n="home.subtitle">
+            Lommeguide for eksplosjonsfarlige områder
+          </p>
+        </div>
+      </section>
+
+      <nav class="main-menu" aria-label="Hovedmeny">
+        <button class="menu-card menu-card--primary"
+                data-route="guide"
+                type="button">
+          <span class="menu-card__icon" aria-hidden="true">▤</span>
+
+          <span class="menu-card__copy">
+            <strong data-i18n="home.guideTitle">Pocket Guide</strong>
+            <small data-i18n="home.guideDescription">
+              20 sider · sveip · zoom
+            </small>
+          </span>
+
+          <span class="menu-card__chevron" aria-hidden="true">›</span>
+        </button>
+
+        <button class="menu-card"
+                data-route="marking"
+                type="button">
+          <span class="menu-card__icon menu-card__icon--text"
+                aria-hidden="true">
+            Ex
+          </span>
+
+          <span class="menu-card__copy">
+            <strong data-i18n="home.markingTitle">EX-merking</strong>
+            <small data-i18n="home.markingDescription">
+              Skriv inn eller skann merkeskilt
+            </small>
+          </span>
+
+          <span class="menu-card__chevron" aria-hidden="true">›</span>
+        </button>
+
+        <button class="menu-card"
+                data-route="poster"
+                type="button">
+          <span class="menu-card__icon" aria-hidden="true">▦</span>
+
+          <span class="menu-card__copy">
+            <strong data-i18n="home.posterTitle">Plakat</strong>
+            <small data-i18n="home.posterDescription">
+              EX-plakat · zoom og dra
+            </small>
+          </span>
+
+          <span class="menu-card__chevron" aria-hidden="true">›</span>
+        </button>
+
+        <button class="menu-card"
+                data-route="courses"
+                type="button">
+          <span class="menu-card__icon" aria-hidden="true">↗</span>
+
+          <span class="menu-card__copy">
+            <strong data-i18n="home.coursesTitle">EX-kurs</strong>
+            <small data-i18n="home.coursesDescription">
+              Utvalgte kurs fra Trainor
+            </small>
+          </span>
+
+          <span class="menu-card__chevron" aria-hidden="true">›</span>
+        </button>
+      </nav>
+    </main>
+
+    <!-- =========================================================
+         POCKET GUIDE
+         ========================================================= -->
+    <main id="view-guide" class="view guide">
+      <div class="viewer-toolbar">
+        <span data-i18n="guide.swipeHint">Sveip for å bla</span>
+
+        <strong id="guidePageIndicator">1 / 20</strong>
+
+        <button id="guideResetZoom"
+                class="compact-button"
+                type="button"
+                data-i18n="common.fit">
+          Tilpass
+        </button>
+      </div>
+
+      <section id="guideViewport"
+               class="guide__viewport"
+               aria-label="Pocket Guide">
+        <img id="guideImage"
+             class="guide__image"
+             draggable="false"
+             alt="Pocket Guide side">
+      </section>
+
+      <footer class="guide__footer">
+        <button id="guidePrevious"
+                class="round-button"
+                type="button"
+                aria-label="Forrige side">
+          ‹
+        </button>
+
+        <div id="guideDots"
+             class="page-dots"
+             aria-hidden="true"></div>
+
+        <button id="guideNext"
+                class="round-button"
+                type="button"
+                aria-label="Neste side">
+          ›
+        </button>
+      </footer>
+    </main>
+
+    <!-- =========================================================
+         EX MARKING
+         ========================================================= -->
+    <main id="view-marking" class="view content-view">
+      <section class="panel">
+        <h2 data-i18n="marking.title">EX-merking</h2>
+
+        <p data-i18n="marking.intro">
+          Skriv inn merkingen, ta bilde eller velg et bilde fra telefonen.
+        </p>
+
+        <label class="field-label"
+               for="markingInput"
+               data-i18n="marking.inputLabel">
+          Merking
+        </label>
+
+        <textarea id="markingInput"
+                  class="text-input"
+                  rows="3"
+                  placeholder="II 2G Ex db IIC T4 Gb"></textarea>
+
+        <button id="interpretButton"
+                class="action-button"
+                type="button"
+                data-i18n="marking.interpret">
+          Tolk merking
+        </button>
+
+        <div class="divider">
+          <span data-i18n="common.or">eller</span>
+        </div>
+
+        <div class="image-source-grid">
+          <button id="takePhotoButton"
+                  class="secondary-action"
+                  type="button">
+            <span class="secondary-action__icon" aria-hidden="true">◎</span>
+            <span>
+              <strong data-i18n="marking.takePhoto">Ta bilde</strong>
+              <small data-i18n="marking.takePhotoHelp">
+                Åpner kamera
+              </small>
+            </span>
+          </button>
+
+          <button id="uploadImageButton"
+                  class="secondary-action"
+                  type="button">
+            <span class="secondary-action__icon" aria-hidden="true">⇧</span>
+            <span>
+              <strong data-i18n="marking.uploadImage">Last opp bilde</strong>
+              <small data-i18n="marking.uploadImageHelp">
+                Velg fra telefonen
+              </small>
+            </span>
+          </button>
+        </div>
+
+        <!-- Browser/WebView fallback inputs.
+             A native Android bridge may replace these actions later. -->
+        <input id="cameraInput"
+               class="is-hidden"
+               type="file"
+               accept="image/*"
+               capture="environment">
+
+        <input id="imageUploadInput"
+               class="is-hidden"
+               type="file"
+               accept="image/*">
+
+        <section id="selectedImagePanel"
+                 class="selected-image is-hidden">
+          <div class="selected-image__header">
+            <strong data-i18n="marking.selectedImage">
+              Valgt bilde
+            </strong>
+
+            <button id="removeSelectedImage"
+                    class="text-button"
+                    type="button"
+                    data-i18n="common.remove">
+              Fjern
+            </button>
+          </div>
+
+          <img id="selectedImagePreview"
+               alt="Valgt bilde for OCR">
+
+          <p id="selectedImageName"
+             class="selected-image__name"></p>
+
+          <button id="runOcrButton"
+                  class="action-button"
+                  type="button"
+                  data-i18n="marking.readImage">
+            Les merkingen fra bildet
+          </button>
+        </section>
+
+        <p class="help-text"
+           data-i18n="marking.ocrNote">
+          OCR-kallet ligger i en egen, plattformuavhengig service slik at samme HTML-kode kan brukes på både iOS og Android.
+        </p>
+      </section>
+
+      <section id="markingResultPanel"
+               class="panel is-hidden">
+        <div class="panel__heading-row">
+          <h3 data-i18n="marking.result">Resultat</h3>
+          <span class="status-chip">DEMO</span>
+        </div>
+
+        <div id="markingTokens" class="token-list"></div>
+
+        <p class="help-text"
+           data-i18n="marking.demoNote">
+          Demo-parseren viser bare UI-flyten. Fagregler legges inn separat og må kvalitetssikres.
+        </p>
+      </section>
+    </main>
+
+    <!-- =========================================================
+         POSTER
+         ========================================================= -->
+    <main id="view-poster" class="view poster">
+      <div class="viewer-toolbar">
+        <span data-i18n="poster.zoomHint">
+          Knip for å zoome · dra for å flytte
+        </span>
+
+        <button id="posterReset"
+                class="compact-button"
+                type="button"
+                data-i18n="common.reset">
+          Tilbakestill
+        </button>
+      </div>
+
+      <section id="posterViewport"
+               class="poster__viewport">
+        <img id="posterImage"
+             class="poster__image"
+             src="assets/poster/poster-placeholder.svg"
+             draggable="false"
+             alt="EX-plakat placeholder">
+      </section>
+    </main>
+
+    <!-- =========================================================
+         COURSES
+         ========================================================= -->
+    <main id="view-courses" class="view content-view">
+      <section class="panel">
+        <h2 data-i18n="courses.title">EX-kurs</h2>
+
+        <p data-i18n="courses.intro">
+          Utvalgte kurs med direkte lenke til Trainor.
+        </p>
+
+        <div id="courseList" class="course-list"></div>
+
+        <a id="allCoursesLink"
+           class="all-courses-button"
+           href="#"
+           target="_blank"
+           rel="noopener"
+           data-i18n="courses.all">
+          Se flere EX- og andre Trainor-kurs her ↗
+        </a>
+      </section>
+    </main>
+
+  </div>
+
+  <!-- Data and configuration -->
+  <script src="data/app-config.js"></script>
+  <script src="data/translations.js"></script>
+  <script src="data/courses.js"></script>
+  <script src="data/ex-demo-rules.js"></script>
+
+  <!-- Core -->
+  <script src="js/core/i18n.js"></script>
+  <script src="js/core/router.js"></script>
+  <script src="js/core/pan-zoom.js"></script>
+
+  <!-- Cross-platform services -->
+  <script src="js/services/ocr-service.js"></script>
+
+  <!-- Features -->
+  <script src="js/features/guide.js"></script>
+  <script src="js/features/marking.js"></script>
+  <script src="js/features/poster.js"></script>
+  <script src="js/features/courses.js"></script>
+
+  <!-- PWA -->
+  <script src="js/services/pwa-service.js"></script>
+
+  <!-- Bootstrap -->
+  <script src="js/app.js"></script>
+</body>
+</html>

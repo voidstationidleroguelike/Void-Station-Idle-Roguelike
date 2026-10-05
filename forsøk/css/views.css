@@ -1,0 +1,170 @@
+.home {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 18px 14px calc(30px + env(safe-area-inset-bottom));
+}
+
+.home__hero {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin: 10px 0 22px;
+  padding: 0 4px;
+}
+
+.home__hero h1 {
+  margin: 0;
+  color: var(--ex-blue);
+  font-size: 34px;
+  letter-spacing: 0.04em;
+}
+
+.home__hero p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+
+.ex-mark {
+  width: 76px;
+  height: 76px;
+  display: grid;
+  place-items: center;
+  border: 5px solid var(--ex-blue);
+  border-radius: 50%;
+  color: var(--ex-blue);
+  font-size: 30px;
+  font-weight: 900;
+}
+
+.main-menu {
+  display: grid;
+  gap: 12px;
+}
+
+.guide,
+.poster {
+  height: calc(100dvh - var(--topbar-height));
+  background: var(--ex-blue-dark);
+  overflow: hidden;
+}
+
+.guide.view--active,
+.poster.view--active {
+  display: flex;
+  flex-direction: column;
+}
+
+.guide__viewport,
+.poster__viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: #111a20;
+  touch-action: none;
+}
+
+.guide__image,
+.poster__image {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  max-width: none;
+  max-height: none;
+  transform-origin: center center;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.guide__footer {
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 52px 1fr 52px;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 12px calc(7px + env(safe-area-inset-bottom));
+  background: var(--ex-blue);
+}
+
+.page-dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.page-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.page-dot--active {
+  width: 18px;
+  border-radius: 999px;
+  background: var(--ex-green);
+}
+
+.poster__viewport {
+  margin: 0;
+}
+
+@media (orientation: landscape) {
+  .guide__footer {
+    min-height: 56px;
+  }
+
+  .viewer-toolbar {
+    min-height: 38px;
+  }
+}
+
+/*
+ * Pocket Guide is intentionally dense: the content gets the maximum possible
+ * screen area on a phone. Controls stay compact and never overlay the guide.
+ */
+.guide .viewer-toolbar {
+  flex: 0 0 auto;
+}
+
+.guide__viewport {
+  min-height: 0;
+}
+
+@media (max-height: 680px) {
+  .guide .viewer-toolbar {
+    display: none;
+  }
+
+  .guide__footer {
+    min-height: 52px;
+    padding-top: 4px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom));
+  }
+
+  .round-button {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (min-width: 700px) {
+  /*
+   * Desktop/tablet is supported for demos, but the app deliberately remains
+   * phone-shaped rather than turning into a desktop dashboard.
+   */
+  .home,
+  .content-view {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .guide,
+  .poster {
+    width: min(100%, 980px);
+    margin: 0 auto;
+  }
+}
