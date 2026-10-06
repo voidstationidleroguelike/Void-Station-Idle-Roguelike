@@ -283,6 +283,86 @@
         "XExplainsSpecialConditions": true,
         "DirectDustTemperatureSupported": "T125°C"
       }
+    },
+    {
+      "id": "whole-plate-collapsed-to-one-line",
+      "title": {
+        "no": "Hele skiltet lest som én lang linje",
+        "en": "Whole plate recognized as one long line"
+      },
+      "input": {
+        "imageText": "|| 2 (|) G Ex d e mb ib [ib] [op is] ||C T4 !1 2 D Ex tD A21 IP65 T90°C CE 0158 TUV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "markingLines": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (1) G",
+          "II 2 D"
+        ],
+        "metadata": [
+          "CE 0158",
+          "TUV 05 ATEX 7176 X"
+        ],
+        "mustExtractAllOccurrences": true,
+        "mustNotStopAfterFirstEx": true,
+        "mustNotStopAfterFirstAtex": true
+      }
+    },
+    {
+      "id": "intrinsic-safety-i-like-glyphs",
+      "title": {
+        "no": "ia/ib/ic tåler I-lignende tegn i kjent Ex-kontekst",
+        "en": "ia/ib/ic tolerate I-like glyphs in known Ex context"
+      },
+      "input": {
+        "markings": [
+          "Ex !a ||C T4 Ga",
+          "Ex |b IIB T4 Gb",
+          "Ex 1c IIA T4 Gc",
+          "Ex db [!a ||C Ga] IIB T4 Gb"
+        ]
+      },
+      "expected": {
+        "normalized": [
+          "Ex ia IIC T4 Ga",
+          "Ex ib IIB T4 Gb",
+          "Ex ic IIA T4 Gc",
+          "Ex db [ia IIC Ga] IIB T4 Gb"
+        ],
+        "iLikeGlyphs": [
+          "I",
+          "i",
+          "l",
+          "1",
+          "|",
+          "!"
+        ],
+        "mustNotGloballyReplace": true
+      }
+    },
+    {
+      "id": "ip-rating-dynamic-interpretation",
+      "title": {
+        "no": "IP-grad tolkes som sammensatt kode",
+        "en": "IP rating interpreted as a composed code"
+      },
+      "input": {
+        "tokens": [
+          "IP55",
+          "IP65",
+          "IP67",
+          "IP68",
+          "IP69K",
+          "IPX4"
+        ]
+      },
+      "expected": {
+        "firstCharacter": "solid/contact protection",
+        "secondCharacter": "water protection",
+        "supportsX": true,
+        "supportsSuffixK": true
+      }
     }
   ]
 }

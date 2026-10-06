@@ -164,6 +164,7 @@
     lastExtractedMetadata = [];
     renderOcrMetadata([]);
     renderOcrWarnings([]);
+    renderReadText("");
   }
 
   function clearSelectedImage() {
@@ -188,10 +189,11 @@
     lastExtractedMetadata = [];
     renderOcrMetadata([]);
     renderOcrWarnings([]);
+    renderReadText("");
   }
 
   // -------------------------------------------------------------------
-  // OCR -> established marking candidate(s)
+  // Image text -> established marking candidate(s)
   // -------------------------------------------------------------------
 
   async function runOcr() {
@@ -204,14 +206,16 @@
 
       showOcrStatus(
         currentLanguage() === "en"
-          ? "Preparing OCR…"
-          : "Klargjør tekstlesing…"
+          ? "Preparing image…"
+          : "Klargjør bilde for tekstlesing…"
       );
 
       const rawText = await window.EX_APP.ocrService.recognizeImage(
         selectedDataUrl,
         updateOcrProgress
       );
+
+      renderReadText(rawText || "");
 
       if (!rawText) {
         showOcrStatus(
@@ -233,10 +237,13 @@
       renderOcrWarnings(extracted.warnings || []);
 
       if (!extracted.markingLines.length) {
+        const rawPanel = document.getElementById("ocrRawPanel");
+        if (rawPanel) rawPanel.open = true;
+
         showOcrStatus(
           currentLanguage() === "en"
-            ? "Text was found, but no established EX marking line could be isolated."
-            : "Fant tekst, men klarte ikke å skille ut en etablert EX-merkelinje.",
+            ? "Text was found, but no established EX marking line could be isolated. The raw text is shown below."
+            : "Fant tekst, men klarte ikke å skille ut en etablert EX-merkelinje. Råteksten vises under.",
           true
         );
         return;
@@ -269,12 +276,32 @@
       showOcrStatus(
         error?.message ||
           (currentLanguage() === "en"
-            ? "OCR failed."
+            ? "Text reading failed."
             : "Tekstlesingen feilet."),
         true
       );
     } finally {
       setOcrBusy(false);
+    }
+  }
+
+  function renderReadText(rawText) {
+    const panel = document.getElementById("ocrRawPanel");
+    const output = document.getElementById("ocrRawText");
+
+    if (!panel || !output) {
+      return;
+    }
+
+    output.textContent = rawText || "";
+    panel.classList.toggle("is-hidden", !rawText);
+
+    /*
+     * Keep it collapsed by default after a successful read. It remains easy
+     * to open when a plate is not parsed as expected.
+     */
+    if (rawText) {
+      panel.open = false;
     }
   }
 
@@ -559,8 +586,8 @@
     const en = currentLanguage() === "en";
 
     const labels = {
-      "loading tesseract core": en ? "Loading OCR engine…" : "Laster OCR-motor…",
-      "initializing tesseract": en ? "Starting OCR…" : "Starter OCR…",
+      "loading tesseract core": en ? "Loading text engine…" : "Laster tekstmotor…",
+      "initializing tesseract": en ? "Starting text reading…" : "Starter tekstlesing…",
       "loading language traineddata": en ? "Loading text model…" : "Laster tekstmodell…",
       "initializing api": en ? "Preparing recognition…" : "Klargjør gjenkjenning…",
       "recognizing text": en ? "Reading text…" : "Leser tekst…",

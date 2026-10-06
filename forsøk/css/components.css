@@ -928,3 +928,41 @@
   overflow-wrap: anywhere;
   font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
+
+
+.ocr-raw-panel {
+  margin-top: 10px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: #f7f9fa;
+}
+
+.ocr-raw-panel summary {
+  cursor: pointer;
+  color: var(--ex-blue);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.ocr-raw-panel p {
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.ocr-raw-text {
+  max-height: 240px;
+  margin: 0;
+  padding: 10px;
+  overflow: auto;
+  border-radius: 9px;
+  background: #111a20;
+  color: #f1f5f7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 11px;
+  line-height: 1.45;
+}

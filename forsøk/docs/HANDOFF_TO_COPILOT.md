@@ -1,228 +1,39 @@
 # Handoff to Copilot – EX Pocket Guide
 
-## Goal
+**Status:** prototype / technical-content build  
+**Updated:** 2026-10-05  
+**Primary target:** mobile-first web/PWA, later reusable for Android/iOS wrapping
 
-Build a mobile-first HTML/CSS/JavaScript EX pocket-guide web app that can:
+## 1. Goal
 
-- run directly in a mobile browser / PWA
-- later be wrapped for Android and iOS from the same codebase
-- keep proprietary assets local/replacable
-- avoid generative AI for EX interpretation
-- use deterministic OCR filtering + rule-based interpretation
+Continue building a compact EX pocket-guide app for field use. The same HTML/CSS/JavaScript codebase should run in a mobile browser/PWA and remain suitable for later wrapping for Android and iOS.
 
-## Main navigation
+The project must remain deterministic for EX interpretation. Do **not** use generative AI to decide what an EX marking means. Image text recognition is only an input step; extraction, normalization, classification, interpretation and generated summary text are rule-based.
 
-1. Pocket Guide
-2. EX-merking
-3. Plakat
-4. EX-kurs
+## 2. Non-negotiable project rules
 
-## Visual direction
+- Mobile-first UI.
+- Norwegian and English UI/content.
+- Main navigation is exactly:
+  1. Pocket Guide
+  2. EX-merking
+  3. Plakat
+  4. EX-kurs
+- ATEX and IECEx may both exist on the same nameplate and must be shown separately.
+- A nameplate may contain several EX lines, for example one gas line and one dust line.
+- Never stop interpretation after the first valid line.
+- `Gas / Dust` and `Electrical / Mechanical` are separate dimensions; do not collapse them into one selector.
+- Unknown codes remain visibly unknown. Do not guess.
+- Technical content is draft/reviewable content and must be SME-reviewed before production use.
+- **Do not replace or delete the user's real assets.** Code-only update ZIPs/patches must contain no `assets/` directory unless explicitly requested.
 
-- Mobile-first
-- Trainor / Groupe Apave logo asset at top
-- EX guide uses blue + green as main working colors
-- Trainor orange remains brand accent
-- Home EX symbol uses the supplied round EX symbol
-- ATEX system selector uses the supplied hexagonal Ex symbol
-
-## Pocket Guide
-
-- 20 landscape pages
-- Norwegian + English asset folders
-- swipe left/right
-- previous/next buttons
-- pinch zoom
-- pan while zoomed
-- remembers last page
-- intended to use maximum phone screen area
-
-Assets:
-
-```text
-assets/pocket-guide/NO/page-01.png ... page-20.png
-assets/pocket-guide/EN/page-01.png ... page-20.png
-```
-
-Norwegian page 1 is already present in the prototype.
-
-## Poster
-
-Separate language assets:
-
-```text
-assets/poster/poster-no.svg
-assets/poster/poster-en.svg
-```
-
-Replace with final poster files locally.
-
-Poster viewer supports zoom and pan.
-
-## EX marking – desired UX
-
-### Manual
-
-User can toggle one or more systems:
-
-- ATEX
-- IECEx
-- Other
-
-ATEX and IECEx can both be selected at the same time.
-
-User types/pastes marking and presses:
-
-```text
-Tolk merking
-```
-
-After first interpretation the button becomes:
-
-```text
-Tolk på nytt
-```
-
-### Camera / image upload
-
-User can:
-
-- take a photo
-- upload/select an existing image
-
-Browser OCR currently uses Tesseract.js.
-
-OCR reads the image, but **the UI must not dump all OCR text into the marking field**.
-
-The flow is intended to be:
-
-```text
-Image
-  ↓
-OCR
-  ↓
-extract complete known EX marking line(s)
-  ↓
-"Fant følgende merking"
-  ↓
-editable textarea
-  ↓
-user checks/corrects OCR
-  ↓
-Tolk merking
-```
-
-Manufacturer names, addresses, telephone numbers etc. should not be forwarded
-to the marking field.
-
-Useful metadata such as certificate numbers / CE / ambient temperature may be
-shown separately.
-
-## Example target
-
-Example plate should ideally produce:
-
-```text
-Ex db [ia IIC Ga] IIB T4 Gb IP55
-II 2 (1) G
-```
-
-Then interpretation should show a short general explanation followed by
-separate IECEx and ATEX sections.
-
-### IECEx section
-
-Full line:
-
-```text
-Ex db [ia IIC Ga] IIB T4 Gb IP55
-```
-
-Clickable elements:
-
-```text
-Ex db
-[
-ia
-IIC
-Ga
-]
-IIB
-T4
-Gb
-IP55
-```
-
-Important: `[ ... ]` is not a gas/dust marker by itself.
-
-It denotes an associated / delimited part of the marking. The content inside
-must be interpreted separately from the main equipment marking.
-
-For this example the intended conceptual split is:
-
-```text
-Main equipment:
-Ex db
-IIB
-T4
-Gb
-
-Associated part:
-[
-ia
-IIC
-Ga
-]
-
-Other:
-IP55
-```
-
-### ATEX section
-
-Full line:
-
-```text
-II 2 (1) G
-```
-
-Clickable elements:
-
-```text
-official Ex symbol
-II
-2
-(1)
-G
-```
-
-## General generated explanation
-
-The final app should generate a deterministic summary from approved rules and
-text templates, not generative AI.
-
-Example direction:
-
-```text
-Skiltet inneholder både ATEX- og IECEx-merking for gassatmosfære.
-Hovedutstyret har beskyttelsesart Ex db, gassgruppe IIB,
-temperaturklasse T4 og EPL Gb.
-
-Delen [ia IIC Ga] beskriver en tilknyttet / associated egensikker del.
-Denne delen har ia, gassgruppe IIC og EPL Ga.
-
-Utstyret er også merket IP55.
-
-ATEX-merkingen er II 2 (1) G.
-```
-
-Exact wording and technical rules must be reviewed by an EX subject-matter
-owner before production use.
-
-## Code architecture
+## 3. Current project structure
 
 ```text
 index.html
+manifest.webmanifest
+sw.js
+README.md
 
 css/
   tokens.css
@@ -238,6 +49,9 @@ data/
   ex-marking-rules.js
   ex-code-library.js
   ex-demo-rules.js
+  content-meta.js
+  general-text-templates.js
+  ex-test-cases.json
 
 js/
   app.js
@@ -249,6 +63,7 @@ js/
     ex-marking-parser.js
     ex-code-extractor.js
     ex-marking-interpreter.js
+    general-text-generator.js
 
   features/
     guide.js
@@ -259,353 +74,572 @@ js/
   services/
     ocr-service.js
     pwa-service.js
+
+assets/
+  branding/
+  home/
+  marking-systems/
+  pocket-guide/
+  poster/
+  pwa/
+
+docs/
+  ASSETS.md
+  PLATFORM.md
+  DEPLOYMENT.md
+  EX_MARKING_PARSER.md
+  OCR_FILTERING.md
+  INTERACTIVE_MARKING_FLOW.md
+  MARKING_SYSTEMS.md
+  EX_CODE_LIBRARY_SCHEMA.md
+  TEST_CASES.md
+  HANDOFF_TO_COPILOT.md
 ```
 
-## Separation of responsibilities
+No build step/npm is currently required. Static hosting is sufficient.
 
-### `ex-code-extractor.js`
+## 4. Branding / visual direction
 
-Input:
-raw OCR text
+Current design direction:
 
-Output:
-- complete candidate EX marking lines
-- detected systems
-- useful metadata
+- technical blue/green working UI
+- Trainor orange as brand accent
+- Trainor / Groupe Apave logo at top
+- round EX image on home screen
+- official-style yellow ATEX hex symbol in ATEX UI/results
 
-It should be conservative and must not invent missing codes.
+Current token direction includes:
 
-### `ex-marking-interpreter.js`
+```text
+--ex-blue: #27465c
+--ex-blue-dark: #1e3546
+--ex-blue-soft: #355c74
+--ex-green: #36b44a
+--trainor-orange: #f45a24
+```
 
-Input:
-verified marking text + selected systems
+Stable asset names used by code:
 
-Output:
-- general interpretation structure
-- system sections
-- clickable tokens
+```text
+assets/branding/trainor-apave-logo.svg
+assets/home/ex-home-symbol.png
+assets/marking-systems/atex-official-symbol.png
+assets/marking-systems/iecex-symbol.svg
+assets/marking-systems/other-marking-symbol.svg
+```
 
-### `ex-code-library.js`
+Some stable-name SVGs may still contain temporary artwork in the prototype. The user may overwrite those files with approved assets without code changes.
 
-Central technical content source for:
+## 5. Pocket Guide
 
-- token labels
-- explanations
-- future approved metadata
+The Pocket Guide is 20 pages in both Norwegian and English.
 
-This should grow gradually and be technically reviewed.
+**Production asset paths are case-sensitive and must remain:**
 
-### `marking.js`
+```text
+assets/pocket-guide/NO/page-01.webp ... page-20.webp
+assets/pocket-guide/EN/page-01.webp ... page-20.webp
+```
 
-UI only:
+UI language keys remain lower-case `no` / `en`; `data/app-config.js` maps those to uppercase asset folders `NO` / `EN`.
 
-- system toggles
-- image selection
-- OCR flow
-- editable marking text
-- result rendering
-- clickable token details
+Current viewer behavior:
 
-Avoid putting technical EX rules directly in this file.
+- swipe left/right
+- previous/next buttons
+- page indicator
+- pinch zoom
+- pan while zoomed
+- remembers last page
+- image load failure shows the attempted path instead of a blank screen
+- guide pages are displayed with a **90° rotation** because of source-page orientation
+- PWA requests `portrait-primary`
 
-## Marking systems
+Important: do not physically overwrite/rotate the user's WebP files unless specifically requested. The viewer currently handles the 90° display rotation.
 
-Top-level manual options:
+## 6. Poster
+
+Poster assets are language-specific and filenames are **lower-case**:
+
+```text
+assets/poster/poster-no.webp
+assets/poster/poster-en.webp
+```
+
+Do not change these to uppercase names.
+
+Poster behavior:
+
+- one large image per language
+- pinch zoom
+- pan/drag
+- no placeholder poster asset should be reintroduced
+
+## 7. EX-merking UX
+
+### Manual entry
+
+Top-level systems are:
 
 ```text
 ATEX
 IECEx
-Other
+Annet / Other
 ```
 
-"Other" is intended for older / country-specific marking systems.
+They are multi-select. ATEX and IECEx can be selected at the same time.
 
-## PWA / web
-
-Included:
-
-- manifest.webmanifest
-- service worker
-- install prompt support
-- offline app shell
-- mobile safe-area handling
-
-The current web project is intended to be the source of truth.
-
-## Hosting/testing
-
-The project is static HTML/CSS/JS.
-
-It can be hosted in a private/obscure test path or behind proper server-side
-authentication.
-
-A JavaScript-only password gate can be used as a soft demo lock, but it is not
-real protection for proprietary assets.
-
-A password gate has not been implemented in the current handoff.
-
-## EX courses
-
-Selected direct links currently included:
-
-- Ex grunnleggende
-- Exi grunnleggende
-- Ex installasjon – praktisk kurs
-- Ex vedlikehold
-- IECEx- og ATEX-merking av elektrisk utstyr
-- Flammespalter
-
-Bottom link:
+User enters one or more lines into an editable text area, then presses:
 
 ```text
-Se flere EX- og andre Trainor-kurs her ↗
+Tolk merking
 ```
 
-## Known limitations / next tasks
-
-1. Complete and technically review `ex-code-library.js`.
-2. Improve OCR extraction robustness on real plates.
-3. Add deterministic general-text generation based on interpreted structure.
-4. Improve bracket / associated-apparatus grouping in the UI.
-5. Add more gas/dust/mechanical/legacy cases only after approved rules exist.
-6. Add final official assets locally.
-7. Optionally add a soft password gate for internal demo.
-8. Test on:
-   - mobile Chrome
-   - mobile Safari
-   - desktop browser
-9. Later package the same project for Android/iOS if desired.
-
-## Important safety/design principle
-
-If OCR or parsing is uncertain:
-
-- show the extracted text
-- let the user edit it
-- mark unknown elements as unknown
-- never silently guess or auto-correct technical codes
-
-
-## Bilingual requirement
-
-All user-facing technical content must exist in both:
-
-- Norwegian (`no`)
-- English (`en`)
-
-This includes:
-
-- token explanations
-- general generated interpretation text
-- warnings
-- legacy/unknown-code messages
-- course/UI labels where applicable
-
-See:
+After interpretation the button becomes:
 
 ```text
-data/general-text-templates.js
-docs/EX_CODE_LIBRARY_SCHEMA.md
+Tolk på nytt
 ```
 
-## Acceptance tests
+### Image input
 
-Before changing parser behavior, run/verify the cases in:
+User can:
+
+- take a photo
+- upload/select an image
+
+The current browser prototype uses Tesseract.js in the client browser.
+
+**User-facing UI should not use the term “OCR”.** Prefer wording such as:
 
 ```text
-docs/TEST_CASES.md
-data/ex-test-cases.json
+Fant følgende merking
+Kontroller at merkingen stemmer med skiltet før du tolker.
 ```
 
-The first acceptance case is the current primary reference:
+Internal file/function names may still use `ocr`.
+
+## 8. Full-plate reading strategy
+
+Read the image **once over the full nameplate**. Then parse the returned text in three deterministic passes:
 
 ```text
-Ex db [ia IIC Ga] IIB T4 Gb IP55
-II 2 (1) G
-```
-
-
-## ATEX graphical Ex symbol and OCR
-
-The ATEX Ex symbol is graphical artwork and is **not expected to be read as
-text by OCR**.
-
-Correct flow:
-
-```text
-OCR finds textual ATEX category line, e.g. II 2 (I) G
-            ↓
-parser creates an ATEX result section
-            ↓
-UI prepends/renders the approved ATEX Ex-symbol asset
-```
-
-An ATEX certificate number can be used as evidence that ATEX information is
-present on the plate, but it must **not** be used to invent a missing category
-line. If the certificate is detected but the category line is not read
-reliably, show a warning and require manual correction/entry.
-
-The general generated text must be based on successfully parsed result
-sections, never merely on selected system toggles.
-
-
-## Multiple marking lines and CE
-
-Image reading must process the entire plate.
-
-Do not stop after the first EX line. A single plate may contain multiple
-relevant marking lines, for example separate gas and dust lines.
-
-The result model therefore supports multiple IECEx/Ex sections and multiple
-ATEX category lines.
-
-CE marking should also be retained as relevant plate information, e.g.:
-
-```text
-CE 0158
-```
-
-CE is shown separately from the EX code breakdown. Do not treat the CE marking
-as an IECEx or ATEX code token.
-
-## WebP content assets
-
-Production Pocket Guide pages and Poster images use WebP.
-
-Expected final paths:
-
-```text
-assets/pocket-guide/NO/page-01.webp ... page-20.webp
-assets/pocket-guide/EN/page-01.webp ... page-20.webp
-assets/poster/poster-no.webp
-assets/poster/poster-en.webp
-```
-
-Do not mass-convert branding, UI icons, SVG vectors or approved symbol files
-just for consistency. WebP is primarily for the large raster content.
-
-
-## Stable final asset names
-
-Do not rename these when replacing temporary artwork with approved files:
-
-```text
-assets/branding/trainor-apave-logo.svg
-assets/marking-systems/atex-official-symbol.png
-assets/marking-systems/iecex-symbol.svg
-assets/marking-systems/other-marking-symbol.svg
-assets/poster/poster-no.webp
-assets/poster/poster-en.webp
-```
-
-Pocket Guide final content should use:
-
-```text
-assets/pocket-guide/NO/page-01.webp ... page-20.webp
-assets/pocket-guide/EN/page-01.webp ... page-20.webp
-```
-
-The goal is that approved assets can simply overwrite these paths without any
-code changes.
-
-## ATEX text-reading tolerance
-
-Real plates frequently contain the ATEX equipment group `II`, which text
-recognition can return as:
-
-```text
-II
-11
-Il
-lI
-ll
-```
-
-The extractor may accept these as ATEX **candidates** when the surrounding
-category syntax matches, e.g.:
-
-```text
-11 2 (2) G Ex ...
-Il 2 D Ex ...
-```
-
-It must preserve the raw characters and ask the user to check the plate. It
-must **not** silently change `11`, `Il`, `lI` or `ll` to `II`.
-
-This is especially important for the R. STAHL example plate containing:
-
-```text
-II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4
-II 2 D Ex tD A21 IP65 T90°C
-CE 0158
-TÜV 05 ATEX 7176 X
-```
-
-## Context-aware `11` / `II` handling
-
-Image text recognition commonly confuses Roman numeral `II` with the number
-`11`.
-
-The parser may normalize this automatically only when the surrounding EX
-grammar makes the intended code clear.
-
-Examples:
-
-```text
-11B   -> IIB
-11C   -> IIC
-111C  -> IIIC
-11 2 (2) G -> II 2 (2) G
-11 2 D     -> II 2 D
-```
-
-Do **not** globally replace every `11` with `II`. Certificate numbers, years,
-addresses and other plate data may legitimately contain `11`.
-
-ATEX is a special case because equipment group `II` is followed by category
-syntax rather than immediately by `A/B/C`. Therefore only normalize it when
-the complete ATEX category pattern matches.
-
-## Staged plate reading
-
-Run image text recognition once over the full plate. Then parse the returned
-text in three deterministic passes:
-
-```text
-1. IECEx / Ex marking
+1. IECEx / IEC-based Ex marking
 2. ATEX category marking
 3. Other relevant plate information
 ```
 
-Do not stop because pass 1 found an Ex line. ATEX and other information may
-exist elsewhere on the same plate.
+Do not stop because pass 1 found a valid `Ex ...` line. The same plate may still contain ATEX categories, CE, certificates, temperature range and a second gas/dust line.
 
-In known EX contexts, uppercase `I` may be confused with:
+Current intended output categories:
+
+### Pass 1 – IECEx / IEC-based Ex lines
+
+Examples:
 
 ```text
-I  i  l  1  |  !
+Ex db [ia IIC Ga] IIB T4 Gb IP55
+Ex d e mb ib [ib] [op is] IIC T4
+Ex tD A21 IP65 T90°C
 ```
 
-Normalize these only when the surrounding syntax makes the intended code
-clear, for example `||C -> IIC` or `|| 2 (|) G -> II 2 (1) G`.
-Do not perform global character replacement.
+### Pass 2 – ATEX category lines
 
-## Clickable-code explanation depth
+Examples:
 
-`data/ex-code-library.js` now contains both `short` and `detailed` bilingual
-text. The detail panel should prefer `detailed` when available.
+```text
+II 2 (1) G
+II 2 (2) G
+II 2 D
+II 2G
+II 2D
+```
 
-The current draft covers, among other things:
+The graphical ATEX hexagonal Ex symbol is **not text** and must not be expected from image text recognition. If an ATEX category line is found, render the supplied asset:
 
-- protection methods
-- gas groups
-- gas/dust EPL
-- T1–T6 maximum surface temperatures
+```text
+assets/marking-systems/atex-official-symbol.png
+```
+
+### Pass 3 – other relevant plate information
+
+Examples:
+
+```text
+CE 0158
+IECEx ABC 06.0012
+TÜV 05 ATEX 7176 X
+-40°C <= Ta <= +60°C
+```
+
+Manufacturer, telephone numbers, addresses and unrelated product text should not be copied into the EX marking input.
+
+## 9. Context-aware character-confusion handling
+
+Image text recognition commonly confuses uppercase Roman `I` with:
+
+```text
+I
+i
+l
+1
+|
+!
+```
+
+These characters may be treated as equivalent **only where known EX grammar makes the intended code clear**.
+
+Examples that may normalize:
+
+```text
+11B       -> IIB
+||C       -> IIC
+!!B       -> IIB
+111C      -> IIIC
+11 2 D    -> II 2 D
+|I 2 (2) G -> II 2 (2) G
+|| 2 (|) G -> II 2 (1) G
+```
+
+Do **not** globally replace `1`, `l`, `|`, `!` or `i`. They may be valid characters elsewhere in certificate numbers, dates, product numbers, addresses etc.
+
+ATEX requires special context checking because equipment group `II` is not always immediately followed by `A/B/C`; it may be followed by category syntax such as `2G`, `2 D`, `2 (1) G`, etc.
+
+## 10. Multiple lines and gas/dust
+
+The interpreter must support all relevant lines, not only the first one.
+
+Example:
+
+```text
+II 2G Ex db IIC T4 Gb
+II 2D Ex tb IIIC T125°C Db
+```
+
+Both lines must survive extraction and interpretation. The first is gas-related; the second is dust-related.
+
+Do not flatten them into one synthetic marking.
+
+## 11. Brackets / associated marking
+
+Square brackets have technical meaning and are not decoration.
+
+Example:
+
+```text
+Ex db [ia IIC Ga] IIB T4 Gb
+```
+
+Conceptually:
+
+```text
+Main equipment:
+Ex db
+IIB
+T4
+Gb
+
+Associated / delimited part:
+[ ia IIC Ga ]
+```
+
+The bracketed part must remain structurally separate. It must not be interpreted as “gas/dust brackets”.
+
+Preserve similar bracketed structures such as:
+
+```text
+[ib]
+[op is]
+[ia IIC Ga]
+```
+
+## 12. Legacy vs modern notation
+
+Do not silently rewrite legacy marking into a modern equivalent.
+
+Examples that should be preserved when present:
+
+```text
+Ex tD
+A21
+Ex nA
+Ex nC
+Ex nR
+```
+
+The explanation library may state that a form is legacy, but the displayed source marking should remain what the user/nameplate supplied unless a very narrow recognition correction is justified by known grammar.
+
+## 13. Interpretation output
+
+For every parsed system/line show:
+
+- full source/normalized line
+- clickable marking elements
+- per-element explanation
+- relevant metadata separately
+- deterministic general summary
+
+Example IEC-based line:
+
+```text
+Ex db [ia IIC Ga] IIB T4 Gb IP55
+```
+
+Useful clickable grouping:
+
+```text
+Ex db
+[
+ia
+IIC
+Ga
+]
+IIB
+T4
+Gb
+IP55
+```
+
+Example ATEX line:
+
+```text
+II 2 (1) G
+```
+
+Useful clickable grouping:
+
+```text
+official ATEX Ex symbol
+II
+2
+(1)
+G
+```
+
+## 14. Technical code library
+
+`data/ex-code-library.js` is the central deterministic explanation library.
+
+Content is bilingual (NO/EN) and should support both:
+
+```text
+short
+```
+
+and
+
+```text
+detailed
+```
+
+The detail panel should prefer `detailed` when available.
+
+Current draft coverage includes, among other items:
+
 - ATEX group/category/G/D structure
-- brackets / associated sections
-- X and U certificate suffixes
-- direct dust temperatures such as `T125°C`
-- legacy placeholders such as `Ex tD` / `A21` without silently converting them
+- Ex protection methods
+- gas groups IIA/IIB/IIC
+- dust groups IIIA/IIIB/IIIC
+- EPL Ga/Gb/Gc and Da/Db/Dc
+- T1–T6 maximum surface-temperature meanings
+- direct dust temperature markings such as `T125°C`
+- IP code handling
+- square-bracket / associated marking explanation
+- certificate suffix `X`
+- component suffix `U`
+- legacy `Ex tD` / `A21` handling
 
-Technical wording remains reviewable content and should be checked before
-production use.
+Do not invent definitions for missing codes. Add missing entries explicitly to the library and mark review status in content metadata as appropriate.
+
+## 15. Deterministic general text
+
+General text must be generated from structured parsed results and approved templates, not from a language model.
+
+Relevant files:
+
+```text
+data/general-text-templates.js
+js/core/general-text-generator.js
+```
+
+The summary must describe only systems/sections actually parsed. A selected UI toggle alone must not cause the summary to claim that ATEX or IECEx was found.
+
+Example direction:
+
+```text
+Skiltet inneholder både ATEX- og IECEx-/IEC-basert Ex-merking.
+Hovedutstyrets merking er Ex db IIB T4 Gb.
+Delen [ia IIC Ga] beskriver en tilknyttet / associated del.
+Utstyret er også merket IP55.
+```
+
+Exact wording remains subject to technical review.
+
+## 16. Safety/disclaimer text
+
+At the bottom of EX interpretation, keep the current guidance/disclaimer:
+
+```text
+Innholdet i guiden er ment som en veiledning. Vær oppmerksom på at innhold i standarder kan oppdateres, og bør sjekkes hvis det skal brukes som beslutningsgrunnlag. Trainor Elsikkerhet AS fraskriver seg alt ansvar for hendelser som kan oppstå som følge av feiltolkning av innholdet i guiden.
+```
+
+The Pocket Guide and poster have their own disclaimer/guidance content; do not add a redundant global modal unless requested.
+
+## 17. EX courses
+
+Current selected direct links:
+
+```text
+Ex grunnleggende
+https://www.trainor.no/app/product/classroom/sjgh9w/ex-grunnleggende
+
+Exi grunnleggende
+https://www.trainor.no/app/product/classroom/pVcMwm/exi-grunnleggende
+
+Ex installasjon – praktisk kurs
+https://www.trainor.no/app/product/classroom/z4iFmV/ex-installasjon---praktisk-kurs
+
+Ex vedlikehold
+https://www.trainor.no/app/product/classroom/dGsi4v/ex-vedlikehold
+
+IECEx- og ATEX-merking av elektrisk utstyr
+https://www.trainor.no/app/product/elearning/6QrPSd/iecex--og-atex-merking-av-elektrisk-utstyr
+
+Flammespalter
+https://www.trainor.no/app/product/classroom/zvVYZx/flammespalter
+```
+
+Generic final link:
+
+```text
+Se flere EX- og andre Trainor-kurs her.
+https://www.trainor.no/courses/
+```
+
+Do not show prices/durations unless explicitly requested.
+
+## 18. PWA / web behavior
+
+Current setup:
+
+- static hosting
+- service worker
+- web app manifest
+- portrait-primary request for installed PWA
+- touch/safe-area support
+- Tesseract.js currently loaded from CDN
+
+For stronger offline production behavior, Tesseract.js can later be vendored locally instead of loaded from CDN.
+
+When changing cached files, bump the service-worker cache version so users do not remain on stale JS/CSS.
+
+A hard refresh/service-worker refresh may still be necessary during active development.
+
+## 19. Asset policy for future patches
+
+The user's real Pocket Guide and poster assets may exist in the GitHub repository but are intentionally not bundled into code-only patch ZIPs.
+
+**Default for generated updates:**
+
+```text
+NO assets directory in patch ZIP
+```
+
+Only include changed source/docs files. Never create placeholder Pocket Guide or poster assets again unless explicitly asked.
+
+## 20. Tests
+
+Machine-readable regression cases live in:
+
+```text
+data/ex-test-cases.json
+```
+
+Human-readable notes live in:
+
+```text
+docs/TEST_CASES.md
+```
+
+Important regression areas:
+
+- same plate contains ATEX + IEC-based marking
+- gas + dust lines on the same plate
+- square-bracket associated marking
+- CE + ATEX/IECEx certificate metadata
+- `II` read as `11`, `Il`, `|I`, `!!`, etc. in valid EX context
+- unrelated `11`, `|`, `!`, `l` elsewhere must not be globally rewritten
+- legacy notation remains legacy
+- selected system toggle does not fabricate parsed systems
+- all relevant nameplate lines are retained
+
+## 21. Known cleanup / follow-up work
+
+Items worth reviewing next:
+
+- `data/ex-demo-rules.js` may now be legacy/dead prototype code; remove only after verifying no runtime dependency.
+- Expand `ex-code-library.js` coverage as more real nameplates are tested.
+- Improve image preprocessing if difficult plates still fail before the parsing stage.
+- Consider locally hosted Tesseract assets for offline production.
+- Continue adding real-nameplate regression cases.
+- Technical SME review of every user-facing EX explanation before production.
+
+## 22. Content references used for recent explanation expansion
+
+Recent draft explanation work used user-provided ATEX/EX reference material covering the structure of ATEX marking, equipment groups/categories, protection methods, gas groups, temperature classes, EPL, combined markings, gas+dust examples, certificate suffixes and related nameplate information.
+
+Treat that content as a drafting/reference source, not as a substitute for checking applicable standards and approved internal technical material before production release.
+
+## 23. Immediate instruction to Copilot
+
+When continuing this repo:
+
+1. Inspect the existing files before changing architecture.
+2. Preserve current stable asset paths exactly.
+3. Do not delete/replace the user's real `assets/pocket-guide/NO`, `assets/pocket-guide/EN` or poster WebPs.
+4. Keep EX interpretation deterministic.
+5. Keep full-plate staged parsing: IECEx/Ex → ATEX → other metadata.
+6. Keep context-aware `I/i/l/1/|/!` handling narrow and grammar-based.
+7. Preserve all relevant marking lines, including separate gas/dust and bracketed associated sections.
+8. Add/adjust regression tests with every parser change.
+9. Keep Norwegian and English content in sync.
+10. For patch delivery, default to **code/docs only, no assets**.
+
+## Multiple markings inside one recognized text line
+
+Do not assume that one returned text line equals one physical nameplate line.
+Image recognition can collapse several physical rows into one long string.
+
+The extractor must scan each returned line **and** the flattened whole-plate
+text for every structural occurrence.
+
+Example input returned as one line:
+
+```text
+|| 2 (|) G Ex d e mb ib [ib] [op is] ||C T4 !1 2 D Ex tD A21 IP65 T90°C CE 0158 TUV 05 ATEX 7176 X
+```
+
+It must yield four marking lines:
+
+```text
+Ex d e mb ib [ib] [op is] IIC T4
+Ex tD A21 IP65 T90°C
+II 2 (1) G
+II 2 D
+```
+
+and keep `CE 0158` and `TUV 05 ATEX 7176 X` as metadata.
+
+Never stop after the first `Ex` occurrence or the first ATEX category.
+
+## v27 image-reading and IP rules
+
+- Preprocess browser-decodable images to enhanced PNG before text recognition.
+- Always expose the full raw recognized text in a collapsible debug panel.
+- Treat `I`, `i`, `l`, `1`, `|`, `!` as I-like glyphs only in known EX grammar.
+- This applies to `ia/ib/ic` as well as `IIA/IIB/IIC`, `IIIA/IIIB/IIIC` and
+  ATEX equipment group II. Never perform global substitutions.
+- IP tokens are interpreted dynamically as a composed code. The first
+  character is solid/contact protection; the second is water protection.
+  Support `X` and relevant suffix letters, including the common `IP69K` form.
+- Code-only patches must not contain `/assets`.

@@ -340,6 +340,17 @@
             <span id="ocrStatusText"></span>
           </div>
 
+          <details id="ocrRawPanel"
+                   class="ocr-raw-panel is-hidden">
+            <summary data-i18n="marking.rawReadTitle">
+              Tekst lest fra bildet
+            </summary>
+            <p data-i18n="marking.rawReadHelp">
+              Dette er teksten motoren faktisk leste. Bruk den ved feilsøking og kontroller alltid mot skiltet.
+            </p>
+            <pre id="ocrRawText" class="ocr-raw-text"></pre>
+          </details>
+
           <section id="ocrMetadataPanel"
                    class="ocr-metadata is-hidden">
             <strong data-i18n="marking.otherRelevant">

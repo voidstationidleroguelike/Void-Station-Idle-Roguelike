@@ -44,3 +44,23 @@ CE 0158
 Ta ranges
 IECEx certificate numbers
 ```
+
+
+## Current image-reading flow
+
+The browser converts a decodable source image to an enhanced PNG before text
+recognition: moderate upscaling, grayscale and contrast. The original uploaded
+asset is not modified.
+
+After one full-image read, parsing runs in three deterministic passes:
+
+1. IECEx / Ex marking
+2. ATEX category marking
+3. Other relevant plate information
+
+The UI exposes the complete raw text in a collapsed **Text read from the image**
+panel so recognition failures can be diagnosed without guessing.
+
+Known Ex contexts allow `I`, `i`, `l`, `1`, `|` and `!` to stand in for the
+letter `i` in `ia`, `ib`, `ic`, and for Roman-I glyphs in IIA/IIB/IIC and
+IIIA/IIIB/IIIC. These substitutions must never be global.
