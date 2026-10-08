@@ -378,23 +378,16 @@
 
     const language = currentLanguage();
 
-    if (!selectedSystems.size) {
-      if (!silent) {
-        window.alert(
-          language === "en"
-            ? "Select ATEX, IECEx and/or Other before interpreting."
-            : "Velg ATEX, IECEx og/eller Annet før du tolker."
-        );
-      }
-      return;
-    }
-
     const result = window.EX_APP.exMarkingInterpreter.interpret(
       text,
       {
         language,
         systems: [...selectedSystems],
         metadata: lastExtractedMetadata,
+        // This button always interprets the editable text literally.
+        // OCR corrections happen only in the image extractor BEFORE text
+        // reaches this field. Never apply OCR substitutions here.
+        inputMode: "manual",
       }
     );
 

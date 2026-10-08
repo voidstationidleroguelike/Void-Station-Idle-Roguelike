@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": "v30",
   "languages": [
     "no",
     "en"
@@ -31,24 +31,20 @@
           "iecex": {
             "fullLine": "Ex db [ia IIC Ga] IIB T4 Gb IP55",
             "tokens": [
-              "Ex db",
-              "[",
-              "ia",
-              "IIC",
-              "Ga",
-              "]",
+              "Ex",
+              "db",
+              "[ia IIC Ga]",
               "IIB",
               "T4",
               "Gb",
               "IP55"
             ],
             "associatedTokens": [
-              "ia",
-              "IIC",
-              "Ga"
+              "[ia IIC Ga]"
             ],
             "mainTokens": [
-              "Ex db",
+              "Ex",
+              "db",
               "IIB",
               "T4",
               "Gb"
@@ -362,6 +358,203 @@
         "secondCharacter": "water protection",
         "supportsX": true,
         "supportsSuffixK": true
+      }
+    },
+    {
+      "id": "real-stahl-ocr-v28",
+      "title": {
+        "no": "R. STAHL – faktisk råtekst fra bilde",
+        "en": "R. STAHL – actual raw image text"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH C (3 0158 |\n2 Im Gewerbegebiet Pesch 14 Fr\n8 D - 50767 Kain sosoma0s TOV OS ATEX 7176 X X\n$ ol: +49 (0)221 elektrische Daten sishe EG-\n2 Fax.: +49 (0)221/ 59808260 Baumusterpriifbescheinigung es\n° W2(2)GExde mb ib [ib] [op is] iC T4 electrical data see EC-type 3\ns & N2DExtD A21 IP65 T90°C examination certificate &\nET-3xx: -20°C < Ta < 55°C ET-4xx, ET-5xx: -20°C < T4 < 50°C §"
+      },
+      "expected": {
+        "markingLines": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (2) G",
+          "II 2 D"
+        ],
+        "ce": "CE 0158",
+        "atexCertificateContains": "05 ATEX 7176 X",
+        "mustIgnoreTrailingNameplateProse": true
+      }
+    },
+    {
+      "id": "i-glyph-context-v28",
+      "title": {
+        "no": "I-lignende tegn i ia/ib/ic og gassgruppe",
+        "en": "I-like glyphs in ia/ib/ic and gas group"
+      },
+      "input": {
+        "markings": [
+          "Ex !a IIC Ga",
+          "Ex |b IIB Gb",
+          "Ex l c IIA Gc",
+          "Ex db [1a i|C Ga] lB T4 Gb",
+          "Ex d e mb ib [ib] [op is] iC T4"
+        ]
+      },
+      "expected": {
+        "contextualOnly": true,
+        "normalized": [
+          "Ex ia IIC Ga",
+          "Ex ib IIB Gb",
+          "Ex ic IIA Gc",
+          "Ex db [ia IIC Ga] IIB T4 Gb",
+          "Ex d e mb ib [ib] [op is] IIC T4"
+        ]
+      }
+    },
+    {
+      "id": "manual-partial-atex-group",
+      "title": {
+        "no": "Manuell ATEX kan tolkes før linjen er komplett",
+        "en": "Manual ATEX can be interpreted before the line is complete"
+      },
+      "input": {
+        "markingText": "II",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "systems": [
+          "atex"
+        ],
+        "tokens": [
+          "Ex",
+          "II"
+        ],
+        "mustInterpretPartial": true,
+        "knownTokens": [
+          "II"
+        ]
+      }
+    },
+    {
+      "id": "square-brackets-preserved",
+      "title": {
+        "no": "Klammeparentes beholdes samlet",
+        "en": "Square brackets are preserved as one structure"
+      },
+      "input": {
+        "markingText": "II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "tokens": [
+          "Ex",
+          "II",
+          "2",
+          "(2)",
+          "G",
+          "Ex",
+          "d",
+          "e",
+          "mb",
+          "ib",
+          "[ib]",
+          "[op is]",
+          "IIC",
+          "T4"
+        ],
+        "mustKeepSquareBracketsWhole": true,
+        "mustKeepParenthesizedCategorySeparate": true,
+        "mustNotCreateTokens": [
+          "[op",
+          "is]"
+        ]
+      }
+    },
+    {
+      "id": "parentheses-vs-square-brackets",
+      "title": {
+        "no": "Runde og firkantede parenteser har forskjellig betydning",
+        "en": "Round and square brackets have different meaning"
+      },
+      "input": {
+        "markingText": "II 2 (1) G Ex db [ia IIC Ga] IIB T4 Gb",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "roundParenthesisToken": "(1)",
+        "squareBracketToken": "[ia IIC Ga]",
+        "roundMeaning": "atex-associated-category",
+        "squareMeaning": "associated-marking-section"
+      }
+    },
+    {
+      "id": "manual-never-uses-ocr-normalization",
+      "title": {
+        "no": "Manuell tekst bruker aldri OCR-korrigering",
+        "en": "Manual text never uses OCR correction"
+      },
+      "input": {
+        "markingText": "Ex !b I1C T4",
+        "selectedSystems": [
+          "iecex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "preservedTokens": [
+          "Ex",
+          "!b",
+          "I1C",
+          "T4"
+        ],
+        "mustNotNormalize": {
+          "!b": "ib",
+          "I1C": "IIC"
+        }
+      }
+    },
+    {
+      "id": "manual-round-parenthesis-preserved",
+      "title": {
+        "no": "(I) må aldri bli (1) ved manuell innskriving",
+        "en": "(I) must never become (1) in manual input"
+      },
+      "input": {
+        "markingText": "II 2 (I) G",
+        "selectedSystems": [
+          "atex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "mustContainToken": "(I)",
+        "mustNotContainToken": "(1)",
+        "mustPreserveLiteralInput": true
+      }
+    },
+    {
+      "id": "bracket-description-adds-inner-meaning",
+      "title": {
+        "no": "Klammet kode viser kodeforklaring og klammeforklaring sammen",
+        "en": "Bracketed code shows code meaning and bracket context together"
+      },
+      "input": {
+        "tokens": [
+          "[ib]",
+          "[op is]",
+          "[ia IIC Ga]"
+        ]
+      },
+      "expected": {
+        "mustKeepWholeTokens": true,
+        "descriptionContainsInnerCodeMeaning": true,
+        "descriptionContainsBracketContext": true,
+        "mustNotTreatBracketsAsSeparateCode": true
       }
     }
   ]

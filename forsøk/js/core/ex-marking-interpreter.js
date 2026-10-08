@@ -9,10 +9,32 @@
       ? options.systems
       : [];
 
+    /*
+     * IMPORTANT:
+     * Manual input and image/OCR input are intentionally different pipelines.
+     *
+     * manual:
+     *   - preserve exactly what the user typed semantically
+     *   - NEVER apply OCR character correction
+     *   - (I) must remain (I), !b must remain !b, I1C must remain I1C
+     *
+     * ocr:
+     *   - context-aware OCR cleanup may be used
+     *   - only for text that actually came from image recognition
+     */
+    const inputMode =
+      options.inputMode === "ocr" || options.manual === false
+        ? "ocr"
+        : "manual";
+
+    const manual = inputMode === "manual";
+
     const lines = normalize(rawText)
       .split("\n")
       .map((line) =>
-        normalizeKnownExConfusions(line.trim())
+        manual
+          ? normalizeManualSyntax(line)
+          : normalizeKnownExConfusions(line.trim())
       )
       .filter(Boolean);
 
@@ -25,25 +47,37 @@
     const sections = [];
 
     if (requestedSystems.includes("iecex")) {
-      findIecexLines(lines).forEach((exLine, index) => {
+      const iecexLines =
+        manual && selectedSystems.includes("iecex")
+          ? lines
+          : findIecexLines(lines);
+
+      iecexLines.forEach((exLine, index) => {
         sections.push({
           system: "iecex",
-          title: "IECEx",
+          title: "IECEx / Ex",
           lineIndex: index,
           fullLine: exLine,
-          tokens: tokenizeIecex(exLine),
+          inputMode,
+          tokens: tokenizeIecex(exLine, inputMode),
         });
       });
     }
 
     if (requestedSystems.includes("atex")) {
-      findAtexLines(lines).forEach((atexLine, index) => {
+      const atexLines =
+        manual && selectedSystems.includes("atex")
+          ? lines
+          : findAtexLines(lines);
+
+      atexLines.forEach((atexLine, index) => {
         sections.push({
           system: "atex",
           title: "ATEX",
           lineIndex: index,
           fullLine: atexLine,
-          tokens: tokenizeAtex(atexLine),
+          inputMode,
+          tokens: tokenizeAtex(atexLine, inputMode),
         });
       });
     }
@@ -65,6 +99,7 @@
               ? "Other"
               : "Annet",
           fullLine: line,
+          inputMode,
           tokens: tokenizeGeneric(line),
         });
       });
@@ -82,14 +117,36 @@
     );
 
     return {
+      inputMode,
       requestedSystems,
       detectedSystems: detected,
       systems: parsedSystems,
       sections,
       metadata,
       generalText:
-        buildGeneralText(parsedSystems, language),
+        manual && !sections.length
+          ? (language === "en"
+              ? "No known marking elements were found. Select the relevant marking system or enter more of the marking."
+              : "Fant ingen kjente merkingselementer. Velg riktig merkesystem eller skriv inn mer av merkingen.")
+          : buildGeneralText(parsedSystems, language),
     };
+  }
+
+  function normalizeManualSyntax(value) {
+    /*
+     * Safe formatting only. No OCR substitutions are allowed here.
+     * Preserve I/1/l/|/! exactly as entered.
+     */
+    return String(value || "")
+      .replace(/\u00a0/g, " ")
+      .replace(/\[\s*([^\]]*?)\s*\]/g, (match, inner) =>
+        `[${String(inner).replace(/\s+/g, " ").trim()}]`
+      )
+      .replace(/\(\s*([^)]*?)\s*\)/g, (match, inner) =>
+        `(${String(inner).replace(/\s+/g, " ").trim()})`
+      )
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
   function detectSystems(lines) {
@@ -120,6 +177,85 @@
     );
   }
 
+  function normalizeKnownPlateSyntax(value) {
+    let text = String(value || "")
+      .replace(/¦/g, "|");
+
+    text = normalizeCompactAtexPrefix(text);
+    text = normalizeCompactExProtection(text);
+    text = normalizeKnownRomanGroups(text);
+    text = normalizeSingleGlyphGasGroup(text);
+    text = normalizeIntrinsicSafetyTokens(text);
+
+    return text
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function normalizeCompactAtexPrefix(value) {
+    return String(value || "").replace(
+      /(^|[^A-Za-z0-9])(?:(?:[Iil1|!]{2}|[WNHM])\s*)?([123])\s*(?:\(\s*([123Iil|!])\s*\))?\s*(GD|G|D)\s*E\s*[xX×]/gi,
+      (match, prefix, category, associated, atmosphere) => {
+        const associatedCategory = associated
+          ? (/^[Iil|!]$/.test(associated) ? "1" : associated)
+          : null;
+
+        return (
+          `${prefix}II ${category}` +
+          (associatedCategory ? ` (${associatedCategory})` : "") +
+          ` ${String(atmosphere).toUpperCase()} Ex`
+        );
+      }
+    );
+  }
+
+  function normalizeCompactExProtection(value) {
+    return String(value || "").replace(
+      /\bEx([A-Za-z]{1,16})\b/g,
+      (match, compact) => {
+        const tokens = segmentProtectionSequence(compact);
+        return tokens ? `Ex ${tokens.join(" ")}` : match;
+      }
+    );
+  }
+
+  function segmentProtectionSequence(value) {
+    const source = String(value || "").toLowerCase();
+    const parts = [
+      ["opis", "op is"], ["oppr", "op pr"], ["opsh", "op sh"],
+      ["db", "db"], ["da", "da"], ["dc", "dc"],
+      ["eb", "eb"], ["ec", "ec"],
+      ["ia", "ia"], ["ib", "ib"], ["ic", "ic"],
+      ["ma", "ma"], ["mb", "mb"], ["mc", "mc"],
+      ["px", "px"], ["py", "py"], ["pz", "pz"],
+      ["na", "nA"], ["nc", "nC"], ["nr", "nR"],
+      ["ta", "ta"], ["tb", "tb"], ["tc", "tc"], ["td", "tD"],
+      ["d", "d"], ["e", "e"], ["i", "i"], ["m", "m"],
+      ["p", "p"], ["q", "q"], ["o", "o"], ["h", "h"], ["s", "s"],
+    ];
+
+    const result = [];
+    let rest = source;
+    while (rest) {
+      const hit = parts.find(([raw]) => rest.startsWith(raw));
+      if (!hit) return null;
+      result.push(...hit[1].split(" "));
+      rest = rest.slice(hit[0].length);
+    }
+    return result.length ? result : null;
+  }
+
+  function normalizeSingleGlyphGasGroup(value) {
+    const text = String(value || "");
+    if (!/\bEx\b/i.test(text)) return text;
+
+    return text.replace(
+      /(^|[\s\]])([Iil1|!])\s*([ABC])(?=\s+(?:T[1-6]\b|[GD][abc]\b|IP\s*[0-9X]|T\d{2,3}\s*°?\s*C\b)|\s*$)/gi,
+      (match, prefix, glyph, suffix) =>
+        `${prefix}II${suffix.toUpperCase()}`
+    );
+  }
+
   // ---------------------------------------------------------------
   // Same context-aware normalization used for manual entry.
   // ---------------------------------------------------------------
@@ -130,19 +266,19 @@
 
     text = text.replace(
       new RegExp(
-        `(^|[^A-Za-z0-9])(${iLike}{3})([ABC])\\b`,
+        `(^|[^A-Za-z0-9])${iLike}\\s*${iLike}\\s*${iLike}\\s*([ABC])\\b`,
         "gi"
       ),
-      (match, prefix, roman, suffix) =>
+      (match, prefix, suffix) =>
         `${prefix}III${suffix.toUpperCase()}`
     );
 
     text = text.replace(
       new RegExp(
-        `(^|[^A-Za-z0-9])(${iLike}{2})([ABC])\\b`,
+        `(^|[^A-Za-z0-9])${iLike}\\s*${iLike}\\s*([ABC])\\b`,
         "gi"
       ),
-      (match, prefix, roman, suffix) =>
+      (match, prefix, suffix) =>
         `${prefix}II${suffix.toUpperCase()}`
     );
 
@@ -192,78 +328,32 @@
     text = text.replace(/\bE\s*[xX×](?=\s|$)/g, "Ex");
 
     return text.replace(
-      /(^|[\s\[])([Iil1|!])([abc])(?=$|[\s\]])/gi,
+      /(^|[\s\[])([Iil1|!])\s*([abc])(?=$|[\s\]])/gi,
       (match, prefix, iLike, level) =>
         `${prefix}i${level.toLowerCase()}`
     );
   }
 
   function normalizeKnownExConfusions(value) {
-    return normalizeIntrinsicSafetyTokens(
-      normalizeAtexEquipmentGroup(
-        normalizeKnownRomanGroups(value)
-      )
+    return normalizeAtexEquipmentGroup(
+      normalizeKnownPlateSyntax(value)
     );
   }
 
-  function tokenizeIecex(line) {
-    let source = normalizeKnownExConfusions(line)
-      .replace(
-        /\bIP\s*([0-6X])\s*([0-9X])([A-Z]{0,2})\b/gi,
-        "IP$1$2$3"
-      )
-      .replace(/\[/g, " [ ")
-      .replace(/\]/g, " ] ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    const raw = source.split(" ").filter(Boolean);
-    const tokens = [];
-
-    for (let i = 0; i < raw.length; i += 1) {
-      const current = raw[i];
-
-      if (
-        /^Ex$/i.test(current) &&
-        /^(?:d|db|da|dc|e|eb|ec|i|ia|ib|ic|m|ma|mb|mc|p|q|h|ta|tb|tc|tD)$/i.test(
-          raw[i + 1] || ""
-        )
-      ) {
-        tokens.push(
-          makeToken(
-            `Ex ${raw[i + 1]}`,
-            "iecex"
-          )
-        );
-        i += 1;
-        continue;
-      }
-
-      if (
-        /^op$/i.test(current) &&
-        /^(?:is|pr|sh)$/i.test(
-          raw[i + 1] || ""
-        )
-      ) {
-        tokens.push(
-          makeToken(
-            `op ${raw[i + 1]}`,
-            "iecex"
-          )
-        );
-        i += 1;
-        continue;
-      }
-
-      tokens.push(
-        makeToken(current, "iecex")
-      );
-    }
-
-    return tokens;
+  function prepareStructuredLine(line, inputMode) {
+    return inputMode === "ocr"
+      ? normalizeKnownExConfusions(line)
+      : normalizeManualSyntax(line);
   }
 
-  function tokenizeAtex(line) {
+  function tokenizeIecex(line, inputMode = "manual") {
+    return tokenizeStructuredLine(
+      prepareStructuredLine(line, inputMode),
+      "iecex"
+    );
+  }
+
+  function tokenizeAtex(line, inputMode = "manual") {
     const tokens = [
       makeToken(
         "Ex",
@@ -272,16 +362,64 @@
       ),
     ];
 
-    normalizeKnownExConfusions(line)
+    tokenizeStructuredLine(
+      prepareStructuredLine(line, inputMode),
+      "atex"
+    ).forEach((token) => tokens.push(token));
+
+    return tokens;
+  }
+
+  function tokenizeStructuredLine(line, system) {
+    let source = String(line || "")
+      .replace(
+        /\bIP\s*([0-6X])\s*([0-9X])([A-Z]{0,2})\b/gi,
+        "IP$1$2$3"
+      )
+      // Keep square brackets as structure. Parentheses are NOT square brackets:
+      // (2) is an ATEX associated-category token, while [ib] / [op is]
+      // delimit an associated marking section.
+      .replace(/\[\s*([^\]]*?)\s*\]/g, (match, inner) =>
+        `[${String(inner).replace(/\s+/g, " ").trim()}]`
+      )
+      .replace(/\(\s*([123])\s*\)/g, "($1)")
       .replace(/\s+/g, " ")
-      .trim()
-      .split(" ")
-      .filter(Boolean)
-      .forEach((value) =>
+      .trim();
+
+    const raw =
+      source.match(/\[[^\]]*\]|\([^)]*\)|[^\s]+/g) || [];
+
+    const tokens = [];
+
+    for (let i = 0; i < raw.length; i += 1) {
+      const current = raw[i];
+
+      // op is / op pr / op sh are multi-word Ex codes when they are not
+      // already protected by square brackets.
+      if (
+        /^op$/i.test(current) &&
+        /^(?:is|pr|sh)$/i.test(raw[i + 1] || "")
+      ) {
         tokens.push(
-          makeToken(value, "atex")
-        )
-      );
+          makeToken(
+            `op ${String(raw[i + 1]).toLowerCase()}`,
+            system
+          )
+        );
+        i += 1;
+        continue;
+      }
+
+      // In an ATEX section the textual "Ex" belongs to the common Ex core;
+      // the separate officialSymbol token above represents the graphical
+      // ATEX hexagon.
+      const tokenSystem =
+        system === "atex" && /^Ex$/i.test(current)
+          ? "common"
+          : system;
+
+      tokens.push(makeToken(current, tokenSystem));
+    }
 
     return tokens;
   }
@@ -351,6 +489,12 @@
 
     const lookup = normalizeLookup(value);
 
+    const bracketDefinition = resolveBracketDefinition(value);
+
+    if (bracketDefinition) {
+      return bracketDefinition;
+    }
+
     const ipDefinition = resolveIpDefinition(value);
 
     if (ipDefinition) {
@@ -394,9 +538,111 @@
 
     return (
       library[system]?.[lookup] ||
+      // ATEX and IECEx share the IEC 60079 Ex-core codes.  When an ATEX
+      // line contains d/e/mb/ib/IIC/T4/etc., use the same reviewed code
+      // explanation instead of marking it unknown.
+      (system === "atex"
+        ? library.iecex?.[lookup]
+        : null) ||
       library.common?.[lookup] ||
       null
     );
+  }
+
+  function resolveBracketDefinition(value) {
+    const text = String(value || "").trim();
+
+    if (!/^\[[^\]]*\]$/.test(text)) {
+      return null;
+    }
+
+    const inner = text.slice(1, -1).trim();
+    const innerParts = splitAssociatedInnerTokens(inner);
+
+    const bracketNo =
+      "Står i klammer: hele delen mellom [ og ] skal leses separat fra hovedutstyrets merking. Klammer brukes blant annet for tilknyttede / associated kretser. Gass eller støv bestemmes av kodene inne i klammen – ikke av klammen i seg selv.";
+
+    const bracketEn =
+      "Shown in brackets: the complete part between [ and ] must be read separately from the main equipment marking. Brackets are used, among other things, for associated circuits. Gas or dust is determined by the codes inside the brackets, not by the brackets themselves.";
+
+    const explanationsNo = [];
+    const explanationsEn = [];
+
+    innerParts.forEach((part) => {
+      const definition =
+        resolveDefinition("iecex", part) ||
+        resolveDefinition("common", part);
+
+      if (!definition) {
+        explanationsNo.push(`${part}: Ingen godkjent forklaring er lagt inn ennå.`);
+        explanationsEn.push(`${part}: No approved explanation has been added yet.`);
+        return;
+      }
+
+      const noText =
+        definition.detailed?.no ||
+        definition.short?.no ||
+        "";
+      const enText =
+        definition.detailed?.en ||
+        definition.short?.en ||
+        definition.detailed?.no ||
+        definition.short?.no ||
+        "";
+
+      explanationsNo.push(`${part}: ${noText}`);
+      explanationsEn.push(`${part}: ${enText}`);
+    });
+
+    const singlePart = innerParts.length === 1;
+
+    return {
+      title: {
+        no: singlePart
+          ? `${text} – ${innerParts[0]} i klammer`
+          : `${text} – tilknyttet del`,
+        en: singlePart
+          ? `${text} – ${innerParts[0]} in brackets`
+          : `${text} – associated part`,
+      },
+      detailed: {
+        no:
+          (explanationsNo.length
+            ? `${explanationsNo.join(" ")} `
+            : "") +
+          bracketNo,
+        en:
+          (explanationsEn.length
+            ? `${explanationsEn.join(" ")} `
+            : "") +
+          bracketEn,
+      },
+    };
+  }
+
+  function splitAssociatedInnerTokens(value) {
+    const raw = String(value || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .split(" ")
+      .filter(Boolean);
+
+    const result = [];
+
+    for (let i = 0; i < raw.length; i += 1) {
+      if (
+        /^op$/i.test(raw[i]) &&
+        /^(?:is|pr|sh)$/i.test(raw[i + 1] || "")
+      ) {
+        result.push(`op ${String(raw[i + 1]).toLowerCase()}`);
+        i += 1;
+        continue;
+      }
+
+      result.push(raw[i]);
+    }
+
+    return result;
   }
 
   function resolveIpDefinition(value) {

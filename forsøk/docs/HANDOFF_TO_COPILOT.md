@@ -643,3 +643,70 @@ Never stop after the first `Ex` occurrence or the first ATEX category.
   character is solid/contact protection; the second is water protection.
   Support `X` and relevant suffix letters, including the common `IP69K` form.
 - Code-only patches must not contain `/assets`.
+
+## v28 real-nameplate OCR regression
+
+The parser must handle the actual OCR output from the R. STAHL test plate, including compact/merged forms such as `W2(2)GExde`, `N2DExtD` and a dropped-I gas group such as `iC T4`. These repairs are context-only: W/N/H/M are accepted as a merged `II` only inside the exact ATEX `category + G/D + Ex` grammar, and `iC` becomes `IIC` only in the gas-group position before a temperature class/EPL/IP/end. Never apply these substitutions globally.
+
+Expected reconstruction from the regression fixture:
+
+```text
+II 2 (2) G
+Ex d e mb ib [ib] [op is] IIC T4
+II 2 D
+Ex tD A21 IP65 T90°C
+```
+
+## v29 manual interpretation and brackets
+
+- Manual entry is incremental: if ATEX is selected, `II`, `II 2`, `II 2 (2) G`, etc. must already produce clickable interpreted elements. A complete marking line is not required.
+- Manual interpretation no longer silently stops merely because the marking is incomplete.
+- `()` and `[]` are different structures:
+  - `(1)`, `(2)`, `(3)` are ATEX associated-category tokens.
+  - `[ ... ]` delimits an associated marking section and must remain one structural token, e.g. `[ib]`, `[op is]`, `[ia IIC Ga]`.
+- Never split `[op is]` into `[op` and `is]`.
+- ATEX lines may contain the shared IEC 60079 Ex-core codes. `d`, `e`, `mb`, `ib`, `op is`, `IIC`, `T4`, etc. should use the same code-library definitions instead of being reported as unknown merely because the section is ATEX.
+- The instructor Excel (`EX-betegnelser-instruktor-v2.xlsx`) is the temporary content guide until the reviewed library is imported.
+
+
+## v30: Manual input and image reading are separate pipelines
+
+This is a hard rule.
+
+### Manual input
+Manual text is authoritative user input. Do not run OCR cleanup or glyph
+normalisation on it.
+
+Examples that MUST remain unchanged in manual mode:
+
+```text
+(I)   -> (I), never (1)
+!b    -> !b, never ib
+I1C   -> I1C, never IIC
+```
+
+The manual interpreter may normalise harmless whitespace and bracket spacing,
+but it must not replace characters.
+
+Manual input may be partial. If ATEX is selected, `II` alone must be
+interpretable. The user does not need to enter a complete marking line.
+
+### Image/OCR input
+OCR correction belongs only in the image extraction pipeline. Context-aware
+I/1/l/|/! correction may be used there when EX grammar makes the correction
+safe. After the extracted candidate has been placed in the editable text field,
+the text field is again treated as manual/literal input.
+
+### Parentheses vs square brackets
+- `(1)`, `(2)`, `(3)` are ATEX associated-category syntax when actually written
+  that way.
+- `(I)` must never be changed to `(1)` in manual input.
+- `[ ... ]` is an associated/bracketed marking section.
+- The bracket is context, not a separate EX code card.
+- `[ib]`, `[op is]`, `[ia IIC Ga]` stay visually whole.
+- Their detail view explains the inner code(s) and then adds the common
+  bracket/associated-context explanation.
+
+### Image feature
+Keep the image-reading feature isolated from the manual interpreter so it can
+be disabled or removed later without changing manual interpretation.
