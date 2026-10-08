@@ -46,6 +46,18 @@ window.EX_APP.exCodeLibrary = {
       }
     },
 
+    "[...]": {
+      title: { no: "[ ... ] – tilknyttet del", en: "[ ... ] – associated part" },
+      short: {
+        no: "Klammet del som skal leses separat fra hovedmerkingen.",
+        en: "Bracketed part that must be read separately from the main marking."
+      },
+      detailed: {
+        no: "Klammeparentesen markerer starten på en del som skal leses separat fra hovedutstyrets merking. Den brukes blant annet rundt merkingen for tilknyttede egensikre kretser. Alt mellom [ og ] hører sammen som en avgrenset del og bør tolkes separat fra hovedmerkingen utenfor parentesene. Gass eller støv bestemmes av kodene inne i parentesen – ikke av klammeparentesen i seg selv.",
+        en: "The brackets mark a part that must be read separately from the main equipment marking. They are used, among other things, around markings for associated intrinsically safe circuits. Everything between [ and ] belongs together as one delimited part and should be interpreted separately from the main marking outside the brackets. Gas or dust is determined by the codes inside the brackets, not by the brackets themselves."
+      }
+    },
+
     "X": {
       title: { no: "X – spesielle betingelser", en: "X – special conditions" },
       short: {
@@ -179,6 +191,10 @@ window.EX_APP.exCodeLibrary = {
     "o": simpleProtection("o", "Oljenedsenking", "Oil immersion", "Vernemetode med oljenedsenking.", "Oil-immersion protection method."),
     "Ex q": simpleProtection("Ex q", "Pulverfylling", "Powder filling", "Vernemetode med pulverfylling. Referansematerialet knytter denne til sone 1.", "Protection method using powder filling. The supplied reference associates it with Zone 1."),
     "q": simpleProtection("q", "Pulverfylling", "Powder filling", "Vernemetode med pulverfylling.", "Powder-filling protection method."),
+
+    "op is": simpleProtection("op is", "Egensikker optisk stråling", "Inherently safe optical radiation", "Optisk energi begrenses slik at den ikke skal kunne bli en tennkilde under forholdene vernemetoden dekker.", "Optical energy is limited so that it is not intended to become an ignition source under the conditions covered by the protection concept."),
+    "op pr": simpleProtection("op pr", "Beskyttet optisk stråling", "Protected optical radiation", "Optisk stråling holdes inne eller beskyttes ved konstruktive tiltak slik at den ikke skal kunne antenne den eksplosive atmosfæren under angitte forhold.", "Optical radiation is contained or protected by design measures so that it is not intended to ignite the explosive atmosphere under specified conditions."),
+    "op sh": simpleProtection("op sh", "Optisk stråling med interlock", "Optical radiation with interlock", "En sikkerhetsfunksjon eller interlock brukes for å kontrollere eller bryte den optiske strålingen dersom den beskyttende tilstanden ikke lenger er oppfylt.", "A safety function or interlock is used to control or interrupt the optical radiation if the protective condition is no longer met."),
 
     "Ex tD": {
       title: { no: "Ex tD – eldre støvmerking", en: "Ex tD – legacy dust marking" },
