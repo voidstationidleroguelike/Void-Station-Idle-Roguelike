@@ -211,3 +211,29 @@
   color: #d8e8ef;
   font-size: 11px;
 }
+
+
+/* v31: desktop viewer behaviour */
+.guide__viewport,
+.poster__viewport {
+  cursor: grab;
+}
+
+.guide__viewport.is-panning,
+.poster__viewport.is-panning {
+  cursor: grabbing;
+}
+
+@media (max-width: 620px) {
+  .viewer-toolbar--guide {
+    align-items: flex-start;
+  }
+
+  .viewer-toolbar__actions {
+    gap: 4px;
+  }
+
+  .viewer-toolbar--guide > span {
+    display: none;
+  }
+}

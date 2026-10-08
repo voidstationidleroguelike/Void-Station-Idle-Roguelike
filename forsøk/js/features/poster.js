@@ -20,6 +20,14 @@
       .getElementById("posterReset")
       ?.addEventListener("click", () => panZoom?.fit());
 
+    document
+      .getElementById("posterZoomIn")
+      ?.addEventListener("click", () => panZoom?.zoomIn());
+
+    document
+      .getElementById("posterZoomOut")
+      ?.addEventListener("click", () => panZoom?.zoomOut());
+
     window.addEventListener("exapp:languagechange", render);
     window.addEventListener("exapp:routechange", (event) => {
       if (event.detail.route === "poster") {

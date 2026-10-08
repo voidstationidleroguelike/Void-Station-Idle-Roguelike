@@ -7,6 +7,7 @@
 
   let page = loadSavedPage();
   let panZoom = null;
+  let rotation = loadSavedRotation();
 
   function loadSavedPage() {
     const saved = Number(
@@ -24,6 +25,18 @@
     return config.guide.startPage;
   }
 
+  function loadSavedRotation() {
+    const saved = Number(
+      localStorage.getItem(config.storageKeys.guideRotation)
+    );
+
+    if (saved === 0 || saved === 90) {
+      return saved;
+    }
+
+    return Number(config.guide.rotationDegrees) || 90;
+  }
+
   function init() {
     const viewport = document.getElementById("guideViewport");
     const image = document.getElementById("guideImage");
@@ -36,7 +49,7 @@
       allowSwipeAtMinScale: true,
       onSwipeLeft: next,
       onSwipeRight: previous,
-      rotation: config.guide.rotationDegrees || 0,
+      rotation,
     });
 
     document
@@ -51,7 +64,23 @@
       .getElementById("guideResetZoom")
       ?.addEventListener("click", () => panZoom?.fit());
 
-    window.addEventListener("exapp:languagechange", render);
+    document
+      .getElementById("guideZoomIn")
+      ?.addEventListener("click", () => panZoom?.zoomIn());
+
+    document
+      .getElementById("guideZoomOut")
+      ?.addEventListener("click", () => panZoom?.zoomOut());
+
+    document
+      .getElementById("guideRotate")
+      ?.addEventListener("click", toggleRotation);
+
+    window.addEventListener("exapp:languagechange", () => {
+      updateRotateButton();
+      render();
+    });
+
     window.addEventListener("exapp:routechange", (event) => {
       if (event.detail.route === "guide") {
         render();
@@ -59,7 +88,38 @@
     });
 
     renderDots();
+    updateRotateButton();
     render();
+  }
+
+  function toggleRotation() {
+    rotation = rotation === 90 ? 0 : 90;
+
+    localStorage.setItem(
+      config.storageKeys.guideRotation,
+      String(rotation)
+    );
+
+    panZoom?.setRotation(rotation);
+    updateRotateButton();
+  }
+
+  function updateRotateButton() {
+    const button = document.getElementById("guideRotate");
+    if (!button) return;
+
+    const language = window.EX_APP.i18n.getLanguage();
+    const label =
+      language === "en"
+        ? `Rotate · ${rotation}°`
+        : `Roter · ${rotation}°`;
+
+    button.textContent = label;
+    button.setAttribute("aria-label", label);
+    button.title =
+      language === "en"
+        ? "Switch between the default 90° view and horizontal 0° view"
+        : "Bytt mellom standardvisning 90° og horisontal visning 0°";
   }
 
   function previous() {
@@ -106,14 +166,6 @@
       config.guide.languageFolders?.[language] ||
       language.toUpperCase();
 
-    /*
-     * Exact production path comes first:
-     *   assets/pocket-guide/NO/page-01.webp
-     *   assets/pocket-guide/EN/page-01.webp
-     *
-     * Lower-case fallback is kept temporarily so an older deployment does
-     * not show a blank guide while assets are being moved.
-     */
     const folders = Array.from(
       new Set([
         configuredFolder,
@@ -140,7 +192,7 @@
     image.onload = () => {
       errorPanel?.classList.add("is-hidden");
       image.classList.remove("is-hidden");
-      panZoom?.fit();
+      panZoom?.setRotation(rotation);
     };
 
     image.onerror = () => {

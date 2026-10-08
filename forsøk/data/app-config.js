@@ -40,5 +40,6 @@ window.EX_APP.config = {
   storageKeys: {
     language: "exPocketGuide.language",
     guidePage: "exPocketGuide.guidePage",
+    guideRotation: "exPocketGuide.guideRotation",
   },
 };

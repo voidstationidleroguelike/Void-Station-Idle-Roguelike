@@ -20,6 +20,7 @@
     let scale = 1;
     let x = 0;
     let y = 0;
+    let currentRotation = Number(rotation) || 0;
 
     let pointerStart = null;
     let pinchStartDistance = 0;
@@ -30,8 +31,8 @@
       scale = 1;
       x = 0;
       y = 0;
-      apply();
       sizeToViewport();
+      apply();
     }
 
     function sizeToViewport() {
@@ -42,7 +43,7 @@
       const viewportRect = viewport.getBoundingClientRect();
 
       const normalizedRotation =
-        ((Number(rotation) % 360) + 360) % 360;
+        ((Number(currentRotation) % 360) + 360) % 360;
 
       const quarterTurn =
         normalizedRotation === 90 || normalizedRotation === 270;
@@ -67,11 +68,47 @@
     function apply() {
       image.style.transform =
         `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) ` +
-        `scale(${scale}) rotate(${rotation}deg)`;
+        `scale(${scale}) rotate(${currentRotation}deg)`;
     }
 
     function clampScale(value) {
       return Math.min(maxScale, Math.max(minScale, value));
+    }
+
+    function setScale(nextScale) {
+      const clamped = clampScale(nextScale);
+
+      if (Math.abs(clamped - scale) < 0.001) {
+        return;
+      }
+
+      scale = clamped;
+
+      if (scale <= minScale + 0.001) {
+        x = 0;
+        y = 0;
+      }
+
+      apply();
+    }
+
+    function zoomIn() {
+      setScale(scale * 1.25);
+    }
+
+    function zoomOut() {
+      setScale(scale / 1.25);
+    }
+
+    function setRotation(nextRotation, { refit = true } = {}) {
+      currentRotation = Number(nextRotation) || 0;
+
+      if (refit) {
+        fit();
+      } else {
+        sizeToViewport();
+        apply();
+      }
     }
 
     function pointerDistance() {
@@ -103,6 +140,8 @@
           y,
           time: Date.now(),
         };
+
+        viewport.classList.add("is-panning");
       }
 
       if (activePointers.size === 2) {
@@ -167,6 +206,31 @@
 
       if (activePointers.size === 0) {
         pointerStart = null;
+        viewport.classList.remove("is-panning");
+      }
+    }
+
+    function onWheel(event) {
+      /*
+       * Desktop zoom:
+       * mouse wheel / trackpad scroll zooms the image without changing page.
+       * This works for both Pocket Guide and Poster.
+       */
+      event.preventDefault();
+
+      const direction = event.deltaY < 0 ? 1 : -1;
+      const factor = direction > 0 ? 1.14 : 1 / 1.14;
+
+      setScale(scale * factor);
+    }
+
+    function onDoubleClick(event) {
+      event.preventDefault();
+
+      if (scale <= minScale + 0.01) {
+        setScale(Math.min(maxScale, 2));
+      } else {
+        fit();
       }
     }
 
@@ -176,13 +240,20 @@
     viewport.addEventListener("pointermove", onPointerMove);
     viewport.addEventListener("pointerup", onPointerUp);
     viewport.addEventListener("pointercancel", onPointerUp);
+    viewport.addEventListener("wheel", onWheel, { passive: false });
+    viewport.addEventListener("dblclick", onDoubleClick);
 
     window.addEventListener("resize", sizeToViewport);
 
     return {
       fit,
       reset: fit,
+      zoomIn,
+      zoomOut,
+      setScale,
+      setRotation,
       getScale: () => scale,
+      getRotation: () => currentRotation,
     };
   }
 

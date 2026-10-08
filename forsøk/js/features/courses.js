@@ -28,16 +28,33 @@
       link.target = "_blank";
       link.rel = "noopener";
 
+      const copy = document.createElement("span");
+      copy.className = "course-card__copy";
+
       const title = document.createElement("strong");
       title.textContent =
         course.title[language] ||
         course.title.no ||
         course.id;
 
+      const subtitle = document.createElement("small");
+      subtitle.className = "course-card__subtitle";
+      subtitle.textContent =
+        course.subtitle?.[language] ||
+        course.subtitle?.no ||
+        "";
+
+      copy.append(title);
+
+      if (subtitle.textContent) {
+        copy.append(subtitle);
+      }
+
       const external = document.createElement("span");
+      external.className = "course-card__external";
       external.textContent = "↗";
 
-      link.append(title, external);
+      link.append(copy, external);
       list.appendChild(link);
     });
 

@@ -154,17 +154,41 @@
          POCKET GUIDE
          ========================================================= -->
     <main id="view-guide" class="view guide">
-      <div class="viewer-toolbar">
+      <div class="viewer-toolbar viewer-toolbar--guide">
         <span data-i18n="guide.swipeHint">Sveip for å bla</span>
 
         <strong id="guidePageIndicator">1 / 20</strong>
 
-        <button id="guideResetZoom"
-                class="compact-button"
-                type="button"
-                data-i18n="common.fit">
-          Tilpass
-        </button>
+        <div class="viewer-toolbar__actions">
+          <button id="guideZoomOut"
+                  class="compact-button compact-button--square"
+                  type="button"
+                  aria-label="Zoom ut"
+                  title="Zoom ut">
+            −
+          </button>
+
+          <button id="guideZoomIn"
+                  class="compact-button compact-button--square"
+                  type="button"
+                  aria-label="Zoom inn"
+                  title="Zoom inn">
+            +
+          </button>
+
+          <button id="guideRotate"
+                  class="compact-button"
+                  type="button">
+            Roter · 90°
+          </button>
+
+          <button id="guideResetZoom"
+                  class="compact-button"
+                  type="button"
+                  data-i18n="common.fit">
+            Tilpass
+          </button>
+        </div>
       </div>
 
       <section id="guideViewport"
@@ -340,17 +364,6 @@
             <span id="ocrStatusText"></span>
           </div>
 
-          <details id="ocrRawPanel"
-                   class="ocr-raw-panel is-hidden">
-            <summary data-i18n="marking.rawReadTitle">
-              Tekst lest fra bildet
-            </summary>
-            <p data-i18n="marking.rawReadHelp">
-              Dette er teksten motoren faktisk leste. Bruk den ved feilsøking og kontroller alltid mot skiltet.
-            </p>
-            <pre id="ocrRawText" class="ocr-raw-text"></pre>
-          </details>
-
           <section id="ocrMetadataPanel"
                    class="ocr-metadata is-hidden">
             <strong data-i18n="marking.otherRelevant">
@@ -421,15 +434,33 @@
     <main id="view-poster" class="view poster">
       <div class="viewer-toolbar">
         <span data-i18n="poster.zoomHint">
-          Knip for å zoome · dra for å flytte
+          Knip eller bruk musehjulet for å zoome · dra for å flytte
         </span>
 
-        <button id="posterReset"
-                class="compact-button"
-                type="button"
-                data-i18n="common.reset">
-          Tilbakestill
-        </button>
+        <div class="viewer-toolbar__actions">
+          <button id="posterZoomOut"
+                  class="compact-button compact-button--square"
+                  type="button"
+                  aria-label="Zoom ut"
+                  title="Zoom ut">
+            −
+          </button>
+
+          <button id="posterZoomIn"
+                  class="compact-button compact-button--square"
+                  type="button"
+                  aria-label="Zoom inn"
+                  title="Zoom inn">
+            +
+          </button>
+
+          <button id="posterReset"
+                  class="compact-button"
+                  type="button"
+                  data-i18n="common.reset">
+            Tilbakestill
+          </button>
+        </div>
       </div>
 
       <section id="posterViewport"

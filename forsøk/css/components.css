@@ -930,39 +930,52 @@
 }
 
 
-.ocr-raw-panel {
-  margin-top: 10px;
-  padding: 10px 11px;
-  border: 1px solid var(--line);
-  border-radius: 11px;
-  background: #f7f9fa;
+/* v31: viewer controls + course subtitles */
+.viewer-toolbar__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.ocr-raw-panel summary {
-  cursor: pointer;
-  color: var(--ex-blue);
-  font-size: 12px;
-  font-weight: 900;
+.compact-button--square {
+  width: 32px;
+  min-width: 32px;
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 18px;
+  line-height: 1;
 }
 
-.ocr-raw-panel p {
-  margin: 8px 0;
+.course-card {
+  align-items: flex-start;
+}
+
+.course-card__copy {
+  min-width: 0;
+  display: grid;
+  gap: 5px;
+  flex: 1;
+}
+
+.course-card .course-card__copy {
+  color: var(--text);
+  font-size: inherit;
+}
+
+.course-card__subtitle {
+  display: block;
   color: var(--muted);
-  font-size: 11px;
-  line-height: 1.45;
+  font-size: 13px;
+  line-height: 1.38;
+  font-weight: 400;
 }
 
-.ocr-raw-text {
-  max-height: 240px;
-  margin: 0;
-  padding: 10px;
-  overflow: auto;
-  border-radius: 9px;
-  background: #111a20;
-  color: #f1f5f7;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  font-size: 11px;
-  line-height: 1.45;
+.course-card .course-card__external {
+  flex: 0 0 auto;
+  color: var(--trainor-orange);
+  font-size: 22px;
+  line-height: 1;
+  margin-top: 2px;
 }

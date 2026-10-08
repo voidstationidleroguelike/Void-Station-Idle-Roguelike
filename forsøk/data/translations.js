@@ -23,7 +23,7 @@ window.EX_APP.translations = {
     "route.poster": "Plakat",
     "route.courses": "EX-kurs",
 
-    "guide.swipeHint": "Sveip for å bla",
+    "guide.swipeHint": "Sveip for å bla · musehjul zoomer på PC",
     "guide.loadErrorTitle": "Fant ikke guidesiden",
     "guide.loadErrorText": "Kontroller at filen finnes på denne banen:",
 
@@ -44,8 +44,6 @@ window.EX_APP.translations = {
     "marking.selectedImage": "Valgt bilde",
     "marking.readImage": "Les merkingen fra bildet",
     "marking.otherRelevant": "Annen relevant skiltinfo",
-    "marking.rawReadTitle": "Tekst lest fra bildet",
-    "marking.rawReadHelp": "Dette er teksten motoren faktisk leste. Bruk den ved feilsøking og kontroller alltid mot skiltet.",
     "marking.ocrNote": "Kontroller at merkingen som ble lest fra bildet stemmer med skiltet før du tolker.",
     "marking.result": "Resultat",
     "marking.interpretation": "TOLKNING",
@@ -58,7 +56,7 @@ window.EX_APP.translations = {
     "marking.unclassified": "Annen skiltinformasjon",
     "marking.demoNote": "Demo-parseren viser bare UI-flyten. Fagregler legges inn separat og må kvalitetssikres.",
 
-    "poster.zoomHint": "Knip for å zoome · dra for å flytte",
+    "poster.zoomHint": "Knip eller bruk musehjulet for å zoome · dra for å flytte",
 
     "courses.title": "EX-kurs",
     "courses.intro": "Utvalgte kurs med direkte lenke til Trainor.",
@@ -87,7 +85,7 @@ window.EX_APP.translations = {
     "route.poster": "Poster",
     "route.courses": "EX courses",
 
-    "guide.swipeHint": "Swipe to change page",
+    "guide.swipeHint": "Swipe to change page · mouse wheel zooms on PC",
     "guide.loadErrorTitle": "Guide page not found",
     "guide.loadErrorText": "Check that the file exists at this path:",
 
@@ -108,8 +106,6 @@ window.EX_APP.translations = {
     "marking.selectedImage": "Selected image",
     "marking.readImage": "Read marking from image",
     "marking.otherRelevant": "Other relevant plate information",
-    "marking.rawReadTitle": "Text read from the image",
-    "marking.rawReadHelp": "This is the text the engine actually read. Use it for troubleshooting and always check it against the plate.",
     "marking.ocrNote": "Check that the marking read from the image matches the plate before interpreting it.",
     "marking.result": "Result",
     "marking.interpretation": "INTERPRETATION",
@@ -122,7 +118,7 @@ window.EX_APP.translations = {
     "marking.unclassified": "Other plate information",
     "marking.demoNote": "The demo parser only demonstrates the UI flow. Technical rules must be added separately and quality-assured.",
 
-    "poster.zoomHint": "Pinch to zoom · drag to pan",
+    "poster.zoomHint": "Pinch or use the mouse wheel to zoom · drag to pan",
 
     "courses.title": "EX courses",
     "courses.intro": "Selected courses with direct links to Trainor.",
