@@ -170,13 +170,6 @@
 }
 
 
-.home__hero-symbol {
-  width: 76px;
-  height: 76px;
-  flex: 0 0 76px;
-  object-fit: contain;
-  display: block;
-}
 
 /* Legacy CSS-generated symbol kept disabled once asset-based symbol is used */
 .ex-mark {
@@ -236,4 +229,14 @@
   .viewer-toolbar--guide > span {
     display: none;
   }
+}
+
+
+/* v35: home hero without the old round EX image */
+.home__hero--text-only {
+  gap: 0;
+}
+
+.home__hero--text-only > div {
+  width: 100%;
 }
