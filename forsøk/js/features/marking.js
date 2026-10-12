@@ -336,6 +336,22 @@
       return;
     }
 
+    /*
+     * The green token-detail panel is temporarily moved directly below the
+     * interpretation card the user clicked. Before rebuilding the result,
+     * move it back OUTSIDE #markingSections. Otherwise sections.innerHTML = ""
+     * would delete the panel from the DOM and it would never appear again.
+     */
+    const tokenDetailPanel =
+      document.getElementById("tokenDetailPanel");
+
+    if (tokenDetailPanel) {
+      sections.insertAdjacentElement(
+        "afterend",
+        tokenDetailPanel
+      );
+    }
+
     hideTokenDetail();
 
     general.textContent =
