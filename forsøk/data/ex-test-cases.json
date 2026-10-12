@@ -1,5 +1,5 @@
 {
-  "version": "v40-clean",
+  "version": "v41",
   "languages": [
     "no",
     "en"
@@ -704,6 +704,27 @@
       "expected": {
         "defaultOpen": false,
         "expandable": true
+      }
+    },
+    {
+      "id": "partial-II-possible-meanings",
+      "title": {
+        "no": "II alene skal gi forklarte mulige betydninger uten falsk systemdeteksjon",
+        "en": "II alone must show explained possible meanings without false system detection"
+      },
+      "input": {
+        "marking": "II",
+        "inputMode": "manual"
+      },
+      "expected": {
+        "confirmedSystems": [],
+        "possibleSections": [
+          "atex",
+          "iecex"
+        ],
+        "allTokensKnown": true,
+        "generalTextMustSayIncomplete": true,
+        "possibleMeaningsMustContainText": true
       }
     }
   ]

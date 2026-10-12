@@ -108,6 +108,42 @@ window.EX_APP.exCodeLibrary = {
   },
 
   iecex: {
+    "I": {
+      title: { no: "Utstyrsgruppe I", en: "Equipment group I" },
+      short: {
+        no: "IEC/Ex-gruppe for gruver med gruvegass.",
+        en: "IEC/Ex group for mines susceptible to firedamp."
+      },
+      detailed: {
+        no: "Utstyrsgruppe I brukes for utstyr beregnet for gruver der gruvegass kan forekomme. Den komplette merkingen må leses sammen med resten av Ex-koden.",
+        en: "Equipment group I is used for equipment intended for mines where firedamp may occur. The complete marking must be read together with the rest of the Ex code."
+      }
+    },
+
+    "II": {
+      title: { no: "Utstyrsgruppe II", en: "Equipment group II" },
+      short: {
+        no: "IEC/Ex-gruppe for eksplosiv gassatmosfære utenfor gruver.",
+        en: "IEC/Ex group for explosive gas atmospheres outside mines."
+      },
+      detailed: {
+        no: "I IEC/Ex-merking angir utstyrsgruppe II utstyr for eksplosive gassatmosfærer utenfor gruver. Undergruppen angis normalt videre som IIA, IIB eller IIC.",
+        en: "In IEC/Ex marking, equipment group II identifies equipment for explosive gas atmospheres outside mines. The subgroup is normally stated further as IIA, IIB or IIC."
+      }
+    },
+
+    "III": {
+      title: { no: "Utstyrsgruppe III", en: "Equipment group III" },
+      short: {
+        no: "IEC/Ex-gruppe for eksplosiv støvatmosfære.",
+        en: "IEC/Ex group for explosive dust atmospheres."
+      },
+      detailed: {
+        no: "Utstyrsgruppe III brukes for utstyr beregnet for eksplosive støvatmosfærer. Undergruppen angis normalt videre som IIIA, IIIB eller IIIC.",
+        en: "Equipment group III is used for equipment intended for explosive dust atmospheres. The subgroup is normally stated further as IIIA, IIIB or IIIC."
+      }
+    },
+
     /*
      * v32: generic/base protection concepts.
      * These entries are deliberately separate from OCR handling. They are
