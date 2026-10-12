@@ -1,0 +1,28 @@
+:root {
+  /*
+   * Design tokens only.
+   * Replace these with exact approved brand values when supplied.
+   */
+  --ex-blue: #27465c;
+  --ex-blue-dark: #1e3546;
+  --ex-blue-soft: #355c74;
+  --ex-green: #36b44a;
+  --trainor-orange: #f45a24;
+
+  --surface: #f3f6f7;
+  --surface-strong: #ffffff;
+  --text: #17242c;
+  --muted: #6b7b85;
+  --line: #dce4e8;
+  --danger: #b63a32;
+
+  --shadow-sm: 0 4px 16px rgba(15, 35, 48, 0.08);
+  --shadow-md: 0 12px 34px rgba(15, 35, 48, 0.12);
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+
+  --topbar-height: 58px;
+  --content-max-width: 520px;
+}

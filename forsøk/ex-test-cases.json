@@ -1,0 +1,651 @@
+{
+  "version": "v33",
+  "languages": [
+    "no",
+    "en"
+  ],
+  "notes": {
+    "no": "Disse testene verifiserer struktur og UI-flyt, ikke full samsvarsvurdering.",
+    "en": "These tests verify structure and UI flow, not full compliance assessment."
+  },
+  "cases": [
+    {
+      "id": "mixed-atex-iecex-associated-gas",
+      "title": {
+        "no": "ATEX + IECEx med associated-del",
+        "en": "ATEX + IECEx with associated section"
+      },
+      "input": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G",
+        "selectedSystems": [
+          "atex",
+          "iecex"
+        ]
+      },
+      "expected": {
+        "systems": [
+          "atex",
+          "iecex"
+        ],
+        "sections": {
+          "iecex": {
+            "fullLine": "Ex db [ia IIC Ga] IIB T4 Gb IP55",
+            "tokens": [
+              "Ex",
+              "db",
+              "[ia IIC Ga]",
+              "IIB",
+              "T4",
+              "Gb",
+              "IP55"
+            ],
+            "associatedTokens": [
+              "[ia IIC Ga]"
+            ],
+            "mainTokens": [
+              "Ex",
+              "db",
+              "IIB",
+              "T4",
+              "Gb"
+            ],
+            "otherTokens": [
+              "IP55"
+            ]
+          },
+          "atex": {
+            "fullLine": "II 2 (1) G",
+            "tokens": [
+              "Ex",
+              "II",
+              "2",
+              "(1)",
+              "G"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "legacy-dust-line",
+      "title": {
+        "no": "Eldre støvmerking",
+        "en": "Legacy dust marking"
+      },
+      "input": {
+        "markingText": "II 2 D Ex tD A21 IP65 T90°C",
+        "selectedSystems": [
+          "other"
+        ]
+      },
+      "expected": {
+        "systems": [
+          "other"
+        ],
+        "preserveFullLine": true,
+        "mustNotInventModernEquivalent": true
+      }
+    },
+    {
+      "id": "ocr-noise-filter",
+      "title": {
+        "no": "OCR-søppel rundt EX-merking",
+        "en": "OCR noise around EX marking"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH\nTel +49 12345\nEx db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G\nFax +49 67890"
+      },
+      "expected": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (1) G",
+        "discardManufacturerText": true,
+        "discardPhoneText": true
+      }
+    },
+    {
+      "id": "unknown-token",
+      "title": {
+        "no": "Ukjent kode skal ikke gjettes",
+        "en": "Unknown code must not be guessed"
+      },
+      "input": {
+        "markingText": "Ex db XYZ IIB T4 Gb",
+        "selectedSystems": [
+          "iecex"
+        ]
+      },
+      "expected": {
+        "unknownTokens": [
+          "XYZ"
+        ],
+        "mustShowUnknown": true,
+        "mustNotAutoCorrect": true
+      }
+    },
+    {
+      "id": "atex-symbol-not-ocr-text",
+      "title": {
+        "no": "ATEX-symbol skal ikke OCR-leses",
+        "en": "ATEX symbol is not OCR text"
+      },
+      "input": {
+        "ocrText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nIECEx ABC 06.0012\nII 2 (I) G\nABC 00 ATEX 4012"
+      },
+      "expected": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55\nII 2 (I) G",
+        "systems": [
+          "iecex",
+          "atex"
+        ],
+        "atexSymbolSource": "ui-asset-not-ocr",
+        "mustRenderAtexSymbolWhenAtexSectionParsed": true
+      }
+    },
+    {
+      "id": "selected-atex-without-parsed-atex",
+      "title": {
+        "no": "Valgt ATEX skal ikke gi falsk ATEX-resultat",
+        "en": "Selected ATEX must not create a false ATEX result"
+      },
+      "input": {
+        "markingText": "Ex db [ia IIC Ga] IIB T4 Gb IP55",
+        "selectedSystems": [
+          "atex",
+          "iecex"
+        ]
+      },
+      "expected": {
+        "parsedSystems": [
+          "iecex"
+        ],
+        "mustNotSayAtexFound": true
+      }
+    },
+    {
+      "id": "multiple-ex-lines-and-ce",
+      "title": {
+        "no": "Flere EX-linjer og CE-merking",
+        "en": "Multiple EX lines and CE marking"
+      },
+      "input": {
+        "ocrText": "II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4\nII 2 D Ex tD A21 IP65 T90°C\nCE 0158\nTÜV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "mustReadWholePlate": true,
+        "mustKeepMultipleRelevantLines": true,
+        "ce": "CE 0158",
+        "mustNotStopAfterFirstExLine": true
+      }
+    },
+    {
+      "id": "stahl-atex-ii-misread-as-11-or-il",
+      "title": {
+        "no": "R. STAHL-skilt – II kan leses som 11/Il",
+        "en": "R. STAHL plate – II may be read as 11/Il"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH\nCE 0158\nTUV 05 ATEX 7176 X\n11 2 (2) G Ex d e mb ib [ib] [op is] IIC T4\nIl 2 D Ex tD A21 IP65 T90°C"
+      },
+      "expected": {
+        "systems": [
+          "atex"
+        ],
+        "mustFindTwoAtexCategoryLines": true,
+        "atexCandidatesPreserveRawText": [
+          "11 2 (2) G",
+          "Il 2 D"
+        ],
+        "mustWarnAboutAmbiguousEquipmentGroup": true,
+        "mustNotSilentlyConvert11OrIlToII": true,
+        "ce": "CE 0158",
+        "atexCertificateContains": "ATEX 7176 X"
+      }
+    },
+    {
+      "id": "context-aware-II-normalization",
+      "title": {
+        "no": "11/II normaliseres kun i kjent EX-kontekst",
+        "en": "11/II normalized only in known EX context"
+      },
+      "input": {
+        "markings": [
+          "Ex db 11B T4 Gb",
+          "Ex ia 11C Ga",
+          "Ex tb 111C T90°C Db",
+          "11 2 (2) G",
+          "11 2 D"
+        ]
+      },
+      "expected": {
+        "normalized": [
+          "Ex db IIB T4 Gb",
+          "Ex ia IIC Ga",
+          "Ex tb IIIC T90°C Db",
+          "II 2 (2) G",
+          "II 2 D"
+        ],
+        "mustNotGloballyReplace11": true
+      }
+    },
+    {
+      "id": "staged-reading-and-I-like-glyphs",
+      "title": {
+        "no": "Tre parserpass og I-lignende tegn",
+        "en": "Three parser passes and I-like glyphs"
+      },
+      "input": {
+        "imageText": "R. STAHL HMI Systems GmbH\n|| 2 (|) G Ex d e mb ib [ib] [op is] ||C T4\n!1 2 D Ex tD A21 IP65 T90°C\nCE 0158\nTUV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "passOrder": [
+          "iecex",
+          "atex",
+          "other"
+        ],
+        "markingContains": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (1) G",
+          "II 2 D"
+        ],
+        "metadataContains": [
+          "CE 0158",
+          "ATEX 7176 X"
+        ],
+        "uppercaseIEquivalentGlyphsInKnownContext": [
+          "I",
+          "i",
+          "l",
+          "1",
+          "|",
+          "!"
+        ],
+        "mustNotGloballyReplaceGlyphs": true
+      }
+    },
+    {
+      "id": "richer-clickable-explanations",
+      "title": {
+        "no": "Mer forklaring på klikkbare koder",
+        "en": "Richer explanations for clickable codes"
+      },
+      "expected": {
+        "T4MentionsMaxSurfaceTemperatureC": 135,
+        "GbMentionsZone": 1,
+        "AtexCategory2MentionsZones": [
+          1,
+          21
+        ],
+        "BracketExplainsAssociatedPart": true,
+        "XExplainsSpecialConditions": true,
+        "DirectDustTemperatureSupported": "T125°C"
+      }
+    },
+    {
+      "id": "whole-plate-collapsed-to-one-line",
+      "title": {
+        "no": "Hele skiltet lest som én lang linje",
+        "en": "Whole plate recognized as one long line"
+      },
+      "input": {
+        "imageText": "|| 2 (|) G Ex d e mb ib [ib] [op is] ||C T4 !1 2 D Ex tD A21 IP65 T90°C CE 0158 TUV 05 ATEX 7176 X"
+      },
+      "expected": {
+        "markingLines": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (1) G",
+          "II 2 D"
+        ],
+        "metadata": [
+          "CE 0158",
+          "TUV 05 ATEX 7176 X"
+        ],
+        "mustExtractAllOccurrences": true,
+        "mustNotStopAfterFirstEx": true,
+        "mustNotStopAfterFirstAtex": true
+      }
+    },
+    {
+      "id": "intrinsic-safety-i-like-glyphs",
+      "title": {
+        "no": "ia/ib/ic tåler I-lignende tegn i kjent Ex-kontekst",
+        "en": "ia/ib/ic tolerate I-like glyphs in known Ex context"
+      },
+      "input": {
+        "markings": [
+          "Ex !a ||C T4 Ga",
+          "Ex |b IIB T4 Gb",
+          "Ex 1c IIA T4 Gc",
+          "Ex db [!a ||C Ga] IIB T4 Gb"
+        ]
+      },
+      "expected": {
+        "normalized": [
+          "Ex ia IIC T4 Ga",
+          "Ex ib IIB T4 Gb",
+          "Ex ic IIA T4 Gc",
+          "Ex db [ia IIC Ga] IIB T4 Gb"
+        ],
+        "iLikeGlyphs": [
+          "I",
+          "i",
+          "l",
+          "1",
+          "|",
+          "!"
+        ],
+        "mustNotGloballyReplace": true
+      }
+    },
+    {
+      "id": "ip-rating-dynamic-interpretation",
+      "title": {
+        "no": "IP-grad tolkes som sammensatt kode",
+        "en": "IP rating interpreted as a composed code"
+      },
+      "input": {
+        "tokens": [
+          "IP55",
+          "IP65",
+          "IP67",
+          "IP68",
+          "IP69K",
+          "IPX4"
+        ]
+      },
+      "expected": {
+        "firstCharacter": "solid/contact protection",
+        "secondCharacter": "water protection",
+        "supportsX": true,
+        "supportsSuffixK": true
+      }
+    },
+    {
+      "id": "real-stahl-ocr-v28",
+      "title": {
+        "no": "R. STAHL – faktisk råtekst fra bilde",
+        "en": "R. STAHL – actual raw image text"
+      },
+      "input": {
+        "ocrText": "R. STAHL HMI Systems GmbH C (3 0158 |\n2 Im Gewerbegebiet Pesch 14 Fr\n8 D - 50767 Kain sosoma0s TOV OS ATEX 7176 X X\n$ ol: +49 (0)221 elektrische Daten sishe EG-\n2 Fax.: +49 (0)221/ 59808260 Baumusterpriifbescheinigung es\n° W2(2)GExde mb ib [ib] [op is] iC T4 electrical data see EC-type 3\ns & N2DExtD A21 IP65 T90°C examination certificate &\nET-3xx: -20°C < Ta < 55°C ET-4xx, ET-5xx: -20°C < T4 < 50°C §"
+      },
+      "expected": {
+        "markingLines": [
+          "Ex d e mb ib [ib] [op is] IIC T4",
+          "Ex tD A21 IP65 T90°C",
+          "II 2 (2) G",
+          "II 2 D"
+        ],
+        "ce": "CE 0158",
+        "atexCertificateContains": "05 ATEX 7176 X",
+        "mustIgnoreTrailingNameplateProse": true
+      }
+    },
+    {
+      "id": "i-glyph-context-v28",
+      "title": {
+        "no": "I-lignende tegn i ia/ib/ic og gassgruppe",
+        "en": "I-like glyphs in ia/ib/ic and gas group"
+      },
+      "input": {
+        "markings": [
+          "Ex !a IIC Ga",
+          "Ex |b IIB Gb",
+          "Ex l c IIA Gc",
+          "Ex db [1a i|C Ga] lB T4 Gb",
+          "Ex d e mb ib [ib] [op is] iC T4"
+        ]
+      },
+      "expected": {
+        "contextualOnly": true,
+        "normalized": [
+          "Ex ia IIC Ga",
+          "Ex ib IIB Gb",
+          "Ex ic IIA Gc",
+          "Ex db [ia IIC Ga] IIB T4 Gb",
+          "Ex d e mb ib [ib] [op is] IIC T4"
+        ]
+      }
+    },
+    {
+      "id": "manual-partial-atex-group",
+      "title": {
+        "no": "Manuell ATEX kan tolkes før linjen er komplett",
+        "en": "Manual ATEX can be interpreted before the line is complete"
+      },
+      "input": {
+        "markingText": "II",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "systems": [
+          "atex"
+        ],
+        "tokens": [
+          "Ex",
+          "II"
+        ],
+        "mustInterpretPartial": true,
+        "knownTokens": [
+          "II"
+        ]
+      }
+    },
+    {
+      "id": "square-brackets-preserved",
+      "title": {
+        "no": "Klammeparentes beholdes samlet",
+        "en": "Square brackets are preserved as one structure"
+      },
+      "input": {
+        "markingText": "II 2 (2) G Ex d e mb ib [ib] [op is] IIC T4",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "tokens": [
+          "Ex",
+          "II",
+          "2",
+          "(2)",
+          "G",
+          "Ex",
+          "d",
+          "e",
+          "mb",
+          "ib",
+          "[ib]",
+          "[op is]",
+          "IIC",
+          "T4"
+        ],
+        "mustKeepSquareBracketsWhole": true,
+        "mustKeepParenthesizedCategorySeparate": true,
+        "mustNotCreateTokens": [
+          "[op",
+          "is]"
+        ]
+      }
+    },
+    {
+      "id": "parentheses-vs-square-brackets",
+      "title": {
+        "no": "Runde og firkantede parenteser har forskjellig betydning",
+        "en": "Round and square brackets have different meaning"
+      },
+      "input": {
+        "markingText": "II 2 (1) G Ex db [ia IIC Ga] IIB T4 Gb",
+        "selectedSystems": [
+          "atex"
+        ],
+        "manual": true
+      },
+      "expected": {
+        "roundParenthesisToken": "(1)",
+        "squareBracketToken": "[ia IIC Ga]",
+        "roundMeaning": "atex-associated-category",
+        "squareMeaning": "associated-marking-section"
+      }
+    },
+    {
+      "id": "manual-never-uses-ocr-normalization",
+      "title": {
+        "no": "Manuell tekst bruker aldri OCR-korrigering",
+        "en": "Manual text never uses OCR correction"
+      },
+      "input": {
+        "markingText": "Ex !b I1C T4",
+        "selectedSystems": [
+          "iecex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "preservedTokens": [
+          "Ex",
+          "!b",
+          "I1C",
+          "T4"
+        ],
+        "mustNotNormalize": {
+          "!b": "ib",
+          "I1C": "IIC"
+        }
+      }
+    },
+    {
+      "id": "manual-round-parenthesis-preserved",
+      "title": {
+        "no": "(I) må aldri bli (1) ved manuell innskriving",
+        "en": "(I) must never become (1) in manual input"
+      },
+      "input": {
+        "markingText": "II 2 (I) G",
+        "selectedSystems": [
+          "atex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "mustContainToken": "(I)",
+        "mustNotContainToken": "(1)",
+        "mustPreserveLiteralInput": true
+      }
+    },
+    {
+      "id": "bracket-description-adds-inner-meaning",
+      "title": {
+        "no": "Klammet kode viser kodeforklaring og klammeforklaring sammen",
+        "en": "Bracketed code shows code meaning and bracket context together"
+      },
+      "input": {
+        "tokens": [
+          "[ib]",
+          "[op is]",
+          "[ia IIC Ga]"
+        ]
+      },
+      "expected": {
+        "mustKeepWholeTokens": true,
+        "descriptionContainsInnerCodeMeaning": true,
+        "descriptionContainsBracketContext": true,
+        "mustNotTreatBracketsAsSeparateCode": true
+      }
+    },
+    {
+      "id": "generic-protection-family-manual",
+      "title": {
+        "no": "Generelle vernemetoder skal kunne tolkes manuelt",
+        "en": "Generic protection concepts must be interpretable manually"
+      },
+      "input": {
+        "markings": [
+          "Ex o",
+          "Ex p",
+          "Ex q",
+          "Ex d",
+          "Ex e",
+          "Ex i",
+          "Ex n",
+          "Ex m",
+          "Ex op",
+          "Ex h",
+          "Ex t",
+          "Ex s"
+        ],
+        "selectedSystems": [
+          "iecex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "knownProtectionTokens": [
+          "o",
+          "p",
+          "q",
+          "d",
+          "e",
+          "i",
+          "n",
+          "m",
+          "op",
+          "h",
+          "t",
+          "s"
+        ],
+        "mustNotDependOnOcr": true,
+        "mustProvideExplanation": true
+      }
+    },
+    {
+      "id": "legacy-national-country-matches",
+      "title": {
+        "no": "Eldre/nasjonal merking viser land og alle mulige treff",
+        "en": "Older/national marking shows country and all possible matches"
+      },
+      "input": {
+        "manualExamples": [
+          "Ex p",
+          "ADF",
+          "EEx d",
+          "AEx p",
+          "Explosion proof"
+        ]
+      },
+      "expected": {
+        "Ex p": {
+          "mayMatchSeveralCountries": true,
+          "mustShowAllAlternatives": true
+        },
+        "ADF": {
+          "countriesInclude": [
+            "Frankrike",
+            "Belgia"
+          ]
+        },
+        "EEx d": {
+          "countriesInclude": [
+            "CENELEC"
+          ]
+        },
+        "AEx p": {
+          "countriesInclude": [
+            "USA (NEC 505)"
+          ]
+        },
+        "Explosion proof": {
+          "countriesInclude": [
+            "U.S.A. (NEC 500)",
+            "Canada"
+          ]
+        },
+        "mustNeverRewriteManualInput": true
+      }
+    }
+  ]
+}

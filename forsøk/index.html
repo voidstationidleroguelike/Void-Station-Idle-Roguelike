@@ -70,12 +70,7 @@
           alt="Trainor / Groupe Apave logo">
       </section>
 
-      <section class="home__hero">
-        <img
-          src="assets/home/ex-home-symbol.png"
-          alt="EX symbol"
-          class="home__hero-symbol">
-
+      <section class="home__hero home__hero--text-only">
         <div>
           <h1>EX</h1>
           <p data-i18n="home.subtitle">
@@ -185,8 +180,8 @@
           <button id="guideResetZoom"
                   class="compact-button"
                   type="button"
-                  data-i18n="common.fit">
-            Tilpass
+                  data-i18n="common.reset">
+            Tilbakestill
           </button>
         </div>
       </div>
@@ -244,16 +239,35 @@
           Skriv inn merkingen, ta bilde eller velg et bilde fra telefonen.
         </p>
 
-        
-        <section class="marking-system-section">
-          <div class="section-label" data-i18n="marking.chooseSystem">
-            Velg merkesystem
+
+        <section class="marking-auto-section" aria-labelledby="markingAutoTitle">
+          <div id="markingAutoTitle"
+               class="section-label"
+               data-i18n="marking.autoDetectTitle">
+            Automatisk gjenkjenning
           </div>
 
-          <div id="markingSystemGrid" class="marking-system-grid"></div>
+          <div class="marking-auto-badges" aria-hidden="true">
+            <div class="marking-auto-badge">
+              <img src="assets/marking-systems/atex-official-symbol.png"
+                   alt="">
+              <strong>ATEX</strong>
+            </div>
 
-          <p id="markingSystemHelp" class="help-text">
-            Velg system for manuell tolkning. Ved bilde/skanning prøver appen å oppdage systemet automatisk.
+            <div class="marking-auto-badge marking-auto-badge--iecex">
+              <img src="assets/marking-systems/iecex-logo.png"
+                   alt="">
+              <strong>IECEx</strong>
+            </div>
+
+            <div class="marking-auto-badge marking-auto-badge--legacy">
+              <span class="marking-auto-badge__legacy-icon">LEGACY</span>
+              <strong data-i18n="marking.legacyShort">Eldre</strong>
+            </div>
+          </div>
+
+          <p class="help-text" data-i18n="marking.autoDetectHelp">
+            Appen prøver automatisk å kjenne igjen ATEX, IECEx / Ex og eldre nasjonal merking. Moderne ATEX og IECEx / Ex prioriteres.
           </p>
         </section>
 

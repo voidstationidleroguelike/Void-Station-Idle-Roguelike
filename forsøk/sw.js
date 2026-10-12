@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v34";
+const CACHE_VERSION = "ex-pocket-guide-v35";
 
 const APP_SHELL = [
   "./",
@@ -19,6 +19,7 @@ const APP_SHELL = [
   "./data/marking-systems.js",
   "./data/ex-marking-rules.js",
   "./data/legacy-national-markings.js",
+  "./assets/marking-systems/iecex-logo.png",
   "./data/ex-code-library.js",
 
   "./js/app.js",
