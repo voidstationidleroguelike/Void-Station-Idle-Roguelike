@@ -1,5 +1,5 @@
 {
-  "version": "v41",
+  "version": "v44",
   "languages": [
     "no",
     "en"
@@ -725,6 +725,96 @@
         "allTokensKnown": true,
         "generalTextMustSayIncomplete": true,
         "possibleMeaningsMustContainText": true
+      }
+    },
+    {
+      "id": "ex-core-without-ex-prefix",
+      "title": {
+        "no": "IEC/Ex-kjerne skal tolkes selv om Ex-prefikset mangler",
+        "en": "IEC/Ex core must be interpreted even when the Ex prefix is absent"
+      },
+      "input": {
+        "examples": [
+          "dem IIC T6",
+          "d e m IIC T4",
+          "db IIC T4 Gb",
+          "ia IIC T4 Ga",
+          "tb IIIC T85°C Db"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "dem IIC T6": [
+          "d",
+          "e",
+          "m",
+          "IIC",
+          "T6"
+        ],
+        "d e m IIC T4": [
+          "d",
+          "e",
+          "m",
+          "IIC",
+          "T4"
+        ],
+        "db IIC T4 Gb": [
+          "db",
+          "IIC",
+          "T4",
+          "Gb"
+        ],
+        "ia IIC T4 Ga": [
+          "ia",
+          "IIC",
+          "T4",
+          "Ga"
+        ],
+        "tb IIIC T85°C Db": [
+          "tb",
+          "IIIC",
+          "T85°C",
+          "Db"
+        ],
+        "mustNotInventExToken": true,
+        "mustIndicatePrefixWasInferred": true
+      }
+    },
+    {
+      "id": "legacy-group-ii-all-gas-groups",
+      "title": {
+        "no": "II skal også kunne vises som eldre betydning for alle gassgrupper",
+        "en": "II must also be available as a legacy meaning for all gas groups"
+      },
+      "input": {
+        "marking": "II",
+        "inputMode": "manual"
+      },
+      "expected": {
+        "legacyMatch": {
+          "id": "legacy-group-ii",
+          "code": "II",
+          "groups": [
+            "IIA",
+            "IIB",
+            "IIC"
+          ]
+        },
+        "legacyOuterDefaultOpen": false,
+        "legacyMeaningExpandable": true
+      }
+    },
+    {
+      "id": "marking-examples-pocket-guide-page-4",
+      "title": {
+        "no": "Resultat skal lenke direkte til Pocket Guide side 4",
+        "en": "Result must link directly to Pocket Guide page 4"
+      },
+      "expected": {
+        "labelNo": "Se eksempler på merking",
+        "labelEn": "See marking examples",
+        "guidePage": 4,
+        "route": "guide"
       }
     }
   ]
