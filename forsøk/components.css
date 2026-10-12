@@ -1261,3 +1261,19 @@
     font-size: 9px;
   }
 }
+
+
+/* v37: single combined ATEX / IEC / IECEx image strip */
+.marking-logo-strip {
+  margin: 10px 0 16px;
+  width: 100%;
+}
+
+.marking-logo-strip__image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 108px;
+  object-fit: contain;
+  object-position: center;
+}
