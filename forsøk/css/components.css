@@ -1086,3 +1086,109 @@
   font-size: 13px;
   line-height: 1.45;
 }
+
+
+/* v43: each legacy meaning can be expanded independently */
+.legacy-marking__entry {
+  border-top: 1px solid var(--line);
+}
+
+.legacy-marking__entry:first-child {
+  border-top: 0;
+}
+
+.legacy-marking__entry-summary {
+  display: grid;
+  grid-template-columns: minmax(58px, auto) 1fr auto;
+  gap: 10px;
+  align-items: baseline;
+  padding: 7px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.legacy-marking__entry-summary::-webkit-details-marker {
+  display: none;
+}
+
+.legacy-marking__entry-summary::after {
+  content: "›";
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1;
+  transform: rotate(90deg);
+  transition: transform .16s ease;
+}
+
+.legacy-marking__entry[open] > .legacy-marking__entry-summary::after {
+  transform: rotate(-90deg);
+}
+
+.legacy-marking__entry-summary code {
+  font-weight: 800;
+  color: var(--ex-blue-dark);
+}
+
+.legacy-marking__entry-details {
+  display: grid;
+  gap: 5px;
+  padding: 0 0 9px 68px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.legacy-marking__entry-details p {
+  margin: 0;
+}
+
+@media (max-width: 420px) {
+  .legacy-marking__entry-details {
+    padding-left: 0;
+  }
+}
+
+
+/* v44: direct link from marking interpretation to Pocket Guide page 4 */
+.marking-guide-link {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 0 14px;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ex-blue-dark);
+  text-align: left;
+  cursor: pointer;
+}
+
+.marking-guide-link:hover {
+  border-color: var(--ex-blue-soft);
+}
+
+.marking-guide-link__copy {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.marking-guide-link__copy strong {
+  font-size: 13px;
+  line-height: 1.25;
+}
+
+.marking-guide-link__copy small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.25;
+}
+
+.marking-guide-link__arrow {
+  margin-left: auto;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ex-blue);
+}
