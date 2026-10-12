@@ -1,5 +1,5 @@
 {
-  "version": "v44",
+  "version": "v45",
   "languages": [
     "no",
     "en"
@@ -815,6 +815,18 @@
         "labelEn": "See marking examples",
         "guidePage": 4,
         "route": "guide"
+      }
+    },
+    {
+      "id": "token-detail-survives-reinterpret",
+      "title": {
+        "no": "Grønn forklaringsboks skal overleve Tolk på nytt",
+        "en": "Green explanation panel must survive Interpret again"
+      },
+      "expected": {
+        "panelMovesBelowClickedSection": true,
+        "panelMovesBackBeforeResultRebuild": true,
+        "panelMustNotBeDeletedByMarkingSectionsInnerHtml": true
       }
     }
   ]
