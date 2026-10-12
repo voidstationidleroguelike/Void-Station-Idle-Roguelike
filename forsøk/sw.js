@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v39";
+const CACHE_VERSION = "ex-pocket-guide-v40-clean";
 
 const APP_SHELL = [
   "./",
@@ -12,11 +12,8 @@ const APP_SHELL = [
 
   "./data/app-config.js",
   "./data/general-text-templates.js",
-  "./data/content-meta.js",
   "./data/translations.js",
   "./data/courses.js",
-  "./data/ex-demo-rules.js",
-  "./data/ex-marking-rules.js",
   "./data/legacy-national-markings.js",
   "./data/ex-code-library.js",
 
@@ -24,7 +21,6 @@ const APP_SHELL = [
   "./js/core/i18n.js",
   "./js/core/router.js",
   "./js/core/pan-zoom.js",
-  "./js/core/ex-marking-parser.js",
   "./js/core/ex-code-extractor.js",
   "./js/core/ex-marking-interpreter.js",
   "./js/core/general-text-generator.js",
