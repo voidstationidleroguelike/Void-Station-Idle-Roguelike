@@ -1075,3 +1075,14 @@
   object-fit: contain;
   object-position: center;
 }
+
+
+/* v41: possible interpretations must contain an actual explanation */
+.interpretation-section__possible-meaning {
+  margin: 10px 0 0;
+  padding-top: 9px;
+  border-top: 1px solid var(--line);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+}
