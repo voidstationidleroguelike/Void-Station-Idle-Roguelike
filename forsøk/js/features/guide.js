@@ -257,5 +257,6 @@
     render,
     next,
     previous,
+    setPage,
   };
 })();

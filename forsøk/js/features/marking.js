@@ -36,6 +36,10 @@
       .getElementById("closeTokenDetail")
       ?.addEventListener("click", hideTokenDetail);
 
+    document
+      .getElementById("openMarkingExamples")
+      ?.addEventListener("click", openMarkingExamples);
+
     cameraInput?.addEventListener("change", onFileSelected);
     uploadInput?.addEventListener("change", onFileSelected);
 
@@ -44,6 +48,12 @@
         interpretFromTextInput({ silent: true });
       }
     });
+  }
+
+  function openMarkingExamples() {
+    // Page 4 in the Pocket Guide contains examples of different marking.
+    window.EX_APP.guide?.setPage(4);
+    window.EX_APP.router?.go("guide");
   }
 
   // -------------------------------------------------------------------
@@ -414,8 +424,12 @@
       list.className = "legacy-marking__matches";
 
       item.matchedEntries.forEach((match) => {
-        const row = document.createElement("div");
-        row.className = "legacy-marking__match";
+        const entry = document.createElement("details");
+        entry.className = "legacy-marking__entry";
+        entry.open = false;
+
+        const summary = document.createElement("summary");
+        summary.className = "legacy-marking__entry-summary";
 
         const code = document.createElement("code");
         code.textContent = match.code;
@@ -423,8 +437,47 @@
         const meaning = document.createElement("span");
         meaning.textContent = match.categoryLabel;
 
-        row.append(code, meaning);
-        list.appendChild(row);
+        summary.append(code, meaning);
+        entry.appendChild(summary);
+
+        const details = document.createElement("div");
+        details.className = "legacy-marking__entry-details";
+
+        if (match.detail) {
+          const detailText = document.createElement("p");
+          detailText.textContent = match.detail;
+          details.appendChild(detailText);
+        }
+
+        if (item.groups?.length) {
+          const groups = document.createElement("p");
+          groups.textContent =
+            language === "en"
+              ? `Group references: ${item.groups.join(", ")}`
+              : `Gruppehenvisning: ${item.groups.join(", ")}`;
+          details.appendChild(groups);
+        }
+
+        if (item.temperatureClass) {
+          const temperature = document.createElement("p");
+          temperature.textContent =
+            language === "en"
+              ? `Temperature class: ${item.temperatureClass}`
+              : `Temperaturklasse: ${item.temperatureClass}`;
+          details.appendChild(temperature);
+        }
+
+        if (!details.childElementCount) {
+          const fallback = document.createElement("p");
+          fallback.textContent =
+            language === "en"
+              ? "Older national/system-specific meaning. Check the applicable historical standard for the equipment."
+              : "Eldre nasjonal/systemspesifikk betydning. Kontroller aktuell historisk standard for utstyret.";
+          details.appendChild(fallback);
+        }
+
+        entry.appendChild(details);
+        list.appendChild(entry);
       });
 
       block.appendChild(list);
@@ -505,7 +558,44 @@
     });
 
     card.append(heading, tokenGrid);
+
+    if (section.confidence === "possible") {
+      const explanation = buildPossibleSectionExplanation(section);
+
+      if (explanation) {
+        const meaning = document.createElement("p");
+        meaning.className = "interpretation-section__possible-meaning";
+        meaning.textContent = explanation;
+        card.appendChild(meaning);
+      }
+    }
+
     return card;
+  }
+
+  function buildPossibleSectionExplanation(section) {
+    const language = currentLanguage();
+
+    const meaningfulTokens = (section.tokens || []).filter(
+      (token) => token.known && !token.officialSymbol
+    );
+
+    const explanations = meaningfulTokens
+      .map((token) =>
+        window.EX_APP.exMarkingInterpreter.getDefinition(
+          token.system,
+          token.value,
+          language
+        )
+      )
+      .filter((definition) => definition?.known && definition?.text)
+      .map((definition) => definition.text);
+
+    return explanations[0] || (
+      language === "en"
+        ? "This is a possible interpretation, but more of the marking is needed to confirm it."
+        : "Dette er en mulig tolkning, men mer av merkingen må være med for å bekrefte den."
+    );
   }
 
   function renderToken(token) {
@@ -524,12 +614,14 @@
       button.textContent = token.value;
     }
 
-    button.addEventListener("click", () => showTokenDetail(token));
+    button.addEventListener("click", () =>
+      showTokenDetail(token, button)
+    );
 
     return button;
   }
 
-  function showTokenDetail(token) {
+  function showTokenDetail(token, sourceButton = null) {
     const panel = document.getElementById("tokenDetailPanel");
     const title = document.getElementById("tokenDetailTitle");
     const text = document.getElementById("tokenDetailText");
@@ -546,6 +638,13 @@
 
     title.textContent = definition.title;
     text.textContent = definition.text;
+
+    const sourceSection =
+      sourceButton?.closest(".interpretation-section");
+
+    if (sourceSection) {
+      sourceSection.insertAdjacentElement("afterend", panel);
+    }
 
     panel.classList.remove("is-hidden");
     panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
