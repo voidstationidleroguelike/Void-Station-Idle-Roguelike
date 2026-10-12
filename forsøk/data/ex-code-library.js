@@ -108,6 +108,191 @@ window.EX_APP.exCodeLibrary = {
   },
 
   iecex: {
+    /*
+     * v32: generic/base protection concepts.
+     * These entries are deliberately separate from OCR handling. They are
+     * ordinary EX-code definitions used by manual interpretation as well.
+     *
+     * The instructor workbook remains the working content guide. Wording is
+     * reviewable and can be replaced without changing parser behaviour.
+     */
+    "Ex da": protection(
+      "Ex da", "Flammesikker kapsling – nivå a", "Flameproof enclosure – level a",
+      "Flammesikker kapsling med beskyttelsesnivå a. Leses sammen med resten av merkingen og sertifikatet.",
+      "Flameproof enclosure with protection level a. Read together with the rest of the marking and certificate."
+    ),
+    "da": protectionAlias("da", "Flammesikker kapsling – nivå a", "Flameproof enclosure – level a"),
+
+    "Ex i": simpleProtection(
+      "Ex i", "Egensikkerhet", "Intrinsic safety",
+      "Generell betegnelse for egensikkerhet. Nivået angis normalt videre med ia, ib eller ic.",
+      "General designation for intrinsic safety. The level is normally stated further as ia, ib or ic."
+    ),
+    "i": simpleProtection(
+      "i", "Egensikkerhet", "Intrinsic safety",
+      "Generell betegnelse for egensikkerhet. Se eventuell nivåbokstav ia, ib eller ic.",
+      "General intrinsic-safety designation. See any following level suffix ia, ib or ic."
+    ),
+
+    "Ex m": simpleProtection(
+      "Ex m", "Innkapsling", "Encapsulation",
+      "Generell betegnelse for innkapsling. Nivået angis normalt videre med ma, mb eller mc.",
+      "General designation for encapsulation. The level is normally stated further as ma, mb or mc."
+    ),
+    "m": simpleProtection(
+      "m", "Innkapsling", "Encapsulation",
+      "Generell betegnelse for innkapsling. Se eventuell nivåbokstav ma, mb eller mc.",
+      "General encapsulation designation. See any following level suffix ma, mb or mc."
+    ),
+
+    "Ex p": simpleProtection(
+      "Ex p", "Overtrykksbeskyttelse", "Pressurization",
+      "Generell / eldre betegnelse for overtrykksbeskyttelse. Nyere merking kan ha mer spesifikke varianter som pxb, pyb eller pzc.",
+      "General / legacy designation for pressurization. Newer markings may use more specific variants such as pxb, pyb or pzc."
+    ),
+    "p": simpleProtection(
+      "p", "Overtrykksbeskyttelse", "Pressurization",
+      "Generell / eldre betegnelse for overtrykksbeskyttelse. Les eventuell underkode og resten av merkingen.",
+      "General / legacy designation for pressurization. Read any subtype and the rest of the marking."
+    ),
+
+    "Ex pxb": simpleProtection(
+      "Ex pxb", "Overtrykksbeskyttelse pxb", "Pressurization pxb",
+      "Overtrykksbeskyttelse med betegnelsen pxb. Leses sammen med EPL og sertifikat.",
+      "Pressurization protection designated pxb. Read together with the EPL and certificate."
+    ),
+    "pxb": simpleProtection(
+      "pxb", "Overtrykksbeskyttelse pxb", "Pressurization pxb",
+      "Overtrykksbeskyttelse pxb.", "Pressurization protection pxb."
+    ),
+    "Ex pyb": simpleProtection(
+      "Ex pyb", "Overtrykksbeskyttelse pyb", "Pressurization pyb",
+      "Overtrykksbeskyttelse med betegnelsen pyb. Leses sammen med EPL og sertifikat.",
+      "Pressurization protection designated pyb. Read together with the EPL and certificate."
+    ),
+    "pyb": simpleProtection(
+      "pyb", "Overtrykksbeskyttelse pyb", "Pressurization pyb",
+      "Overtrykksbeskyttelse pyb.", "Pressurization protection pyb."
+    ),
+    "Ex pzc": simpleProtection(
+      "Ex pzc", "Overtrykksbeskyttelse pzc", "Pressurization pzc",
+      "Overtrykksbeskyttelse med betegnelsen pzc. Leses sammen med EPL og sertifikat.",
+      "Pressurization protection designated pzc. Read together with the EPL and certificate."
+    ),
+    "pzc": simpleProtection(
+      "pzc", "Overtrykksbeskyttelse pzc", "Pressurization pzc",
+      "Overtrykksbeskyttelse pzc.", "Pressurization protection pzc."
+    ),
+    "pb": simpleProtection(
+      "pb", "Overtrykksbeskyttelse – nivå b", "Pressurization – level b",
+      "Betegnelse innen overtrykksbeskyttelse. Kontroller anvendt standard og sertifikat for den konkrete merkingen.",
+      "Designation within pressurization protection. Check the applied standard and certificate for the specific marking."
+    ),
+    "pc": simpleProtection(
+      "pc", "Overtrykksbeskyttelse – nivå c", "Pressurization – level c",
+      "Betegnelse innen overtrykksbeskyttelse. Kontroller anvendt standard og sertifikat for den konkrete merkingen.",
+      "Designation within pressurization protection. Check the applied standard and certificate for the specific marking."
+    ),
+
+    "Ex ob": simpleProtection(
+      "Ex ob", "Væskeinnkapsling – nivå b", "Liquid immersion – level b",
+      "Væskeinnkapsling med nivå b. Leses sammen med resten av merkingen.",
+      "Liquid immersion with level b. Read together with the rest of the marking."
+    ),
+    "ob": simpleProtection(
+      "ob", "Væskeinnkapsling – nivå b", "Liquid immersion – level b",
+      "Væskeinnkapsling, nivå b.", "Liquid immersion, level b."
+    ),
+    "Ex oc": simpleProtection(
+      "Ex oc", "Væskeinnkapsling – nivå c", "Liquid immersion – level c",
+      "Væskeinnkapsling med nivå c. Leses sammen med resten av merkingen.",
+      "Liquid immersion with level c. Read together with the rest of the marking."
+    ),
+    "oc": simpleProtection(
+      "oc", "Væskeinnkapsling – nivå c", "Liquid immersion – level c",
+      "Væskeinnkapsling, nivå c.", "Liquid immersion, level c."
+    ),
+
+    "Ex qb": simpleProtection(
+      "Ex qb", "Pulverfylling – nivå b", "Powder filling – level b",
+      "Pulverfylling med nivå b. Leses sammen med resten av merkingen.",
+      "Powder filling with level b. Read together with the rest of the marking."
+    ),
+    "qb": simpleProtection(
+      "qb", "Pulverfylling – nivå b", "Powder filling – level b",
+      "Pulverfylling, nivå b.", "Powder filling, level b."
+    ),
+
+    "Ex n": simpleProtection(
+      "Ex n", "Type n – eldre/generell betegnelse", "Type n – legacy/general designation",
+      "Eldre samlebetegnelse for flere beskyttelsesmetoder. Underkoder som nA, nC og nR beskriver den konkrete utførelsen.",
+      "Legacy umbrella designation for several protection methods. Sub-codes such as nA, nC and nR describe the specific construction."
+    ),
+    "n": simpleProtection(
+      "n", "Type n – eldre/generell betegnelse", "Type n – legacy/general designation",
+      "Eldre samlebetegnelse. Se eventuell underkode som nA, nC eller nR.",
+      "Legacy umbrella designation. See any subtype such as nA, nC or nR."
+    ),
+
+    "Ex op": simpleProtection(
+      "Ex op", "Optisk stråling", "Optical radiation",
+      "Samlebetegnelse for beskyttelse knyttet til optisk stråling. Underkoder kan blant annet være op is, op pr og op sh.",
+      "Umbrella designation for protection related to optical radiation. Sub-codes may include op is, op pr and op sh."
+    ),
+    "op": simpleProtection(
+      "op", "Optisk stråling", "Optical radiation",
+      "Samlebetegnelse for optisk beskyttelse. Se eventuell underkode op is, op pr eller op sh.",
+      "Umbrella designation for optical protection. See any subtype op is, op pr or op sh."
+    ),
+
+    "Ex t": simpleProtection(
+      "Ex t", "Beskyttelse ved kapsling for støv", "Protection by enclosure for dust",
+      "Generell betegnelse for støvbeskyttelse ved kapsling. Nivået angis normalt videre med ta, tb eller tc.",
+      "General designation for dust protection by enclosure. The level is normally stated further as ta, tb or tc."
+    ),
+    "t": simpleProtection(
+      "t", "Beskyttelse ved kapsling for støv", "Protection by enclosure for dust",
+      "Generell støvbetegnelse. Se eventuell nivåbokstav ta, tb eller tc.",
+      "General dust designation. See any following level suffix ta, tb or tc."
+    ),
+
+    "Ex s": simpleProtection(
+      "Ex s", "Spesiell beskyttelse", "Special protection",
+      "Generell betegnelse for spesiell beskyttelse. Detaljene må kontrolleres i sertifikatet.",
+      "General designation for special protection. Details must be checked in the certificate."
+    ),
+    "s": simpleProtection(
+      "s", "Spesiell beskyttelse", "Special protection",
+      "Generell betegnelse for spesiell beskyttelse. Kontroller sertifikatet.",
+      "General designation for special protection. Check the certificate."
+    ),
+    "sa": simpleProtection(
+      "sa", "Spesiell beskyttelse – nivå a", "Special protection – level a",
+      "Spesiell beskyttelse, nivå a. Detaljene må kontrolleres i sertifikatet.",
+      "Special protection, level a. Details must be checked in the certificate."
+    ),
+    "sb": simpleProtection(
+      "sb", "Spesiell beskyttelse – nivå b", "Special protection – level b",
+      "Spesiell beskyttelse, nivå b. Detaljene må kontrolleres i sertifikatet.",
+      "Special protection, level b. Details must be checked in the certificate."
+    ),
+    "sc": simpleProtection(
+      "sc", "Spesiell beskyttelse – nivå c", "Special protection – level c",
+      "Spesiell beskyttelse, nivå c. Detaljene må kontrolleres i sertifikatet.",
+      "Special protection, level c. Details must be checked in the certificate."
+    ),
+
+    "Ex h": simpleProtection(
+      "Ex h", "Ikke-elektrisk Ex-utstyr", "Non-electrical Ex equipment",
+      "Moderne samlemerking for ikke-elektrisk Ex-utstyr. Den komplette merkingen og sertifikatet beskriver beskyttelsen nærmere.",
+      "Modern umbrella marking for non-electrical Ex equipment. The complete marking and certificate describe the protection in more detail."
+    ),
+    "h": simpleProtection(
+      "h", "Ikke-elektrisk Ex-utstyr", "Non-electrical Ex equipment",
+      "Moderne betegnelse for ikke-elektrisk Ex-utstyr. Leses sammen med resten av merkingen og sertifikatet.",
+      "Modern designation for non-electrical Ex equipment. Read together with the rest of the marking and certificate."
+    ),
+
     "Ex d": protection(
       "Ex d", "Flammesikker kapsling", "Flameproof enclosure",
       "En vernemetode der en eksplosjon inne i kapslingen ikke skal antenne den eksplosive atmosfæren utenfor.",

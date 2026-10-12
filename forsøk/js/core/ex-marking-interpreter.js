@@ -116,6 +116,12 @@
       extractInlineMetadata(lines, language)
     );
 
+    const legacyMatches =
+      window.EX_APP.legacyNationalMarkings?.match(
+        lines.join("\n"),
+        language
+      ) || [];
+
     return {
       inputMode,
       requestedSystems,
@@ -123,12 +129,17 @@
       systems: parsedSystems,
       sections,
       metadata,
+      legacyMatches,
       generalText:
-        manual && !sections.length
+        manual && !sections.length && !legacyMatches.length
           ? (language === "en"
               ? "No known marking elements were found. Select the relevant marking system or enter more of the marking."
               : "Fant ingen kjente merkingselementer. Velg riktig merkesystem eller skriv inn mer av merkingen.")
-          : buildGeneralText(parsedSystems, language),
+          : (!sections.length && legacyMatches.length
+              ? (language === "en"
+                  ? "Possible older or national marking was found. The same code can occur in more than one historical system, so all matching alternatives are shown."
+                  : "Mulig eldre eller nasjonal merking ble funnet. Samme kode kan forekomme i flere historiske systemer, derfor vises alle treff.")
+              : buildGeneralText(parsedSystems, language)),
     };
   }
 

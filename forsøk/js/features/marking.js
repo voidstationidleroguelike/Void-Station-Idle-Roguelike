@@ -419,12 +419,94 @@
       sections.appendChild(renderSection(section));
     });
 
+    renderLegacyNationalMatches(
+      result.legacyMatches || [],
+      sections
+    );
+
     renderResultMetadata(result.metadata || [], sections);
 
     panel.classList.remove("is-hidden");
     panel.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
+
+  function renderLegacyNationalMatches(items, container) {
+    if (!items?.length || !container) {
+      return;
+    }
+
+    const language = currentLanguage();
+
+    const card = document.createElement("article");
+    card.className =
+      "interpretation-section interpretation-section--legacy";
+
+    const heading = document.createElement("div");
+    heading.className = "interpretation-section__heading";
+
+    const title = document.createElement("strong");
+    title.textContent =
+      language === "en"
+        ? "Possible older / national marking"
+        : "Mulig eldre / nasjonal merking";
+
+    const note = document.createElement("small");
+    note.className = "legacy-marking__note";
+    note.textContent =
+      language === "en"
+        ? "The same code may occur in several historical systems. All matches from the supplied comparison table are shown."
+        : "Samme kode kan forekomme i flere historiske systemer. Alle treff fra sammenligningstabellen vises.";
+
+    heading.append(title, note);
+    card.appendChild(heading);
+
+    items.forEach((item) => {
+      const block = document.createElement("div");
+      block.className = "legacy-marking__system";
+
+      const country = document.createElement("strong");
+      country.className = "legacy-marking__country";
+      country.textContent =
+        item.systemVariant
+          ? `${item.country} · ${item.systemVariant}`
+          : item.country;
+
+      block.appendChild(country);
+
+      if (item.symbol) {
+        const symbol = document.createElement("span");
+        symbol.className = "legacy-marking__symbol";
+        symbol.textContent =
+          language === "en"
+            ? `Symbol: ${item.symbol}`
+            : `Symbol: ${item.symbol}`;
+        block.appendChild(symbol);
+      }
+
+      const list = document.createElement("div");
+      list.className = "legacy-marking__matches";
+
+      item.matchedEntries.forEach((match) => {
+        const row = document.createElement("div");
+        row.className = "legacy-marking__match";
+
+        const code = document.createElement("code");
+        code.textContent = match.code;
+
+        const meaning = document.createElement("span");
+        meaning.textContent = match.categoryLabel;
+
+        row.append(code, meaning);
+        list.appendChild(row);
+      });
+
+      block.appendChild(list);
+      card.appendChild(block);
+    });
+
+    container.appendChild(card);
+  }
 
   function renderResultMetadata(items, container) {
     if (!items?.length || !container) {

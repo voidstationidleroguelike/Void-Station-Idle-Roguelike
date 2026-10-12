@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v31";
+const CACHE_VERSION = "ex-pocket-guide-v34";
 
 const APP_SHELL = [
   "./",
@@ -18,6 +18,7 @@ const APP_SHELL = [
   "./data/ex-demo-rules.js",
   "./data/marking-systems.js",
   "./data/ex-marking-rules.js",
+  "./data/legacy-national-markings.js",
   "./data/ex-code-library.js",
 
   "./js/app.js",

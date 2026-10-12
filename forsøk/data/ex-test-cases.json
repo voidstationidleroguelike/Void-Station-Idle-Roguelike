@@ -1,5 +1,5 @@
 {
-  "version": "v30",
+  "version": "v33",
   "languages": [
     "no",
     "en"
@@ -555,6 +555,96 @@
         "descriptionContainsInnerCodeMeaning": true,
         "descriptionContainsBracketContext": true,
         "mustNotTreatBracketsAsSeparateCode": true
+      }
+    },
+    {
+      "id": "generic-protection-family-manual",
+      "title": {
+        "no": "Generelle vernemetoder skal kunne tolkes manuelt",
+        "en": "Generic protection concepts must be interpretable manually"
+      },
+      "input": {
+        "markings": [
+          "Ex o",
+          "Ex p",
+          "Ex q",
+          "Ex d",
+          "Ex e",
+          "Ex i",
+          "Ex n",
+          "Ex m",
+          "Ex op",
+          "Ex h",
+          "Ex t",
+          "Ex s"
+        ],
+        "selectedSystems": [
+          "iecex"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "knownProtectionTokens": [
+          "o",
+          "p",
+          "q",
+          "d",
+          "e",
+          "i",
+          "n",
+          "m",
+          "op",
+          "h",
+          "t",
+          "s"
+        ],
+        "mustNotDependOnOcr": true,
+        "mustProvideExplanation": true
+      }
+    },
+    {
+      "id": "legacy-national-country-matches",
+      "title": {
+        "no": "Eldre/nasjonal merking viser land og alle mulige treff",
+        "en": "Older/national marking shows country and all possible matches"
+      },
+      "input": {
+        "manualExamples": [
+          "Ex p",
+          "ADF",
+          "EEx d",
+          "AEx p",
+          "Explosion proof"
+        ]
+      },
+      "expected": {
+        "Ex p": {
+          "mayMatchSeveralCountries": true,
+          "mustShowAllAlternatives": true
+        },
+        "ADF": {
+          "countriesInclude": [
+            "Frankrike",
+            "Belgia"
+          ]
+        },
+        "EEx d": {
+          "countriesInclude": [
+            "CENELEC"
+          ]
+        },
+        "AEx p": {
+          "countriesInclude": [
+            "USA (NEC 505)"
+          ]
+        },
+        "Explosion proof": {
+          "countriesInclude": [
+            "U.S.A. (NEC 500)",
+            "Canada"
+          ]
+        },
+        "mustNeverRewriteManualInput": true
       }
     }
   ]
