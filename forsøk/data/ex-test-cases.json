@@ -1,5 +1,5 @@
 {
-  "version": "v45",
+  "version": "v46-final",
   "languages": [
     "no",
     "en"
@@ -827,6 +827,64 @@
         "panelMovesBelowClickedSection": true,
         "panelMovesBackBeforeResultRebuild": true,
         "panelMustNotBeDeletedByMarkingSectionsInnerHtml": true
+      }
+    },
+    {
+      "id": "bracket-context-only-when-bracketed",
+      "title": {
+        "no": "Klammeforklaring skal bare vises når koden faktisk står i klammer",
+        "en": "Bracket context must only be shown when the code is actually bracketed"
+      },
+      "input": {
+        "plain": [
+          "ia",
+          "ib"
+        ],
+        "bracketed": [
+          "[ia]",
+          "[ib]",
+          "[ia IIC Ga]"
+        ]
+      },
+      "expected": {
+        "plainMustNotMentionBrackets": true,
+        "bracketedMustMentionBrackets": true
+      }
+    },
+    {
+      "id": "bracket-and-parenthesis-context-only-when-present",
+      "title": {
+        "no": "Klamme- og parenteskontekst skal bare vises når tegnene faktisk står i merkingen",
+        "en": "Bracket and parenthesis context must only appear when those characters are actually present"
+      },
+      "input": {
+        "plain": [
+          "ia",
+          "ib",
+          "1",
+          "2",
+          "3"
+        ],
+        "bracketed": [
+          "[ia]",
+          "[ib]",
+          "[ia IIC Ga]"
+        ],
+        "parenthesized": [
+          "(1)",
+          "(2)",
+          "(3)"
+        ],
+        "manualPreserve": [
+          "(I)"
+        ]
+      },
+      "expected": {
+        "plainIaIbMustNotMentionBrackets": true,
+        "bracketedMustMentionBrackets": true,
+        "plain123MustNotMentionParentheses": true,
+        "parenthesized123MustMentionParentheses": true,
+        "manualIInParenthesesMustRemainLiteral": "(I)"
       }
     }
   ]

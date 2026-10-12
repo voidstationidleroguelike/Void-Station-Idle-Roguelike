@@ -372,10 +372,10 @@ window.EX_APP.exCodeLibrary = {
     "ec": protectionAlias("ec", "Økt sikkerhet – nivå c", "Increased safety – level c"),
 
     "Ex ia": intrinsic("Ex ia", "ia", "Svært høyt beskyttelsesnivå; referansematerialet knytter Ex ia til sone 0.", "Very high protection level; the supplied reference associates Ex ia with Zone 0."),
-    "ia": intrinsic("ia", "ia", "Når ia står inne i [ ], gjelder den den tilknyttede egensikre delen som parentesen avgrenser.", "When ia appears inside [ ], it applies to the associated intrinsically safe section delimited by the brackets."),
+    "ia": intrinsic("ia", "ia", "Egensikkerhet nivå ia. Dette er det høyeste nivået innen egensikkerhet og må leses sammen med resten av Ex-merkingen.", "Intrinsic safety level ia. This is the highest intrinsic-safety level and must be read together with the rest of the Ex marking."),
 
     "Ex ib": intrinsic("Ex ib", "ib", "Høyt beskyttelsesnivå; referansematerialet knytter Ex ib til sone 1.", "High protection level; the supplied reference associates Ex ib with Zone 1."),
-    "ib": intrinsic("ib", "ib", "Egensikkerhet nivå ib. Står den i [ ], gjelder den den tilknyttede delen.", "Intrinsic safety level ib. When inside [ ], it applies to the associated section."),
+    "ib": intrinsic("ib", "ib", "Egensikkerhet nivå ib. Koden må leses sammen med resten av Ex-merkingen.", "Intrinsic safety level ib. The code must be read together with the rest of the Ex marking."),
 
     "Ex ic": intrinsic("Ex ic", "ic", "Referansematerialet knytter Ex ic til sone 2.", "The supplied reference associates Ex ic with Zone 2."),
     "ic": intrinsic("ic", "ic", "Egensikkerhet nivå ic.", "Intrinsic safety level ic."),
@@ -635,11 +635,17 @@ function atexCategory(code, noLevel, enLevel, noZones, enZones) {
 
 function parenthesizedCategory(code) {
   return {
-    title: { no: `(${code}) – kategori i parentes`, en: `(${code}) – parenthesized category` },
-    short: { no: `Kategori ${code} for en tilknyttet del av merkingen.`, en: `Category ${code} for an associated part of the marking.` },
+    title: {
+      no: `(${code}) – kategori i parentes`,
+      en: `(${code}) – parenthesized category`
+    },
+    short: {
+      no: `Kategori ${code} står faktisk i parentes og gjelder en tilknyttet del av merkingen.`,
+      en: `Category ${code} is actually parenthesized and applies to an associated part of the marking.`
+    },
     detailed: {
-      no: `Når kategorien står i parentes, skal den ikke uten videre leses som hovedutstyrets kategori. Den viser en tilknyttet del / krets og må tolkes sammen med resten av ATEX-linjen.`,
-      en: `When the category appears in parentheses, it should not automatically be read as the main equipment category. It identifies an associated part / circuit and must be interpreted together with the rest of the ATEX line.`
+      no: `Parentesforklaringen gjelder bare når selve merkingen faktisk er skrevet som (${code}). Da skal kategorien ikke uten videre leses som hovedutstyrets kategori; den viser en tilknyttet del / krets og må tolkes sammen med resten av ATEX-linjen.`,
+      en: `This parenthesis context applies only when the marking is actually written as (${code}). It should then not automatically be read as the main equipment category; it identifies an associated part / circuit and must be interpreted together with the rest of the ATEX line.`
     }
   };
 }
