@@ -509,10 +509,120 @@
           ? "common"
           : system;
 
-      tokens.push(makeToken(current, tokenSystem));
+      const directToken = makeToken(current, tokenSystem);
+
+      if (directToken.known) {
+        tokens.push(directToken);
+        continue;
+      }
+
+      /*
+       * Some older/common markings concatenate protection concepts without
+       * spaces, for example:
+       *
+       *   Ex d e m IIC T4  -> Ex dem IIC T4
+       *
+       * Only split an UNKNOWN, lowercase alphabetic token when the complete
+       * token can be decomposed into two or more known protection concepts.
+       * Existing valid atomic codes always win first:
+       *   ia stays ia
+       *   db stays db
+       *   mb stays mb
+       *   pxb stays pxb
+       *   op is stays one multi-word concept
+       *
+       * Groups such as IIC, EPLs, T4, IP66, etc. are therefore never split.
+       */
+      const combinedParts =
+        splitCombinedProtectionToken(current, tokenSystem);
+
+      if (combinedParts) {
+        combinedParts.forEach((part) => {
+          tokens.push(
+            makeToken(part, tokenSystem, {
+              combinedFrom: current,
+            })
+          );
+        });
+        continue;
+      }
+
+      tokens.push(directToken);
     }
 
     return tokens;
+  }
+
+  const COMBINABLE_PROTECTION_CODES = [
+    "pxb", "pyb", "pzc",
+    "da", "db", "dc",
+    "eb", "ec",
+    "ia", "ib", "ic",
+    "ma", "mb", "mc",
+    "ob", "oc",
+    "qb",
+    "px", "py", "pz", "pv",
+    "sa", "sb", "sc",
+    "ta", "tb", "tc",
+    "fr",
+    "d", "e", "i", "m", "o", "p", "q", "s", "n", "t", "h", "c", "b", "k"
+  ];
+
+  function splitCombinedProtectionToken(value, system) {
+    const text = String(value || "");
+
+    // Historical concatenated protection strings are letter codes. Keeping
+    // this lowercase-only also prevents accidental splitting of IIC, Ga, etc.
+    if (!/^[a-z]{2,}$/u.test(text)) {
+      return null;
+    }
+
+    const memo = new Map();
+
+    function splitFrom(position) {
+      if (position === text.length) {
+        return [];
+      }
+
+      if (memo.has(position)) {
+        return memo.get(position);
+      }
+
+      let best = null;
+
+      COMBINABLE_PROTECTION_CODES.forEach((code) => {
+        if (!text.startsWith(code, position)) {
+          return;
+        }
+
+        if (!resolveDefinition(system, code)) {
+          return;
+        }
+
+        const rest = splitFrom(position + code.length);
+
+        if (rest === null) {
+          return;
+        }
+
+        const candidate = [code, ...rest];
+
+        // Prefer the decomposition with fewer parts. If equal, the list above
+        // already places longer/more-specific codes before shorter families.
+        if (!best || candidate.length < best.length) {
+          best = candidate;
+        }
+      });
+
+      memo.set(position, best);
+      return best;
+    }
+
+    const parts = splitFrom(0);
+
+    return parts && parts.length >= 2
+      ? parts
+      : null;
   }
 
   function tokenizeGeneric(line) {
@@ -860,7 +970,17 @@
   }
 
   function normalizeLookup(value) {
-    return value;
+    const raw = String(value || "");
+
+    // Manual input remains untouched for display. This only canonicalizes the
+    // dictionary lookup for the Ex prefix itself. Do NOT make the whole
+    // library case-insensitive: codes such as da/Da, db/Db and ma/Ma have
+    // different meanings depending on case and context.
+    if (/^ex$/i.test(raw)) {
+      return "Ex";
+    }
+
+    return raw;
   }
 
   function extractInlineMetadata(

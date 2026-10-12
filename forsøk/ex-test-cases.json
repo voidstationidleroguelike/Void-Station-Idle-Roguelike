@@ -1,5 +1,5 @@
 {
-  "version": "v33",
+  "version": "v39",
   "languages": [
     "no",
     "en"
@@ -645,6 +645,97 @@
           ]
         },
         "mustNeverRewriteManualInput": true
+      }
+    },
+    {
+      "id": "manual-lowercase-ex-prefix",
+      "title": {
+        "no": "Liten ex skal slå opp Ex-betydningen uten å endre manuell tekst",
+        "en": "Lowercase ex must resolve the Ex meaning without rewriting manual text"
+      },
+      "input": {
+        "marking": "ex p",
+        "inputMode": "manual"
+      },
+      "expected": {
+        "displayPreserves": "ex p",
+        "exKnown": true,
+        "exMeaning": "Eksplosjonsbeskyttet utstyr / Ex-merking",
+        "pKnown": true,
+        "mustNotApplyGlobalCaseFolding": true
+      }
+    },
+    {
+      "id": "concatenated-protection-concepts",
+      "title": {
+        "no": "Sammenslåtte vernetyper skal deles uten å ødelegge atomiske koder",
+        "en": "Concatenated protection concepts must split without breaking atomic codes"
+      },
+      "input": {
+        "examples": [
+          "Ex dem IIC T4",
+          "Ex de IIC T4",
+          "Ex demb IIC T4",
+          "Ex ia IIC T4",
+          "Ex db IIC T4",
+          "Ex pxb IIC T4"
+        ],
+        "inputMode": "manual"
+      },
+      "expected": {
+        "Ex dem IIC T4": [
+          "Ex",
+          "d",
+          "e",
+          "m",
+          "IIC",
+          "T4"
+        ],
+        "Ex de IIC T4": [
+          "Ex",
+          "d",
+          "e",
+          "IIC",
+          "T4"
+        ],
+        "Ex demb IIC T4": [
+          "Ex",
+          "d",
+          "e",
+          "mb",
+          "IIC",
+          "T4"
+        ],
+        "Ex ia IIC T4": [
+          "Ex",
+          "ia",
+          "IIC",
+          "T4"
+        ],
+        "Ex db IIC T4": [
+          "Ex",
+          "db",
+          "IIC",
+          "T4"
+        ],
+        "Ex pxb IIC T4": [
+          "Ex",
+          "pxb",
+          "IIC",
+          "T4"
+        ],
+        "originalLineMustRemainUnchanged": true
+      }
+    },
+    {
+      "id": "legacy-collapsed-expandable",
+      "title": {
+        "no": "Legacy skal være minimert og kunne utvides",
+        "en": "Legacy must be collapsed and expandable"
+      },
+      "expected": {
+        "defaultOpen": false,
+        "expandable": true
       }
     }
   ]

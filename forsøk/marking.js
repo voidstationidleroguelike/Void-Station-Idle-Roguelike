@@ -341,8 +341,7 @@
 
     renderLegacyNationalMatches(
       result.legacyMatches || [],
-      sections,
-      result.sections.length > 0
+      sections
     );
 
     renderResultMetadata(result.metadata || [], sections);
@@ -352,7 +351,7 @@
   }
 
 
-  function renderLegacyNationalMatches(items, container, collapse = false) {
+  function renderLegacyNationalMatches(items, container) {
     if (!items?.length || !container) {
       return;
     }
@@ -363,9 +362,9 @@
     card.className =
       "interpretation-section interpretation-section--legacy legacy-marking";
 
-    // When modern ATEX / Ex interpretation exists, legacy information is
-    // deliberately secondary and collapsed by default.
-    card.open = !collapse;
+    // Legacy/national marking is always secondary. Keep it minimized by
+    // default; the user can expand the details when needed.
+    card.open = false;
 
     const summary = document.createElement("summary");
     summary.className = "legacy-marking__summary";
