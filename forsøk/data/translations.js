@@ -3,7 +3,6 @@ window.EX_APP = window.EX_APP || {};
 window.EX_APP.translations = {
   no: {
     "common.or": "eller",
-    "common.fit": "Tilpass",
     "common.reset": "Tilbakestill",
     "common.remove": "Fjern",
 
@@ -29,9 +28,7 @@ window.EX_APP.translations = {
 
     "marking.title": "EX-merking",
     "marking.intro": "Skriv inn merkingen, ta bilde eller velg et bilde fra telefonen.",
-    "marking.chooseSystem": "Velg merkesystem",
     "marking.manual": "manuell merking",
-    "marking.autoSystemHint": "Velg system for manuell tolkning. Ved bilde/skanning prøver appen å oppdage systemet automatisk.",
     "marking.inputLabel": "Merking",
     "marking.interpret": "Tolk merking",
     "marking.reinterpret": "Tolk på nytt",
@@ -52,12 +49,6 @@ window.EX_APP.translations = {
     "marking.reviewNote": "Kontroller at merkingen stemmer med skiltet før resultatet brukes.",
     "marking.disclaimerTitle": "Viktig informasjon",
     "marking.disclaimerText": "Innholdet i guiden er ment som en veiledning. Vær oppmerksom på at innhold i standarder kan oppdateres, og bør sjekkes hvis det skal brukes som beslutningsgrunnlag. Trainor Elsikkerhet AS fraskriver seg alt ansvar for hendelser som kan oppstå som følge av feiltolkning av innholdet i guiden.",
-    "marking.structural": "STRUKTUR",
-    "marking.detected": "Oppdaget på skiltet",
-    "marking.lines": "Linjer",
-    "marking.unclassified": "Annen skiltinformasjon",
-    "marking.demoNote": "Demo-parseren viser bare UI-flyten. Fagregler legges inn separat og må kvalitetssikres.",
-
     "poster.zoomHint": "Knip eller bruk musehjulet for å zoome · dra for å flytte",
 
     "courses.title": "EX-kurs",
@@ -67,7 +58,6 @@ window.EX_APP.translations = {
 
   en: {
     "common.or": "or",
-    "common.fit": "Fit",
     "common.reset": "Reset",
     "common.remove": "Remove",
 
@@ -93,9 +83,7 @@ window.EX_APP.translations = {
 
     "marking.title": "EX marking",
     "marking.intro": "Enter the marking, take a photo or choose an image from the phone.",
-    "marking.chooseSystem": "Choose marking system",
     "marking.manual": "manual marking",
-    "marking.autoSystemHint": "Choose a system for manual interpretation. For image scanning, the app tries to detect the system automatically.",
     "marking.inputLabel": "Marking",
     "marking.interpret": "Interpret marking",
     "marking.reinterpret": "Interpret again",
@@ -116,12 +104,6 @@ window.EX_APP.translations = {
     "marking.reviewNote": "Check that the interpreted marking matches the actual plate before using the result.",
     "marking.disclaimerTitle": "Important information",
     "marking.disclaimerText": "The content of this guide is intended as guidance. Please note that standards may be updated and should be checked if the information is to be used as a basis for decisions. Trainor Elsikkerhet AS accepts no responsibility for incidents that may arise from misinterpretation of the content of this guide.",
-    "marking.structural": "STRUCTURE",
-    "marking.detected": "Detected on the plate",
-    "marking.lines": "Lines",
-    "marking.unclassified": "Other plate information",
-    "marking.demoNote": "The demo parser only demonstrates the UI flow. Technical rules must be added separately and quality-assured.",
-
     "poster.zoomHint": "Pinch or use the mouse wheel to zoom · drag to pan",
 
     "courses.title": "EX courses",
