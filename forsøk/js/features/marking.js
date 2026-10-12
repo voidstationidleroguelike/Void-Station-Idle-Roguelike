@@ -5,13 +5,10 @@
 
   let selectedFile = null;
   let selectedDataUrl = null;
-  let selectedSystems = new Set();
   let hasInterpreted = false;
   let lastExtractedMetadata = [];
 
   function init() {
-    renderSystemSelector();
-
     const cameraInput = document.getElementById("cameraInput");
     const uploadInput = document.getElementById("imageUploadInput");
 
@@ -43,84 +40,10 @@
     uploadInput?.addEventListener("change", onFileSelected);
 
     window.addEventListener("exapp:languagechange", () => {
-      renderSystemSelector();
-
       if (hasInterpreted) {
         interpretFromTextInput({ silent: true });
       }
     });
-  }
-
-  // -------------------------------------------------------------------
-  // Marking-system toggles
-  // -------------------------------------------------------------------
-
-  function renderSystemSelector() {
-    const grid = document.getElementById("markingSystemGrid");
-    const help = document.getElementById("markingSystemHelp");
-
-    if (!grid) {
-      return;
-    }
-
-    const language = currentLanguage();
-    grid.innerHTML = "";
-
-    window.EX_APP.markingSystems.forEach((system) => {
-      const selected = selectedSystems.has(system.id);
-
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "marking-system-card";
-      button.dataset.system = system.id;
-      button.setAttribute("aria-pressed", selected ? "true" : "false");
-
-      const image = document.createElement("img");
-      image.src = system.asset;
-      image.alt = system.title[language] || system.title.no || system.id;
-
-      const copy = document.createElement("span");
-      copy.className = "marking-system-card__copy";
-
-      const title = document.createElement("strong");
-      title.textContent =
-        system.title[language] ||
-        system.title.no ||
-        system.id;
-
-      const description = document.createElement("small");
-      description.textContent =
-        system.description[language] ||
-        system.description.no ||
-        "";
-
-      copy.append(title, description);
-      button.append(image, copy);
-
-      button.addEventListener("click", () => {
-        if (selectedSystems.has(system.id)) {
-          selectedSystems.delete(system.id);
-        } else {
-          selectedSystems.add(system.id);
-        }
-
-        renderSystemSelector();
-      });
-
-      grid.appendChild(button);
-    });
-
-    if (help) {
-      help.textContent =
-        language === "en"
-          ? "You can select more than one system. One plate may contain both ATEX and IECEx marking."
-          : "Du kan velge flere systemer samtidig. Ett skilt kan inneholde både ATEX- og IECEx-merking.";
-    }
-  }
-
-  function addDetectedSystems(systems) {
-    systems.forEach((system) => selectedSystems.add(system));
-    renderSystemSelector();
   }
 
   // -------------------------------------------------------------------
@@ -256,8 +179,6 @@
         input.focus();
       }
 
-      addDetectedSystems(extracted.systems);
-
       document
         .getElementById("ocrCandidateBanner")
         ?.classList.remove("is-hidden");
@@ -382,7 +303,6 @@
       text,
       {
         language,
-        systems: [...selectedSystems],
         metadata: lastExtractedMetadata,
         // This button always interprets the editable text literally.
         // OCR corrections happen only in the image extractor BEFORE text
@@ -438,12 +358,16 @@
 
     const language = currentLanguage();
 
-    const card = document.createElement("article");
+    const card = document.createElement("details");
     card.className =
-      "interpretation-section interpretation-section--legacy";
+      "interpretation-section interpretation-section--legacy legacy-marking";
 
-    const heading = document.createElement("div");
-    heading.className = "interpretation-section__heading";
+    // Legacy/national marking is always secondary. Keep it minimized by
+    // default; the user can expand the details when needed.
+    card.open = false;
+
+    const summary = document.createElement("summary");
+    summary.className = "legacy-marking__summary";
 
     const title = document.createElement("strong");
     title.textContent =
@@ -451,15 +375,20 @@
         ? "Possible older / national marking"
         : "Mulig eldre / nasjonal merking";
 
-    const note = document.createElement("small");
+    const count = document.createElement("span");
+    count.className = "legacy-marking__count";
+    count.textContent = `(${items.length})`;
+
+    summary.append(title, count);
+    card.appendChild(summary);
+
+    const note = document.createElement("p");
     note.className = "legacy-marking__note";
     note.textContent =
       language === "en"
-        ? "The same code may occur in several historical systems. All matches from the supplied comparison table are shown."
-        : "Samme kode kan forekomme i flere historiske systemer. Alle treff fra sammenligningstabellen vises.";
-
-    heading.append(title, note);
-    card.appendChild(heading);
+        ? "Secondary reference only. Modern ATEX and IEC/IECEx-based marking is prioritized. The same old code may occur in several national systems."
+        : "Kun sekundær referanse. Moderne ATEX og IEC/IECEx-basert merking prioriteres. Samme eldre kode kan forekomme i flere nasjonale systemer.";
+    card.appendChild(note);
 
     items.forEach((item) => {
       const block = document.createElement("div");
@@ -477,10 +406,7 @@
       if (item.symbol) {
         const symbol = document.createElement("span");
         symbol.className = "legacy-marking__symbol";
-        symbol.textContent =
-          language === "en"
-            ? `Symbol: ${item.symbol}`
-            : `Symbol: ${item.symbol}`;
+        symbol.textContent = `Symbol: ${item.symbol}`;
         block.appendChild(symbol);
       }
 
