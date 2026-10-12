@@ -1169,3 +1169,95 @@
     padding-right: 4px;
   }
 }
+
+
+/* v36 compact auto-detect strip */
+.marking-auto-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 10px 0 16px;
+}
+
+.marking-auto-card {
+  min-height: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 6px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  text-align: center;
+}
+
+.marking-auto-card__logo {
+  display: block;
+  object-fit: contain;
+}
+
+.marking-auto-card__logo--atex {
+  width: 56px;
+  height: 42px;
+}
+
+.marking-auto-card__logo--iecex {
+  width: 68px;
+  height: 42px;
+}
+
+.marking-auto-card__text {
+  display: grid;
+  gap: 2px;
+}
+
+.marking-auto-card__text strong {
+  color: var(--ex-blue-dark);
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.marking-auto-card__text span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.marking-auto-card--legacy {
+  justify-content: center;
+}
+
+.marking-auto-card__text--legacy {
+  align-content: center;
+}
+
+@media (max-width: 380px) {
+  .marking-auto-strip {
+    gap: 6px;
+  }
+
+  .marking-auto-card {
+    min-height: 78px;
+    padding: 7px 4px;
+  }
+
+  .marking-auto-card__logo--atex {
+    width: 50px;
+    height: 38px;
+  }
+
+  .marking-auto-card__logo--iecex {
+    width: 62px;
+    height: 38px;
+  }
+
+  .marking-auto-card__text strong {
+    font-size: 11px;
+  }
+
+  .marking-auto-card__text span {
+    font-size: 9px;
+  }
+}

@@ -1,4 +1,4 @@
-const CACHE_VERSION = "ex-pocket-guide-v35";
+const CACHE_VERSION = "ex-pocket-guide-v36";
 
 const APP_SHELL = [
   "./",

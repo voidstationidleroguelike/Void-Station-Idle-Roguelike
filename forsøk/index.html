@@ -240,35 +240,34 @@
         </p>
 
 
-        <section class="marking-auto-section" aria-labelledby="markingAutoTitle">
-          <div id="markingAutoTitle"
-               class="section-label"
-               data-i18n="marking.autoDetectTitle">
-            Automatisk gjenkjenning
-          </div>
-
-          <div class="marking-auto-badges" aria-hidden="true">
-            <div class="marking-auto-badge">
-              <img src="assets/marking-systems/atex-official-symbol.png"
-                   alt="">
+        <section class="marking-auto-strip"
+                 aria-label="Automatisk gjenkjenning">
+          <div class="marking-auto-card">
+            <img src="assets/marking-systems/atex-official-symbol.png"
+                 alt="ATEX"
+                 class="marking-auto-card__logo marking-auto-card__logo--atex">
+            <div class="marking-auto-card__text">
               <strong>ATEX</strong>
-            </div>
-
-            <div class="marking-auto-badge marking-auto-badge--iecex">
-              <img src="assets/marking-systems/iecex-logo.png"
-                   alt="">
-              <strong>IECEx</strong>
-            </div>
-
-            <div class="marking-auto-badge marking-auto-badge--legacy">
-              <span class="marking-auto-badge__legacy-icon">LEGACY</span>
-              <strong data-i18n="marking.legacyShort">Eldre</strong>
+              <span>Europeisk Ex-merking</span>
             </div>
           </div>
 
-          <p class="help-text" data-i18n="marking.autoDetectHelp">
-            Appen prøver automatisk å kjenne igjen ATEX, IECEx / Ex og eldre nasjonal merking. Moderne ATEX og IECEx / Ex prioriteres.
-          </p>
+          <div class="marking-auto-card">
+            <img src="assets/marking-systems/iecex-logo.png"
+                 alt="IECEx"
+                 class="marking-auto-card__logo marking-auto-card__logo--iecex">
+            <div class="marking-auto-card__text">
+              <strong>IECEx</strong>
+              <span>Internasjonal Ex-merking</span>
+            </div>
+          </div>
+
+          <div class="marking-auto-card marking-auto-card--legacy">
+            <div class="marking-auto-card__text marking-auto-card__text--legacy">
+              <strong>Legacy</strong>
+              <span>Older national standards</span>
+            </div>
+          </div>
         </section>
 
         <div class="divider">
